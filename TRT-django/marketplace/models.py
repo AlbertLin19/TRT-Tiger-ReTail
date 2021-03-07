@@ -1,6 +1,10 @@
 from django.db import models
 
+# followed Django documentation on Model fields for the following
+
 class UserProfile(models.Model):
+    # eventually need a foreign key to some authentication model here
+    # i.e. Django's user model
     name = models.CharField(max_length=50)
     email = models.EmailField()
 
@@ -13,12 +17,25 @@ class Item(models.Model):
     FROZEN = 1
     COMPLETE = 2
 
+    NEW = 0
+    LIKE_NEW = 1
+    GOOD = 2
+    FAIR = 3
+    POOR = 4
+
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateTimeField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    quality = models.DecimalField(max_digits=1, decimal_places=0)
+    condition = models.DecimalField(max_digits=1, decimal_places=0,
+        choices = [
+            (NEW, 'new'),
+            (LIKE_NEW, 'like_new'),
+            (GOOD, 'good'),
+            (FAIR, 'fair'),
+            (POOR, 'poor')
+        ])
     categories = models.ManyToManyField(Category)
     description = models.TextField()
     image = models.ImageField()
