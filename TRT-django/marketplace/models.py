@@ -13,7 +13,7 @@ class Item(models.Model):
     FROZEN = 1
     COMPLETE = 2
 
-    seller = models.ForeignKey(UserProfile)
+    seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateTimeField()
@@ -36,9 +36,9 @@ class Transaction(models.Model):
     B_PENDING = 3
     COMPLETE = 4
 
-    item = models.ForeignKey(Item)
-    seller = models.ForeignKey(UserProfile)
-    buyer = models.ForeignKey(UserProfile)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    seller = models.ForeignKey(UserProfile, related_name='sale_transaction', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(UserProfile, related_name='purchase_transaction', on_delete=models.CASCADE)
     status = models.DecimalField(max_digits=1, decimal_places=0,
         choices = [
             (INITIATED, 'initiated'),
