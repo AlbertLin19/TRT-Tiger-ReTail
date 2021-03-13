@@ -3,8 +3,8 @@ from django.db import models
 # followed Django documentation on Model fields for the following
 
 class Account(models.Model):
-    # eventually need a foreign key to some authentication model here
-    # i.e. Django's user model
+    # username is matched by what is returned from CAS authentication
+    username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=50)
     email = models.EmailField()
 
