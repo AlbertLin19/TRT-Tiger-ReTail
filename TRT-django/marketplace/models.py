@@ -2,7 +2,7 @@ from django.db import models
 
 # followed Django documentation on Model fields for the following
 
-class UserProfile(models.Model):
+class Account(models.Model):
     # eventually need a foreign key to some authentication model here
     # i.e. Django's user model
     name = models.CharField(max_length=50)
@@ -23,7 +23,7 @@ class Item(models.Model):
     FAIR = 3
     POOR = 4
 
-    seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Account, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateTimeField()
@@ -54,8 +54,7 @@ class Transaction(models.Model):
     COMPLETE = 4
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    seller = models.ForeignKey(UserProfile, related_name='sale_transaction', on_delete=models.CASCADE)
-    buyer = models.ForeignKey(UserProfile, related_name='purchase_transaction', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(Account, on_delete=models.CASCADE)
     status = models.DecimalField(max_digits=1, decimal_places=0,
         choices = [
             (INITIATED, 'initiated'),
