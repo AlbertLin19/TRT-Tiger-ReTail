@@ -52,3 +52,10 @@ def getLoginUrl(url):
         + '?service=' + quote(stripTicket(url))
 
 #-----------------------------------------------------------------------
+
+# Return the url for the CAS authentication logout page
+
+def getLogoutUrl():
+    return settings.CAS_URL + 'logout'
+
+#-----------------------------------------------------------------------
