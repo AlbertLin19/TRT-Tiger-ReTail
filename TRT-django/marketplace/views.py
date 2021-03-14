@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from utils import CASClient
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # ----------------------------------------------------------------------
 
 # custom authentication_required decorator for protected views
