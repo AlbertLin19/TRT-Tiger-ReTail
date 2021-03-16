@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Account, Item
 
 
 class ItemForm(forms.ModelForm):
@@ -13,4 +13,13 @@ class ItemForm(forms.ModelForm):
             "categories",
             "description",
             "image",
+        ]
+
+
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = [
+            "name",
+            "email",
         ]

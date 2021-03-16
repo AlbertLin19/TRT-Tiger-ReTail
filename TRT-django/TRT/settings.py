@@ -19,6 +19,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+import django_heroku
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "marketplace.apps.MarketplaceConfig",
     "cloudinary",
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [
@@ -136,3 +139,8 @@ cloudinary.config(
     api_key=os.environ.get("CLOUDINARY_API_KEY"),
     api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
 )
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# Keep at the bottom of the settings.py file. Activate Django-Heroku.
+django_heroku.settings(locals())

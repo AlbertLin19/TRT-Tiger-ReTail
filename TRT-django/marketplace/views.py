@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Account, Item
-from .forms import ItemForm
+from .forms import AccountForm, ItemForm
 from utils import CASClient
 
 import cloudinary
@@ -68,12 +68,12 @@ def gallery(request):
 # personal items page
 
 
+@authentication_required
 def listItems(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+    items = account.item_set.all()
+    context = {"items": items}
+    return render(request, "marketplace/list_items.html", context)
 
 
 # ----------------------------------------------------------------------
@@ -96,10 +96,8 @@ def newItem(request):
             item = item_form.save(commit=False)
             item.seller = account
             item.posted_date = datetime.datetime.now()
+            item.status = Item.AVAILABLE
             item.save()
-            # not strictly necessary,
-            # but good practice due to the intricacies of commit=False
-            item.save_m2m()
 
             messages.success(request, "New item posted!")
             return redirect("list_items")
@@ -215,9 +213,24 @@ def cancelTransaction(request):
 
 
 @authentication_required
-def account(request):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+def editAccount(request):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        account_form = AccountForm(request.POST, instance=account)
+        if account_form.is_valid():
+            # save changes to the account
+            account_form.save()
+
+            messages.success(request, "Account edited!")
+
+    # did not receive form data via POST, so send stored account form
+    else:
+        account_form = AccountForm(instance=account)
+
+    context = {"account_form": account_form}
+    return render(request, "marketplace/edit_account.html", context)
 
 
 # ----------------------------------------------------------------------

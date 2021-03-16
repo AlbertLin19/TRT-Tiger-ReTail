@@ -24,7 +24,7 @@ urlpatterns = [
         views.cancelTransaction,
         name="cancel_transaction",
     ),
-    path("account/", views.account, name="account"),
-    path("account/login/", views.account, name="login"),
+    path("account/edit/", views.editAccount, name="edit_account"),
+    path("account/login/", views.editAccount, name="login"),
     path("account/logout/", views.logout, name="logout"),
 ]
