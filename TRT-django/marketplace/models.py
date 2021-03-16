@@ -1,4 +1,7 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+
+# above as in sample https://github.com/cloudinary/cloudinary-django-sample/blob/master/photo_album/models.py
 
 # followed Django documentation on Model fields for the following
 
@@ -44,7 +47,7 @@ class Item(models.Model):
     )
     categories = models.ManyToManyField(Category)
     description = models.TextField()
-    image = models.ImageField()
+    image = CloudinaryField("image")
     status = models.DecimalField(
         max_digits=1,
         decimal_places=0,

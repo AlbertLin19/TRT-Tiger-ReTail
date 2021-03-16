@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .models import Account, Item
+from .forms import ItemForm
 from utils import CASClient
 
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+
+import datetime
 
 # ----------------------------------------------------------------------
 
@@ -12,6 +16,8 @@ import cloudinary.api
 
 # if user can be authenticated, call view as normal
 # otherwise, redirect to CAS login page
+
+# will ensure that an account with associated username exists
 
 
 def authentication_required(view_function):
@@ -28,8 +34,12 @@ def authentication_required(view_function):
             )
 
             if username is not None:
-                # store authenticated username and call view as normal
+                # store authenticated username,
+                # check that associated Account exists, else create one,
+                # call view as normal
                 request.session["username"] = username
+                if not Account.objects.filter(username=username).exists():
+                    Account(username=username).save()
                 return view_function(request, *args, **kwargs)
 
         # user could NOT be authenticated, so redirect to CAS login
@@ -48,7 +58,8 @@ def gallery(request):
         request,
         "This is a demonstration of the common messages system via the base template!",
     )
-    context = {}
+    items = Item.objects.all()
+    context = {"items": items}
     return render(request, "marketplace/gallery.html", context)
 
 
@@ -68,16 +79,37 @@ def listItems(request):
 # ----------------------------------------------------------------------
 
 # new item form
-# GET requests given a blank form
-# POST requests given a form with error feedback, else new item created
+# GET requests get a blank form
+# POST requests get a form with error feedback, else new item created
+# and redirected to list items page
 
 
+@authentication_required
 def newItem(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_form = ItemForm(request.POST, request.FILES)
+        if item_form.is_valid():
+            # create new item, but do not save yet until changes made
+            item = item_form.save(commit=False)
+            item.seller = account
+            item.posted_date = datetime.datetime.now()
+            item.save()
+            # not strictly necessary,
+            # but good practice due to the intricacies of commit=False
+            item.save_m2m()
+
+            messages.success(request, "New item posted!")
+            return redirect("list_items")
+
+    # did not receive form data via POST, so send a blank form
+    else:
+        item_form = ItemForm()
+
+    context = {"item_form": item_form}
+    return render(request, "marketplace/new_item.html", context)
 
 
 # ----------------------------------------------------------------------

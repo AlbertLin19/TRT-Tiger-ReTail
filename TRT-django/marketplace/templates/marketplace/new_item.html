@@ -1,0 +1,8 @@
+{% extends "marketplace/base.html" %}
+{% block content %}
+    <form action="{% url 'new_item' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ item_form }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock content %}
