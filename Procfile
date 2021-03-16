@@ -1,0 +1,1 @@
+web: gunicorn TRT-django.TRT.wsgi
