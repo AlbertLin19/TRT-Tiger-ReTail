@@ -6,17 +6,21 @@
         {% endif %}
         {% for item in items %}
             <div class="row">
-                <div class='col-md-5'>
+                <div class='col-md-3'>
                     {{item.name}}
                 </div>
                 <div class='col-md-5'>
                     {{item.description}}
                 </div>
                 <div class='col-md-2'>
-                    {{item.status}}
+                    <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                </div>
+                <div class='col-md-2'>
+                    <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
                 </div>
             </div>
         {% endfor %}
+        <a href="{% url 'new_item' %}">Post Item</a> <br>
         <a href="{% url 'gallery' %}">Back to image gallery</a> <br>
     </div>
 {% endblock content %}

@@ -1,0 +1,19 @@
+{% extends "marketplace/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <div class="container">
+        <display>Please beautify this form. Like add input icons next to the input fields or somethin</display>
+        <display>And add a date picker tool to help with the deadline input (for now, you can type mm/dd/yyyy manually) </display>
+        <form action="{% url 'edit_item' item.pk %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- SHOULD TRY TO CUSTOMIZE FORM TO LOOK NICE -->
+            <!-- i.e. ADD INPUT ICONS NEXT TO THE FIELDS -->
+            <!-- ESPECIALLY BY ADDING A DATE PICKER TOOL FOR DEADLINE INPUT -->
+            {{ item_form|crispy }}
+            <input type="submit" value="Save">
+        </form>
+        <a href="{% url 'list_items' %}">Back to item list</a> <br>
+    </div>
+
+{% endblock content %}

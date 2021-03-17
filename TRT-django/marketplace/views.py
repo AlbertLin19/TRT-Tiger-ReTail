@@ -10,6 +10,8 @@ import cloudinary.api
 
 import datetime
 
+from django.core.exceptions import PermissionDenied
+
 # ----------------------------------------------------------------------
 
 # custom authentication_required decorator for protected views
@@ -117,12 +119,29 @@ def newItem(request):
 # POST requests given form with error feedback, else item edited
 
 
-def editItem(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+@authentication_required
+def editItem(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # if the item does not belong to this account, permission denied
+    item = Item.objects.get(pk=pk)
+    if item.seller != account:
+        raise PermissionDenied
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_form = ItemForm(request.POST, request.FILES, instance=item)
+        if item_form.is_valid():
+            # save changes to item
+            item_form.save()
+
+            messages.success(request, "Item updated!")
+
+    # did not receive form data via POST, so send stored item form
+    else:
+        item_form = ItemForm(instance=item)
+    context = {"item": item, "item_form": item_form}
+    return render(request, "marketplace/edit_item.html", context)
 
 
 # ----------------------------------------------------------------------
@@ -130,12 +149,18 @@ def editItem(request):
 # delete item
 
 
-def deleteItem(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+@authentication_required
+def deleteItem(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # if the item does not belong to this account, permission denied
+    item = Item.objects.get(pk=pk)
+    if item.seller != account:
+        raise PermissionDenied
+
+    item.delete()
+    messages.success(request, "Item deleted!")
+    return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
@@ -223,7 +248,7 @@ def editAccount(request):
             # save changes to the account
             account_form.save()
 
-            messages.success(request, "Account edited!")
+            messages.success(request, "Account updated!")
 
     # did not receive form data via POST, so send stored account form
     else:

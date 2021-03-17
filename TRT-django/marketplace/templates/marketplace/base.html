@@ -18,7 +18,14 @@
             </display>
 
             <div class=row>
-                <a href="{% url 'edit_account' %}">My Account</a>
+
+                {% if account %}
+                    <a href="{% url 'edit_account' %}">My Account</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'edit_account' %}">Login</a>
+                {% endif %}
+
             </div>
 
             <div class="row">
