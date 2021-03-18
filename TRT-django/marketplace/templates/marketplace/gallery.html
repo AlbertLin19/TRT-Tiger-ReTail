@@ -5,28 +5,14 @@
     <div class="container-fluid mb-3">
         <a href="{% url 'list_items' %}">My Items</a> <br>
         <a href="{% url 'new_item' %}">Post Item</a> <br>
-        <div>This stuff is from the gallery html.</div>
-        <!--{% for item in items %}-->
-            <!--<div class="row">
-                <div class='col-md-2'>
-                    {{ item.name }}
-                </div>
-                <div class='col-md-2'>
-                    {% cloudinary item.image format="jpg" width=120 height=80 crop="fill" %}
-                </div>
-                <div class='col-md-3'>
-                    {{item.price}}
-                </div>
-                <div class='col-md-2'>
-                    {{item.seller}}
-                </div>
-            </div> -->
-            <!--<div class="row">-->
-            <div class="row">
-                <!--{% for item in items %}-->
+        <!--<div id = 'gallery_landing'>-->
+        This stuff is from the gallery html.
+        <div class="container">
+            <div id="itemBox" class="row">
+                {% for item in items %}
                 <div class="col-12 col-md-4" style="text-align: center;">
                     <h1 class="big-text typing"> 
-                        {{ item.name }}
+                        {{item.name}}
                         <!--<div></div>-->
                     </h1>
                     {% cloudinary item.image format="jpg" width=120 height=80 crop="fill" %}
@@ -36,10 +22,8 @@
                         Merchant: {{item.seller}}
                     </p>
                 </div>
-                <!--{% endfor %}-->
+                {% endfor %}
             </div>
         </div>
-            <!--</div>-->
-        <!--{% endfor %}-->
     </div>
 {% endblock content %}

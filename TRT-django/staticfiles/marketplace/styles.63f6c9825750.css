@@ -1,0 +1,26 @@
+html,
+
+.gallery_landing{
+   position: absolute;
+   width: 1920px;
+   height: 370px;
+   left: 0px;
+   top: 0px;
+
+   mix-blend-mode: darken;
+   border: 1px solid #000000;
+   box-sizing: border-box;
+}
+
+.itemBox{
+   position: absolute;
+   width: 1078px;
+   height: 722px;
+   left: 335px;
+   top: 225px;
+
+   background: #FCFCFC;
+   border: 1px solid #000000;
+   box-sizing: border-box;
+   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
