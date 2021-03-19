@@ -1,0 +1,22 @@
+html,
+
+#gallery_top_bar{
+   width: 1500px;
+   height: 300px;
+   left: 0px;
+   top: 0px;
+   background: linear-gradient(180deg, rgba(18, 18, 18, 0.11) 99.99%, rgba(255, 255, 255, 0) 100%), url("Nassau_bckgrd.9028efac0939.png");
+}
+
+#itemBox{
+   position: absolute;
+   width: 1165px;
+   height: 722px;
+   left: 335px;
+   top: 300px;
+
+   background: #b8a3a31c;
+   border: 1px solid #000000;
+   box-sizing: border-box;
+   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}

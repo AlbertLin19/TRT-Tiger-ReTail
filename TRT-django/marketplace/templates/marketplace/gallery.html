@@ -2,21 +2,19 @@
 {% load cloudinary %}
 {% block content %}
     <!--<div class="container">-->
-    <div class="container-fluid mb-3">
+    <div class="container-fliud mb-3">
         <a href="{% url 'list_items' %}">My Items</a> <br>
         <a href="{% url 'new_item' %}">Post Item</a> <br>
-        <!--<div id = 'gallery_landing'>-->
-        This stuff is from the gallery html.
         <div class="container">
-            <div id="itemBox" class="row">
+            <div id="gallery_title"> IMAGE GALLERY </div> <br><br>
+            <div class="row">
                 {% for item in items %}
-                <div class="col-12 col-md-4" style="text-align: center;">
-                    <h1 class="big-text typing"> 
-                        {{item.name}}
-                        <!--<div></div>-->
-                    </h1>
+                <div class="col-12 col-md-4"  style="text-align: center;">
                     {% cloudinary item.image format="jpg" width=120 height=80 crop="fill" %}
                     <p class="sub-text">
+                        <h1 class="big-text typing"> 
+                            {{item.name}}
+                        </h1>
                         ${{item.price}} USD
                         <br>
                         Merchant: {{item.seller}}

@@ -1,27 +1,49 @@
 html,
 
-.gallery_landing{
-   position: absolute;
-   width: 1920px;
-   height: 370px;
+#gallery_top_bar{
+   width: 1500px;
+   height: 300px;
    left: 0px;
    top: 0px;
-
-   /*background: linear-gradient(180deg, rgba(18, 18, 18, 0.11) 99.99%, rgba(255, 255, 255, 0) 100%), url(a10e3cd8b3bf2e28228a4c4520a1cdc2.jpg);*/
-   mix-blend-mode: darken;
-   border: 1px solid #000000;
-   box-sizing: border-box;
+   background: linear-gradient(180deg, rgba(18, 18, 18, 0.11) 99.99%, rgba(255, 255, 255, 0) 100%), url(Nass.png);
+   opacity: 0.9;
 }
 
-/*.itemBox{
+#itemBox{
    position: absolute;
-   width: 1078px;
+   width: 1165px;
    height: 722px;
    left: 335px;
-   top: 225px;
+   top: 300px;
 
-   background: #FCFCFC;
+   background: #b8a3a31c;
    border: 1px solid #000000;
    box-sizing: border-box;
    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}*/
+}
+
+#trt_title{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-size: 90px;
+   color: #000000;
+   font-weight: bold;
+   text-align: center;
+   
+}
+
+#Login{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-size: 30px;
+   font-weight: bold;
+   color: #000000;
+   text-align: right;
+}
+
+#gallery_title{
+   font-size: 40px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+}
