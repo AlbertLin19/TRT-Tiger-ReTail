@@ -2,11 +2,14 @@
 {% load cloudinary %}
 {% block content %}
     <!--<div class="container">-->
-    <div class="container-fliud mb-3">
-        <a href="{% url 'list_items' %}">My Items</a> <br>
-        <a href="{% url 'new_item' %}">Post Item</a> <br>
+    <div class="container-fliud mb-3">   
         <div class="container">
-            <div id="gallery_title"> IMAGE GALLERY </div> <br><br>
+            <div id="posting_bar"> 
+                <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
+                <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
+            </div>
+            <div id="gallery_title"> IMAGE GALLERY </div> 
+            <br><br>
             <div class="row">
                 {% for item in items %}
                 <div class="col-12 col-md-4"  style="text-align: center;">
