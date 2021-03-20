@@ -4,12 +4,25 @@
     <!--<div class="container">-->
     <div class="container-fliud mb-3">   
         <div class="container">
-            <div id="posting_bar"> 
-                <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
-                <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
-            </div>
-            <div id="gallery_title"> IMAGE GALLERY </div> 
-            <br><hr><br>
+                <!--<div id="posting_bar">-->
+                <!--<input type="text" placeholder="Search.." class="topnav">
+                <div id="posting_bar">
+                    <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
+                    <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
+                </div>-->
+
+                <div class="header3 justify-content-around" style="display: flex; flex-direction: row;">
+                    <br />
+                    <div style="text-align: left; width: 50%;">
+                        <input type="text" placeholder="Search.." class="topnav">
+                    </div>
+                    <div style="text-align: right; width: 50%;">
+                        <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
+                        <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
+                    </div>
+                    <br />
+                </div><br />
+            <div id="gallery_title"> IMAGE GALLERY </div><hr>
             <div class="row">
                 {% for item in items %}
                 <div class="col-12 col-md-4"  style="text-align: center;">
