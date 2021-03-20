@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Account, Item
+from .models import Account, Item, Transaction
 from .forms import AccountForm, ItemForm
 from utils import CASClient
 
@@ -10,7 +10,7 @@ import cloudinary.api
 
 import datetime
 
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 
 # ----------------------------------------------------------------------
 
@@ -171,8 +171,9 @@ def deleteItem(request, pk):
 def listPurchases(request):
     account = Account.objects.get(username=request.session.get("username"))
 
-    purchases = account.transaction_set.all()
-    context = {'purchases': purchases}
+    # get transactions for which user is the buyer
+    transactions = Transaction.objects.filter(buyer=account)
+    context = {'transactions': transactions}
     return render(request, "marketplace/list_purchases.html", context)
 
 
@@ -181,32 +182,29 @@ def listPurchases(request):
 # buyer makes new purchase
 # POST request with pk of item to purchase will create new transaction
 
-
+@authentication_required
 def newPurchase(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
 
+    # item must be available for a transaction to associate with
+    pk = request.POST['pk']
+    item = Item.objects.get(pk=pk)
+    if item.status != Item.AVAILABLE:
+        # rejected
+        raise ValidationError
 
-# ----------------------------------------------------------------------
-
-# seller accepts purchase
-
-
-def acceptPurchase(request):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    transaction = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
+    transaction.save()
+    return redirect("list_purchases")
 
 
 # ----------------------------------------------------------------------
 
 # confirm purchase
-# seller/buyer confirms purchase
+# buyer confirms purchase
 
 
-def confirmPurchase(request):
+def confirmPurchase(request, pk):
     context = {}
     return render(request, "marketplace/gallery.html", context)
 
@@ -214,10 +212,40 @@ def confirmPurchase(request):
 # ----------------------------------------------------------------------
 
 # cancel purchase
-# buyer/seller cancels purchase
+# buyer cancels purchase
 
 
-def cancelPurchase(request):
+def cancelPurchase(request, pk):
+    context = {}
+    return render(request, "marketplace/gallery.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# seller accepts sale
+
+
+def acceptSale(request, pk):
+    context = {}
+    return render(request, "marketplace/gallery.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# seller confirms sale
+
+
+def confirmSale(request, pk):
+    context = {}
+    return render(request, "marketplace/gallery.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# seller cancels sale
+
+
+def cancelSale(request, pk):
     context = {}
     return render(request, "marketplace/gallery.html", context)
 

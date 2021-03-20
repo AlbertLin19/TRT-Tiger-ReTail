@@ -1,22 +1,26 @@
 {% extends "marketplace/base.html" %}
 {% block content %}
     <div class="container">
-        {% if not purchases %}
+        {% if not transactions %}
             <h3>You have not started any purchases yet!</h3>
         {% endif %}
-        {% for purchase in purchases %}
+        {% for transaction in transactions %}
             <div class="row">
                 <div class='col-md-3'>
-                    {{purchase.item}}
+                    {{transaction.item}}
                 </div>
                 <div class='col-md-5'>
-                    {{purchase.seller}}
+                    {{transaction.seller}}
                 </div>
                 <div class='col-md-2'>
-                    <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                    {% if transaction.status == 1 or transaction.status == 3 %}
+                        <a href="{% url 'confirm_purchase' transaction.pk %}">Confirm</a>
+                    {% else %}
+                        <p>Confirm (grey out and add popup with text: awaiting seller acknowledgement)</p>
+                    {% endif %}
                 </div>
                 <div class='col-md-2'>
-                    <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
+                    <a href="{% url 'cancel_purchase' transaction.pk %}">Cancel</a>
                 </div>
             </div>
         {% endfor %}
