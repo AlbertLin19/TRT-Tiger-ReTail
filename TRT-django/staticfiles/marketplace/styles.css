@@ -5,7 +5,8 @@ html,
    height: 300px;
    left: 0px;
    top: 0px;
-   background: linear-gradient(180deg, rgba(18, 18, 18, 0.11) 99.99%, rgba(255, 255, 255, 0) 100%), url(Perelman.jpg);
+   background: url(Header_pic.png);
+   background-size: 100%;
    opacity: 0.9;
 }
 

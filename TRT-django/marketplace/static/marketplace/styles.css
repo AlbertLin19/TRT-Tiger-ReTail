@@ -16,9 +16,8 @@ html,
    height: 100%;*/
    left: 0px;
    top: 0px;
-   background: linear-gradient(180deg, rgba(18, 18, 18, 0.11) 99.99%, rgba(255, 255, 255, 0) 100%), url(PrMan.png) no-repeat;
-   opacity: 0.7;
-   /*background-size: 100% 100%;*/
+   background: url(Header_pic.png) no-repeat;
+   background-size: 100%;
 }
 
 #itemBox{
