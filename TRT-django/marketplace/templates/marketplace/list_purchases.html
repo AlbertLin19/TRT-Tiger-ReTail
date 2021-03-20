@@ -1,0 +1,26 @@
+{% extends "marketplace/base.html" %}
+{% block content %}
+    <div class="container">
+        {% if not purchases %}
+            <h3>You have not started any purchases yet!</h3>
+        {% endif %}
+        {% for purchase in purchases %}
+            <div class="row">
+                <div class='col-md-3'>
+                    {{purchase.item}}
+                </div>
+                <div class='col-md-5'>
+                    {{purchase.seller}}
+                </div>
+                <div class='col-md-2'>
+                    <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                </div>
+                <div class='col-md-2'>
+                    <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
+                </div>
+            </div>
+        {% endfor %}
+        <a href="{% url 'new_item' %}">Post Item</a> <br>
+        <a href="{% url 'gallery' %}">Back to image gallery</a> <br>
+    </div>
+{% endblock content %}

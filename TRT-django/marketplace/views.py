@@ -165,24 +165,24 @@ def deleteItem(request, pk):
 
 # ----------------------------------------------------------------------
 
-# personal transactions page
+# personal purchases page
 
+@authentication_required
+def listPurchases(request):
+    account = Account.objects.get(username=request.session.get("username"))
 
-def listTransactions(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    purchases = account.transaction_set.all()
+    context = {'purchases': purchases}
+    return render(request, "marketplace/list_purchases.html", context)
 
 
 # ----------------------------------------------------------------------
 
-# new transaction
+# buyer makes new purchase
 # POST request with pk of item to purchase will create new transaction
 
 
-def newTransaction(request):
+def newPurchase(request):
     messages.success(
         request, "This is a demonstration of the messages system via the base template!"
     )
@@ -192,42 +192,32 @@ def newTransaction(request):
 
 # ----------------------------------------------------------------------
 
-# accept transaction
-# seller accepts transaction
+# seller accepts purchase
 
 
-def acceptTransaction(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
+def acceptPurchase(request):
     context = {}
     return render(request, "marketplace/gallery.html", context)
 
 
 # ----------------------------------------------------------------------
 
-# confirm transaction
-# seller/buyer confirms transaction
+# confirm purchase
+# seller/buyer confirms purchase
 
 
-def confirmTransaction(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
+def confirmPurchase(request):
     context = {}
     return render(request, "marketplace/gallery.html", context)
 
 
 # ----------------------------------------------------------------------
 
-# cancel transaction
-# seller/buyer cancels transaction
+# cancel purchase
+# buyer/seller cancels purchase
 
 
-def cancelTransaction(request):
-    messages.success(
-        request, "This is a demonstration of the messages system via the base template!"
-    )
+def cancelPurchase(request):
     context = {}
     return render(request, "marketplace/gallery.html", context)
 
