@@ -10,7 +10,7 @@ import cloudinary.api
 
 import datetime
 
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import PermissionDenied
 
 # ----------------------------------------------------------------------
 
@@ -191,10 +191,20 @@ def newPurchase(request):
     item = Item.objects.get(pk=pk)
     if item.status != Item.AVAILABLE:
         # rejected
-        raise ValidationError
+        raise PermissionDenied
+
+    # buyer must not be the seller of this item
+    if item.seller == account:
+        # rejected
+        raise PermissionDenied
+
+    # freeze item
+    item.status = Item.FROZEN
+    item.save()
 
     transaction = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
     transaction.save()
+
     return redirect("list_purchases")
 
 
