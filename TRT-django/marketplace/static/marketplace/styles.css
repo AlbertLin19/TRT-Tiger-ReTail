@@ -46,10 +46,10 @@ html,
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
    font-size: 50px;
-   color: #F9F9F9;
+   color: #ff7301;
    font-weight: bold;
    text-align: center;
-   text-shadow: 6px 6px #000000;
+   text-shadow: 4px 4px #000000;
 }
 
 #Login{
