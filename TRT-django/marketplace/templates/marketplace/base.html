@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>TRT Tiger ReTail</title>
         {% load static %}
         <link rel="stylesheet" href="{% static 'marketplace/styles.css' %}">
-        <title>TRT Tiger ReTail</title>
 
         <!-- Bootstrap CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -13,19 +13,21 @@
 
     <body>
         <div id="gallery_top_bar" class="container-fluid">
-            <div class="container mx-2">
-                <div class=row>
-                    {% if account %}
-                        <a href="{% url 'edit_account' %}">My Account</a>
-                        <a href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                        <a href="{% url 'edit_account' %}" id="Login">LOGIN</a>
-                    {% endif %}
-                </div>
-                <div id="trt_title"> 
-                    TRT - Tiger ReTail
-                </div>
+            <div id="Login">
+                {% if account %}
+                    <a href="{% url 'edit_account' %}" id="Login">My Account</a>
+                    <a href="{% url 'logout' %}"id="Login">Logout</a>
+                {% else %}
+                    <a href="{% url 'edit_account' %}"id="Login">LOGIN</a>
+                {% endif %}
             </div>
+            <div id="tiger_retail_title"> 
+                Tiger ReTail
+            </div>
+            <div id="trt_title"> 
+                T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T
+            </div>
+            <br><br><br>
         </div>
 
             <div class="row">
