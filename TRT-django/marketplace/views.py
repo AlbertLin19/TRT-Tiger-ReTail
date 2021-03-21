@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.core.cache import cache
 from django.conf import settings
 from .models import Account, Item, Transaction
 from .forms import AccountForm, ItemForm
@@ -437,11 +438,10 @@ def editAccount(request):
                 account.email = old_email 
                 account.save()
 
-                # store new_email and random token into session
+                # store new_email and random token into cache
                 # for email verification
-                request.session["new_email"] = new_email 
                 token = secrets.token_hex(32)
-                request.session["email_verification_token"] = token
+                cache.set(token, [account.username, new_email], 30)
 
                 # send verification email
                 send_mail('Tiger ReTail Email Verification',
@@ -468,12 +468,16 @@ def editAccount(request):
 @authentication_required
 def verifyEmail(request, token):
     account = Account.objects.get(username=request.session.get("username"))
-    if token == request.session.get("email_verification_token"):
-        account.email = request.session.get("new_email")
-        account.save()
-        messages.success(request, "Email verified.")
+    if cache.get(token):
+        username, new_email = cache.get(token)
+        if username != account.username:
+            messages.warning(request, "Permission denied. Ensure you are logged in with the correct account.")
+        else:
+            account.email = new_email
+            account.save()
+            messages.success(request, "Email verified.")
     else:
-        messages.warning(request, "Verification failed.")
+        messages.warning(request, "Verification link has expired.")
     return redirect('edit_account')
 
 # ----------------------------------------------------------------------
