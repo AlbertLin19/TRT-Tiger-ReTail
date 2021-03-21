@@ -58,10 +58,6 @@ def authentication_required(view_function):
 
 
 def gallery(request):
-    messages.success(
-        request,
-        "This is a demonstration of the common messages system via the base template!",
-    )
     items = Item.objects.all()
     context = {"items": items}
     return render(request, "marketplace/gallery.html", context)
@@ -174,6 +170,8 @@ def deleteItem(request, pk):
 
     item.delete()
     messages.success(request, "Item deleted!")
+    # send confirmation email
+    send_mail('Item Delete Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     return redirect("list_items")
 
 
@@ -221,6 +219,9 @@ def newPurchase(request):
     purchase = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
     purchase.save()
 
+    # send confirmation email
+    send_mail('Purchase Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+
     return redirect("list_purchases")
 
 
@@ -254,6 +255,8 @@ def confirmPurchase(request, pk):
         purchase.status = Transaction.S_PENDING
         purchase.save()
         messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
+        # send confirmation email
+        send_mail('Purchase Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif purchase.status == Transaction.B_PENDING:
         item = purchase.item
@@ -262,6 +265,8 @@ def confirmPurchase(request, pk):
         purchase.status = Transaction.COMPLETE
         purchase.save()
         messages.success(request, "Purchase confirmed by both parties and completed.")
+        # send confirmation email
+        send_mail('Purchase Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     
     return redirect("list_purchases")
 
@@ -295,6 +300,8 @@ def cancelPurchase(request, pk):
         purchase.status = Transaction.CANCELLED
         purchase.save()
         messages.success(request, "Purchase cancelled.")
+        # send confirmation email
+        send_mail('Purchase Cancel Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     
     return redirect("list_purchases")
 
@@ -319,6 +326,8 @@ def acceptSale(request, pk):
         sale.status = Transaction.ACKNOWLEDGED
         sale.save()
         messages.success(request, "Sale acknowledged.")
+        # send confirmation email
+        send_mail('Sale Acceptance Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     else:
         messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
     
@@ -354,6 +363,8 @@ def confirmSale(request, pk):
         sale.status = Transaction.B_PENDING
         sale.save()
         messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
+        # send confirmation email
+        send_mail('Sale Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif sale.status == Transaction.S_PENDING:
         item = sale.item
@@ -362,6 +373,8 @@ def confirmSale(request, pk):
         sale.status = Transaction.COMPLETE
         sale.save()
         messages.success(request, "Sale confirmed by both parties and completed.")
+        # send confirmation email
+        send_mail('Sale Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     
     return redirect("list_items")
 
@@ -394,6 +407,8 @@ def cancelSale(request, pk):
         sale.status = Transaction.CANCELLED
         sale.save()
         messages.success(request, "Sale cancelled.")
+        # send confirmation email
+        send_mail('Sale Cancel Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     
     return redirect("list_items")
 
