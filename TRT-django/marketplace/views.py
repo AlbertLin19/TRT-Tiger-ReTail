@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -13,6 +14,7 @@ import cloudinary.api
 import datetime
 
 from django.core.exceptions import PermissionDenied
+import secrets
 
 # ----------------------------------------------------------------------
 
@@ -99,7 +101,7 @@ def newItem(request):
             item.status = Item.AVAILABLE
             item.save()
 
-            messages.success(request, "New item posted!")
+            messages.success(request, "New item posted.")
             # send confirmation email
             send_mail('Item Post Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
             return redirect("list_items")
@@ -140,7 +142,7 @@ def editItem(request, pk):
             # save changes to item
             item_form.save()
 
-            messages.success(request, "Item updated!")
+            messages.success(request, "Item updated.")
 
     # did not receive form data via POST, so send stored item form
     else:
@@ -169,7 +171,7 @@ def deleteItem(request, pk):
         return redirect("list_items")
 
     item.delete()
-    messages.success(request, "Item deleted!")
+    messages.success(request, "Item deleted.")
     # send confirmation email
     send_mail('Item Delete Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
     return redirect("list_items")
@@ -421,15 +423,37 @@ def cancelSale(request, pk):
 @authentication_required
 def editAccount(request):
     account = Account.objects.get(username=request.session.get("username"))
+    old_email = account.email
 
     # populate the Django model form and validate data
     if request.method == "POST":
         account_form = AccountForm(request.POST, instance=account)
         if account_form.is_valid():
-            # save changes to the account
+            new_email = account_form.cleaned_data['email']
             account_form.save()
+            # do not save new email yet
+            if new_email != old_email:
+                account = Account.objects.get(username=request.session.get("username"))
+                account.email = old_email 
+                account.save()
 
-            messages.success(request, "Account updated!")
+                # store new_email and random token into session
+                # for email verification
+                request.session["new_email"] = new_email 
+                token = secrets.token_hex(32)
+                request.session["email_verification_token"] = token
+
+                # send verification email
+                send_mail('Tiger ReTail Email Verification',
+                    'Please visit the following link to verify your email.\n' + \
+                    'If you did not make this request, you can safely ignore this message.\n' + \
+                    request.build_absolute_uri(reverse('verify_email', args=[token])),
+                    settings.EMAIL_HOST_USER,
+                    [new_email],
+                    fail_silently=False)
+                messages.info(request, "Verification email sent.")
+
+            messages.success(request, "Account updated.")
 
     # did not receive form data via POST, so send stored account form
     else:
@@ -438,6 +462,19 @@ def editAccount(request):
     context = {"account_form": account_form}
     return render(request, "marketplace/edit_account.html", context)
 
+
+# ----------------------------------------------------------------------
+
+@authentication_required
+def verifyEmail(request, token):
+    account = Account.objects.get(username=request.session.get("username"))
+    if token == request.session.get("email_verification_token"):
+        account.email = request.session.get("new_email")
+        account.save()
+        messages.success(request, "Email verified.")
+    else:
+        messages.warning(request, "Verification failed.")
+    return redirect('edit_account')
 
 # ----------------------------------------------------------------------
 
