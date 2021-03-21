@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Account, Item, Transaction
 from .forms import AccountForm, ItemForm
 from utils import CASClient
@@ -102,6 +104,8 @@ def newItem(request):
             item.save()
 
             messages.success(request, "New item posted!")
+            # send confirmation email
+            send_mail('Item Post Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
             return redirect("list_items")
 
     # did not receive form data via POST, so send a blank form
