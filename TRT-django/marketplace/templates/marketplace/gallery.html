@@ -2,14 +2,15 @@
 {% load cloudinary %}
 {% block content %}
     <!--<div class="container">-->
+        <script> var ret_items = [];</script>
         <div class="topbar header3 justify-content-around" style="display: flex; flex-direction: row;">
             <br />
-            <form style="text-align: left; width: 50%;">
-                <div class="input-group">
-                    <input type="search" id="form1" placeholder="Search" class="form-control"/>
-                    <button class="btn btn-secondary" type="submit"><i class=" fa fa-search"></i></button>
+            <!--<form style="text-align: left; width: 50%;">-->
+                <div class="input-group rounded">
+                    <input type="search" id="searchbar" placeholder="Search" class="form-control"/>
+                    <button class="btn btn-secondary" type="submit" onclick="search(ret_items)"><i class=" fa fa-search"></i></button>
                 </div>
-            </form>
+            <!--</form>-->
             <div style="text-align: right; width: 50%;">
                 <a href="{% url 'list_items' %}" class="btn btn-outline-light" style="font-weight: bold;">MY ITEMS</a>
                 <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
@@ -21,7 +22,7 @@
         <div class="container">
             <div id="gallery_title"> CURRENT OFFERS </div><hr>
             <div class="row">
-                {% for item in items %}
+                {% for item in ret_items %}
                 <div class="card col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
                     <div class="card-img-top rounded-corners">
                         {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
