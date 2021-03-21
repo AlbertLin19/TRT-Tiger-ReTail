@@ -441,7 +441,7 @@ def editAccount(request):
                 # store new_email and random token into cache
                 # for email verification
                 token = secrets.token_hex(32)
-                cache.set(token, [account.username, new_email], 30)
+                cache.set(token, [account.username, new_email], 900)
 
                 # send verification email
                 send_mail('Tiger ReTail Email Verification',
