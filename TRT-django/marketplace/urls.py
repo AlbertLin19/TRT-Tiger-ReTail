@@ -21,4 +21,5 @@ urlpatterns = [
     path("account/edit/", views.editAccount, name="edit_account"),
     path("account/login/", views.editAccount, name="login"),
     path("account/logout/", views.logout, name="logout"),
+    path("account/email/verify/<str:token>/", views.verifyEmail, name="verify_email"),
 ]

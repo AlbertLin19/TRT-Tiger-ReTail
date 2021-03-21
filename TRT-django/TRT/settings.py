@@ -152,5 +152,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'trt.tiger.retail@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
+# setup cache for email verification
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'tokens',
+    }
+}
+
 # Keep at the bottom of the settings.py file. Activate Django-Heroku.
 django_heroku.settings(locals())
