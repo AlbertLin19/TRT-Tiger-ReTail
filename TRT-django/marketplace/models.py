@@ -64,6 +64,9 @@ class Item(models.Model):
         ],
     )
 
+    def __str__(self):
+        return self.name + ' - ' + str(self.seller)
+
 
 class Transaction(models.Model):
     INITIATED = 0
