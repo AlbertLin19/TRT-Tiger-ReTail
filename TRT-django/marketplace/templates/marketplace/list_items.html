@@ -21,6 +21,7 @@
 
                             <div class='row'>
                                 {% if sale.status == Transaction_INITIATED %}
+                                    <a href="{% url 'accept_sale' sale.pk %}">Accept</a>
                                 {% elif sale.status == Transaction_ACKNOWLEDGED or sale.status == Transaction_S_PENDING %}
                                     <a href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
                                 {% elif sale.status == Transaction_B_PENDING %}
