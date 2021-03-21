@@ -2,29 +2,24 @@
 {% load cloudinary %}
 {% block content %}
     <!--<div class="container">-->
-    <div class="container-fliud mb-3">   
+        <div class="topbar header3 justify-content-around" style="display: flex; flex-direction: row;">
+            <br />
+            <form style="text-align: left; width: 50%;">
+                <div class="input-group">
+                    <input type="search" id="form1" placeholder="Search" class="form-control"/>
+                    <button class="btn btn-secondary" type="submit"><i class=" fa fa-search"></i></button>
+                </div>
+            </form>
+            <div style="text-align: right; width: 50%;">
+                <a href="{% url 'list_items' %}" class="btn btn-outline-light" style="font-weight: bold;">MY ITEMS</a>
+                <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
+                <a href="{% url 'list_purchases' %}" class="btn btn-outline-light" style="font-weight: bold;">PURCHASES</a>
+            </div>
+        </div>
+    <div class="gallery_back container-fliud mb-3">
+        <br>   
         <div class="container">
-                <!--<div id="posting_bar">-->
-                <!--<input type="text" placeholder="Search.." class="topnav">
-                <div id="posting_bar">
-                    <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
-                    <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
-                </div>-->
-
-                <div class="header3 justify-content-around" style="display: flex; flex-direction: row;">
-                    <br />
-                    <form style="text-align: left; width: 50%;">
-                        <input type="text" placeholder="Search.." id="topnav">
-                        <button type="submit"><i class="btn btn-primary fa fa-search"></i></button>
-                    </form>
-                    <div style="text-align: right; width: 50%;">
-                        <a href="{% url 'list_items' %}" id="button_topnav">MY ITEMS</a>
-                        <a href="{% url 'new_item' %}" id="button_topnav">POST ITEM</a>
-                        <a href="{% url 'list_purchases' %}" id="button_topnav">PURCHASES</a>
-                    </div>
-                    <br />
-                </div><br />
-            <div id="gallery_title"> IMAGE GALLERY </div><hr>
+            <div id="gallery_title"> CURRENT OFFERS </div><hr>
             <div class="row">
                 {% for item in items %}
                 <div class="col-12 col-md-4"  style="text-align: center;">
