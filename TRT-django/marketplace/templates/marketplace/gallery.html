@@ -13,9 +13,10 @@
 
                 <div class="header3 justify-content-around" style="display: flex; flex-direction: row;">
                     <br />
-                    <div style="text-align: left; width: 50%;">
+                    <form style="text-align: left; width: 50%;">
                         <input type="text" placeholder="Search.." class="topnav">
-                    </div>
+                        <button type="submit"><i class="search_button" class="fa fa-search"></i></button>
+                    </form>
                     <div style="text-align: right; width: 50%;">
                         <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
                         <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
