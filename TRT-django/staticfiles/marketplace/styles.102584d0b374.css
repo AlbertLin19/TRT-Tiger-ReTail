@@ -6,7 +6,7 @@ html,
    height: 100%;*/
    left: 0px;
    top: 0px;
-   background: url(PrMan.png) no-repeat;
+   background: url("PrMan.435b8a96aefd.png") no-repeat;
    /* background-size: 100%;*/
 }
 
@@ -96,17 +96,4 @@ html,
    border-radius: 2px;
    padding: 3px 20px 3px 20px;
    font-family: 'Source Sans Pro', sans-serif;
-}
-
-.button {
-   padding: 6px 50px 6px 50px;
-   border-top: 10px solid #CCCCCC;
-   border-right: 10px solid #333333;
-   border-bottom: 1px solid #333333;
-   border-left: 1px solid #CCCCCC;
-   box-shadow: 10px 40px 40px rgba(0, 0, 0, 0.25);
-   font-style: normal;
-   font-weight: bold;
-   font-size: 18px;
-   line-height: 30px;
 }

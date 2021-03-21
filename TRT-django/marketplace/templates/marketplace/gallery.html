@@ -14,13 +14,13 @@
                 <div class="header3 justify-content-around" style="display: flex; flex-direction: row;">
                     <br />
                     <form style="text-align: left; width: 50%;">
-                        <input type="text" placeholder="Search.." class="topnav">
-                        <button type="submit"><i class="search_button" class="fa fa-search"></i></button>
+                        <input type="text" placeholder="Search.." id="topnav">
+                        <button type="submit"><i class="btn btn-primary fa fa-search"></i></button>
                     </form>
                     <div style="text-align: right; width: 50%;">
-                        <a href="{% url 'list_items' %}" class="button">MY ITEMS</a>
-                        <a href="{% url 'new_item' %}" class="button">POST ITEM</a>
-                        <a href="{% url 'list_purchases' %}" class="button">PURCHASES</a>
+                        <a href="{% url 'list_items' %}" id="button_topnav">MY ITEMS</a>
+                        <a href="{% url 'new_item' %}" id="button_topnav">POST ITEM</a>
+                        <a href="{% url 'list_purchases' %}" id="button_topnav">PURCHASES</a>
                     </div>
                     <br />
                 </div><br />
