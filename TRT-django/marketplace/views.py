@@ -191,12 +191,14 @@ def newPurchase(request):
     item = Item.objects.get(pk=pk)
     if item.status != Item.AVAILABLE:
         # rejected
-        raise PermissionDenied
+        messages.error(request, "Item unavailable for purchase.")
+        return redirect("gallery")
 
     # buyer must not be the seller of this item
     if item.seller == account:
         # rejected
-        raise PermissionDenied
+        messages.error(request, "Cannot purchase an item you are selling.")
+        return redirect("gallery")
 
     # freeze item
     item.status = Item.FROZEN
@@ -213,10 +215,41 @@ def newPurchase(request):
 # confirm purchase
 # buyer confirms purchase
 
-
+@authentication_required
 def confirmPurchase(request, pk):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    purchase = Transaction.objects.get(pk=pk)
+
+    # must be the buyer of this transaction
+    if purchase.buyer != account:
+        # rejected
+        raise PermissionDenied
+
+    # transaction cannot be INITIATED, S_PENDING, COMPLETE, or CANCELLED
+    if purchase.status == Transaction.INITIATED:
+        messages.error(request, "Cannot confirm - awaiting seller acknowledgement.")
+    elif purchase.status == Transaction.S_PENDING:
+        messages.error(request, "Already confirmed - awaiting seller confirmation.")
+    elif purchase.status == Transaction.COMPLETE:
+        messages.error(request, "Already confirmed - purchase has already been completed.")
+    elif purchase.status == Transaction.CANCELLED:
+        messages.error(request, "Cannot confirm - purchase has already been cancelled.")
+    # elif ACKNOWLEDGED, move to S_PENDING
+    elif purchase.status == Transaction.ACKNOWLEDGED:
+        purchase.status = Transaction.S_PENDING
+        purchase.save()
+        messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
+    # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
+    elif purchase.status == Transaction.B_PENDING:
+        item = purchase.item
+        item.status = Item.COMPLETE
+        item.save()
+        purchase.status = Transaction.COMPLETE
+        purchase.save()
+        messages.success(request, "Purchase confirmed by both parties and completed.")
+    
+    return redirect("list_purchases")
 
 
 # ----------------------------------------------------------------------
@@ -224,40 +257,131 @@ def confirmPurchase(request, pk):
 # cancel purchase
 # buyer cancels purchase
 
-
+@authentication_required
 def cancelPurchase(request, pk):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    purchase = Transaction.objects.get(pk=pk)
+
+    # must be the buyer of this transaction
+    if purchase.buyer != account:
+        # rejected
+        raise PermissionDenied
+
+    # transaction cannot be COMPLETE or CANCELLED
+    if purchase.status == Transaction.COMPLETE:
+        messages.error(request, "Cannot cancel a purchase which has already been completed.")
+    elif purchase.status == Transaction.CANCELLED:
+        messages.error(request, "Already cancelled.")
+    # move to CANCELLED and move item to AVAILABLE
+    else:
+        item = purchase.item
+        item.status = Item.AVAILABLE
+        item.save()
+        purchase.status = Transaction.CANCELLED
+        purchase.save()
+        messages.success(request, "Purchase cancelled.")
+    
+    return redirect("list_purchases")
 
 
 # ----------------------------------------------------------------------
 
 # seller accepts sale
 
-
+@authentication_required
 def acceptSale(request, pk):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    sale = Transaction.objects.get(pk=pk)
+
+    # must be the seller of this transaction
+    if sale.item.seller != account:
+        # rejected
+        raise PermissionDenied
+
+    # transaction must be INITIATED
+    if sale.status == Transaction.INITIATED:
+        sale.status = Transaction.ACKNOWLEDGED
+        sale.save()
+        messages.success(request, "Sale acknowledged.")
+    else:
+        messages.error(request, "Cannot acknowledge - sale not in INITIATED state.")
+    
+    return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
 
 # seller confirms sale
 
-
+@authentication_required
 def confirmSale(request, pk):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    sale = Transaction.objects.get(pk=pk)
+
+    # must be the seller of this transaction
+    if sale.item.seller != account:
+        # rejected
+        raise PermissionDenied
+
+    # transaction cannot be INITIATED, B_PENDING, COMPLETE, or CANCELLED
+    if sale.status == Transaction.INITIATED:
+        messages.error(request, "Cannot confirm - acknowledge the sale first.")
+    elif sale.status == Transaction.B_PENDING:
+        messages.error(request, "Already confirmed - awaiting buyer confirmation.")
+    elif sale.status == Transaction.COMPLETE:
+        messages.error(request, "Already confirmed - sale has already been completed.")
+    elif sale.status == Transaction.CANCELLED:
+        messages.error(request, "Cannot confirm - sale has already been cancelled.")
+    # elif ACKNOWLEDGED, move to B_PENDING
+    elif sale.status == Transaction.ACKNOWLEDGED:
+        sale.status = Transaction.B_PENDING
+        sale.save()
+        messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
+    # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
+    elif sale.status == Transaction.S_PENDING:
+        item = sale.item
+        item.status = Item.COMPLETE
+        item.save()
+        sale.status = Transaction.COMPLETE
+        sale.save()
+        messages.success(request, "Sale confirmed by both parties and completed.")
+    
+    return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
 
 # seller cancels sale
 
-
+@authentication_required
 def cancelSale(request, pk):
-    context = {}
-    return render(request, "marketplace/gallery.html", context)
+    account = Account.objects.get(username=request.session.get("username"))
+
+    sale = Transaction.objects.get(pk=pk)
+
+    # must be the seller of this transaction
+    if sale.item.seller != account:
+        # rejected
+        raise PermissionDenied
+
+    # transaction cannot be COMPLETE or CANCELLED
+    if sale.status == Transaction.COMPLETE:
+        messages.error(request, "Cannot cancel a sale which has already been completed.")
+    elif sale.status == Transaction.CANCELLED:
+        messages.error(request, "Already cancelled.")
+    # move to CANCELLED and move item to AVAILABLE
+    else:
+        item = sale.item
+        item.status = Item.AVAILABLE
+        item.save()
+        sale.status = Transaction.CANCELLED
+        sale.save()
+        messages.success(request, "Sale cancelled.")
+    
+    return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
