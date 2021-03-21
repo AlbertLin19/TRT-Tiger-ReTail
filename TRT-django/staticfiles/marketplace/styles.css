@@ -68,27 +68,40 @@ html,
 }
 
 /* post items and my items buttons */
+/*
 #button_topnav {
    text-decoration: none;
    background-color: #789C55;
    color: #FFFFFF;
-   padding: 6px 20px 6px 20px;
-   border-top: 1px solid #CCCCCC;
-   border-right: 1px solid #333333;
-   border-bottom: 1px solid #333333;
+   padding: 8px 20px 8px 20px;
+   border-top: 6px solid #FFFFFF;
+   border-right: 3px solid #333333;
+   border-bottom: 5px solid #789C55;
    border-left: 1px solid #CCCCCC;
    border-radius: 3px;
-   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+   /*box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
    font-weight: bold;
    font-size: 18px;
    line-height: 30px;
  }
+ */
+ .topbar{
+    padding: 20px 20px 20px 20px;
+    /*background: #d0eede;*/
+    background: url(tiger.jpg);
+    background-size: 100%;
+    opacity: 90%;
+ }
+
+ .gallery_back{
+   background: #f3dfc9;
+ }
 
 /* search bar */
  #topnav {
-   background-color: #e9e9e9;
+   background-color: #9cdef8;
    width: 48%;
    min-width: 150px;
    border: 1px solid #000000;
@@ -96,13 +109,4 @@ html,
    border-radius: 2px;
    padding: 3px 20px 3px 20px;
    font-family: 'Source Sans Pro', sans-serif;
-}
-
-.button {
-   padding: 6px 50px 6px 50px;
-   border-top: 10px solid #CCCCCC;
-   border-right: 10px solid #333333;
-   border-bottom: 1px solid #333333;
-   border-left: 1px solid #CCCCCC;
-   box-shadow: 10px 40px 40px rgba(0, 0, 0, 0.25);
 }

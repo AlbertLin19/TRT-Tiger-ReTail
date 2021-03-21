@@ -17,15 +17,20 @@
     {% with Transaction_INITIATED=0 Transaction_ACKNOWLEDGED=1 Transaction_S_PENDING=2 %}
     {% with Transaction_B_PENDING=3 Transaction_COMPLETE=4 Transaction_CANCELLED=5 %}
     
-        <div id="gallery_top_bar" class="container-fluid">
-            <div id="Login">
-                {% if account %}
-                    <a href="{% url 'edit_account' %}" id="Login">My Account | </a>
-                    <a href="{% url 'logout' %}"id="Login">Logout</a>
-                {% else %}
-                    <a href="{% url 'edit_account' %}"id="Login">LOGIN</a>
-                {% endif %}
-            </div>
+        <div id="gallery_top_bar" class=" container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-dark" style="padding-left: 20px;">
+                <a class="navbar-brand" href="{% url 'gallery' %}">HOME</a>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div class="navbar-nav">
+                    {% if account %}
+                        <a class="nav-item nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span class="sr-only">(current)</span></a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
+                    {% else %}
+                        <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
+                    {% endif %}
+                  </div>
+                </div>
+              </nav>
             <div id="tiger_retail_title"> 
                 Tiger ReTail
             </div>

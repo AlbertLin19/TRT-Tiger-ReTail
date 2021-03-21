@@ -6,8 +6,8 @@ html,
    height: 100%;*/
    left: 0px;
    top: 0px;
-   background: url(Header_pic.png) no-repeat;
-   background-size: 100%;
+   background: url("PrMan.435b8a96aefd.png") no-repeat;
+   /* background-size: 100%;*/
 }
 
 #itemBox{
@@ -49,10 +49,8 @@ html,
    font-style: normal;
    font-size: 30px;
    font-weight: bold;
-   padding-left: 6px;
-   /*color: #F9F9F9;*/
-   color: #000000;
-   text-align: left;
+   color: #F9F9F9;
+   text-align: right;
    text-decoration: none;
 }
 
@@ -92,7 +90,7 @@ html,
  .topbar{
     padding: 20px 20px 20px 20px;
     /*background: #d0eede;*/
-    background: url(tiger.jpg);
+    background: url("tiger.4efb42bde9ea.jpg");
     background-size: 100%;
     opacity: 90%;
  }
