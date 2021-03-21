@@ -13,20 +13,20 @@
                     {{purchase.item.seller}}
                 </div>
                 <div class='col-md-2'>
-                    {% if purchase.status == Purchase.ACKNOWLEDGED or purchase.status == Purchase.B_PENDING %}
+                    {% if purchase.status == Purchase_ACKNOWLEDGED or purchase.status == Purchase_B_PENDING %}
                         <a href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
-                    {% elif purchase.status == Purchase.INITIATED %}
+                    {% elif purchase.status == Purchase_INITIATED %}
                         <p>Confirm (grey out and add popup with text: awaiting seller acknowledgement)</p>
-                    {% elif purchase.status == Purchase.S_PENDING %}
+                    {% elif purchase.status == Purchase_S_PENDING %}
                         <p>Already Confirmed (grey out and add popup with text: awaiting seller confirmation)</p>
-                    {% elif purchase.status == Purchase.COMPLETE %}
+                    {% elif purchase.status == Purchase_COMPLETE %}
                         <p>Complete</p>
-                    {% elif purchase.status == Purchase.CANCELLED %}
+                    {% elif purchase.status == Purchase_CANCELLED %}
                         <p>Cancelled</p>
                     {% endif %}
                 </div>
                 <div class='col-md-2'>
-                    {% if purchase.status != Purchase.COMPLETE and purchase.status != Purchase.CANCELLED %}
+                    {% if purchase.status != Purchase_COMPLETE and purchase.status != Purchase_CANCELLED %}
                         <a href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
                     {% endif %}
                 </div>

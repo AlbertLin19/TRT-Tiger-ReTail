@@ -12,9 +12,9 @@
     
 
     <body>
-    {% with Item.AVAILABLE=0 Item.FROZEN=1 Item.COMPLETE=2 %}
-    {% with Transaction.INITIATED=0 Transaction.ACKNOWLEDGED=1 Transaction.S_PENDING=2 %}
-    {% with Transaction.B_PENDING=3 Transaction.COMPLETE=4 Transaction.CANCELLED=5 %}
+    {% with Item_AVAILABLE=0 Item_FROZEN=1 Item_COMPLETE=2 %}
+    {% with Transaction_INITIATED=0 Transaction_ACKNOWLEDGED=1 Transaction_S_PENDING=2 %}
+    {% with Transaction_B_PENDING=3 Transaction_COMPLETE=4 Transaction_CANCELLED=5 %}
     
         <div id="gallery_top_bar" class="container-fluid">
             <div id="Login">
@@ -48,5 +48,8 @@
 
         <!-- Bootstrap Popper, JS plugins -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
     </body>
 </html>

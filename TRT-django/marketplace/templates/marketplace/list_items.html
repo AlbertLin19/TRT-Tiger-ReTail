@@ -13,33 +13,33 @@
                     {{item.description}}
                 </div>
                 <div class='col-md-2'>
-                    {% if item.status == Item.AVAILABLE %}
+                    {% if item.status == Item_AVAILABLE %}
                         <p>AVAILABLE</p>
-                    {% elif item.status == Item.FROZEN %}
+                    {% elif item.status == Item_FROZEN %}
 
                         {% for sale in item.transaction_set.all %}
 
                             <div class='row'>
-                                {% if sale.status == Transaction.INITIATED %}
-                                {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
+                                {% if sale.status == Transaction_INITIATED %}
+                                {% elif sale.status == Transaction_ACKNOWLEDGED or sale.status == Transaction_S_PENDING %}
                                     <a href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
-                                {% elif sale.status == Transaction.B_PENDING %}
+                                {% elif sale.status == Transaction_B_PENDING %}
                                     <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
-                                {% elif sale.status == Transaction.COMPLETE %}
+                                {% elif sale.status == Transaction_COMPLETE %}
                                     <p>COMPLETE</p>
-                                {% elif sale.status == Transaction.CANCELLED %}
+                                {% elif sale.status == Transaction_CANCELLED %}
                                     <p>CANCELLED</p>
                                 {% endif %}
                             </div>
                             <div class='row'>
-                                {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED %}
+                                {% if sale.status != Transaction_COMPLETE and sale.status != Transaction_CANCELLED %}
                                     <a href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
                                 {% endif %}
                             </div>
 
                         {% endfor %}
                         
-                    {% elif item.status == Item.COMPLETE %}
+                    {% elif item.status == Item_COMPLETE %}
                         <p>COMPLETE</p>
                     {% endif %}
                 </div>
