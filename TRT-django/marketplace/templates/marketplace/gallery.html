@@ -22,27 +22,26 @@
             <div id="gallery_title"> CURRENT OFFERS </div><hr>
             <div class="row">
                 {% for item in items %}
-                <div class="col-12 col-md-4"  style="text-align: center;">
-                    {% cloudinary item.image format="jpg" width=120 height=80 crop="fill" %}
-                    <p class="sub-text">
-                        <h1 class="big-text typing"> 
-                            {{item.name}}
-                        </h1>
-                        ${{item.price}} USD
-                        <br>
-                        Merchant: {{item.seller}}
-                    </p>
-                    {% if item.status == Item_AVAILABLE %}
+                <div class="card col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+                    <div class="card-img-top rounded-corners">
+                        {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">{{item.name}}</h5>
+                      <p class="card-text">${{item.price}} USD<br>Merchant: {{item.seller}}</p>
+                      {% if item.status == Item_AVAILABLE %}
                         <form action="{% url 'new_purchase' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value={{item.pk}}>
-                            <input type="submit" value="Purchase">
+                            <input type="submit" class="btn btn-success" value="Purchase" style="padding-left: 20px; padding-right: 20px;">
+                            <a href="#"type="submit" class="btn btn-secondary" >View Details</a>
                         </form>
                     {% elif item.status == Item_FROZEN %}
-                        <p>FROZEN</p>
+                        <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">FROZEN</p>
                     {% elif item.status == Item_COMPLETE %}
-                        <p>SOLD</p>
+                        <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">SOLD</p>
                     {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>

@@ -1,5 +1,9 @@
 {% extends "marketplace/base.html" %}
 {% block content %}
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+</div>
     <div class="container">
         {% if not items %}
             <h3>You have not posted any items yet!</h3>
@@ -56,7 +60,5 @@
                 </div>
             </div>
         {% endfor %}
-        <a href="{% url 'new_item' %}">Post Item</a> <br>
-        <a href="{% url 'gallery' %}">Back to image gallery</a> <br>
     </div>
 {% endblock content %}

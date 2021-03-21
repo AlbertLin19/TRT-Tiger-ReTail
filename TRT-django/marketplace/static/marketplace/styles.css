@@ -43,18 +43,19 @@ html,
    text-shadow: 4px 4px #000000;
 }
 
-/* login button */
+/*
 #Login{
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
    font-size: 30px;
    font-weight: bold;
    padding-left: 6px;
-   /*color: #F9F9F9;*/
+   color: #F9F9F9;
    color: #000000;
    text-align: left;
    text-decoration: none;
 }
+*/
 
 /* image gallery title */
 #gallery_title{
@@ -69,6 +70,11 @@ html,
    text-align: right;
 }
 
+.card{
+   margin-bottom: 20px;
+   margin-right: 10px;
+   margin-left: 10px;
+}
 /* post items and my items buttons */
 /*
 #button_topnav {

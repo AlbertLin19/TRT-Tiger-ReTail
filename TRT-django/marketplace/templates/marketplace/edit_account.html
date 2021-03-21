@@ -2,6 +2,9 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+</div>
     <div class="container">
         <display>Please beautify this form. Like add input icons next to the input fields or somethin</display>
         <form action="{% url 'edit_account' %}" method="post">
@@ -11,7 +14,6 @@
             {{ account_form|crispy }}
             <input type="submit" value="Save">
         </form>
-        <a href="{% url 'gallery' %}">Back to image gallery</a> <br>
     </div>
 
 {% endblock content %}

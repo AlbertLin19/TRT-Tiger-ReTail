@@ -1,7 +1,9 @@
 {% extends "marketplace/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+</div>
     <div class="container">
         <display>Please beautify this form. Like add input icons next to the input fields or somethin</display>
         <display>And add a date picker tool to help with the deadline input (for now, you can type mm/dd/yyyy manually) </display>
@@ -13,7 +15,6 @@
             {{ item_form|crispy }}
             <input type="submit" value="Save">
         </form>
-        <a href="{% url 'list_items' %}">Back to item list</a> <br>
     </div>
 
 {% endblock content %}
