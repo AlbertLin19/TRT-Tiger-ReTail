@@ -19,7 +19,7 @@
     
         <div id="gallery_top_bar" class=" container-fluid">
             <nav class="navbar navbar-expand-lg navbar-dark" style="padding-left: 20px;">
-                <a class="navbar-brand" href="{% url 'gallery' %}">HOME</a>
+                <a class="navbar-brand" href="#">FAQ</a>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                   <div class="navbar-nav">
                     {% if account %}
@@ -28,6 +28,7 @@
                     {% else %}
                         <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
                     {% endif %}
+                    <a class="nav-item nav-link" href="#">CONTACT US</a>
                   </div>
                 </div>
               </nav>
