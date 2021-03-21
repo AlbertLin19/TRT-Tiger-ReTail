@@ -20,7 +20,7 @@
         <div id="gallery_top_bar" class="container-fluid">
             <div id="Login">
                 {% if account %}
-                    <a href="{% url 'edit_account' %}" id="Login">My Account</a>
+                    <a href="{% url 'edit_account' %}" id="Login">My Account | </a>
                     <a href="{% url 'logout' %}"id="Login">Logout</a>
                 {% else %}
                     <a href="{% url 'edit_account' %}"id="Login">LOGIN</a>
