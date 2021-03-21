@@ -7,7 +7,7 @@ html,
    left: 0px;
    top: 0px;
    background: url(Header_pic.png) no-repeat;
-   background-size: 100%;
+   /* background-size: 100%;*/
 }
 
 #itemBox{
@@ -90,14 +90,13 @@ html,
  .search_button{
    /*float: left;*/
    width: 48%;
-   padding: 1px 7px 1px 7px;
+   padding: 0.3px 10px 0.3px 10px;
    /*padding: 10px;*/
-   background: #2196F3;
-   color: white;
+   background: url(search_icon.png) no-repeat;
+   color: #FFFFFF;
    font-size: 17px;
-   /*border: 1px 1px solid grey;*/
-   border-left: none; /* Prevent double borders */
    cursor: pointer;
+   background-size: 100%;
  }
 
 /* search bar */
@@ -107,7 +106,7 @@ html,
    min-width: 150px;
    border: 1px solid #000000;
    box-sizing: border-box;
-   border-radius: 3px;
-   padding: 6px 20px 6px 20px;
+   border-radius: 2px;
+   padding: 3px 20px 3px 20px;
    font-family: 'Source Sans Pro', sans-serif;
 }
