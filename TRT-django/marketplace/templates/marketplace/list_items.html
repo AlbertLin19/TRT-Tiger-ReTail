@@ -45,10 +45,14 @@
                     {% endif %}
                 </div>
                 <div class='col-md-2'>
-                    <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                    {% if item.status != Item_AVAILABLE %}
+                        <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                    {% endif %}
                 </div>
                 <div class='col-md-2'>
-                    <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
+                    {% if item.status != Item_AVAILABLE %}
+                        <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

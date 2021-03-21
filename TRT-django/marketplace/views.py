@@ -128,6 +128,11 @@ def editItem(request, pk):
     if item.seller != account:
         raise PermissionDenied
 
+    # if item is frozen or complete, do not allow editing
+    if item.status != item.AVAILABLE:
+        messages.error(request, "Cannot edit an item in the unavailable state.")
+        return redirect("list_items")
+
     # populate the Django model form and validate data
     if request.method == "POST":
         item_form = ItemForm(request.POST, request.FILES, instance=item)
@@ -157,6 +162,11 @@ def deleteItem(request, pk):
     item = Item.objects.get(pk=pk)
     if item.seller != account:
         raise PermissionDenied
+
+    # if item is frozen or complete, do not allow deleting
+    if item.status != item.AVAILABLE:
+        messages.error(request, "Cannot delete an item in the unavailable state.")
+        return redirect("list_items")
 
     item.delete()
     messages.success(request, "Item deleted!")
