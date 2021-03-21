@@ -36,15 +36,15 @@
                         <br>
                         Merchant: {{item.seller}}
                     </p>
-                    {% if item.status == 0 %}
+                    {% if item.status == Item.AVAILABLE %}
                         <form action="{% url 'new_purchase' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value={{item.pk}}>
                             <input type="submit" value="Purchase">
                         </form>
-                    {% elif item.status == 1 %}
+                    {% elif item.status == Item.FROZEN %}
                         <p>FROZEN</p>
-                    {% else %}
+                    {% elif item.status == Item.COMPLETE %}
                         <p>SOLD</p>
                     {% endif %}
                 </div>

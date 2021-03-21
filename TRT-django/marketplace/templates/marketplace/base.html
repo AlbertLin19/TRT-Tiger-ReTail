@@ -12,6 +12,10 @@
     
 
     <body>
+    {% with Item.AVAILABLE=0 Item.FROZEN=1 Item.COMPLETE=2 %}
+    {% with Transaction.INITIATED=0 Transaction.ACKNOWLEDGED=1 Transaction.S_PENDING=2 %}
+    {% with Transaction.B_PENDING=3 Transaction.COMPLETE=4 Transaction.CANCELLED=5 %}
+    
         <div id="gallery_top_bar" class="container-fluid">
             <div id="Login">
                 {% if account %}

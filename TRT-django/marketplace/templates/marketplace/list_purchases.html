@@ -1,26 +1,34 @@
 {% extends "marketplace/base.html" %}
 {% block content %}
     <div class="container">
-        {% if not transactions %}
+        {% if not purchases %}
             <h3>You have not started any purchases yet!</h3>
         {% endif %}
-        {% for transaction in transactions %}
+        {% for purchase in purchases %}
             <div class="row">
                 <div class='col-md-3'>
-                    {{transaction.item}}
+                    {{purchase.item}}
                 </div>
                 <div class='col-md-5'>
-                    {{transaction.seller}}
+                    {{purchase.item.seller}}
                 </div>
                 <div class='col-md-2'>
-                    {% if transaction.status == 1 or transaction.status == 3 %}
-                        <a href="{% url 'confirm_purchase' transaction.pk %}">Confirm</a>
-                    {% else %}
+                    {% if purchase.status == Purchase.ACKNOWLEDGED or purchase.status == Purchase.B_PENDING %}
+                        <a href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
+                    {% elif purchase.status == Purchase.INITIATED %}
                         <p>Confirm (grey out and add popup with text: awaiting seller acknowledgement)</p>
+                    {% elif purchase.status == Purchase.S_PENDING %}
+                        <p>Already Confirmed (grey out and add popup with text: awaiting seller confirmation)</p>
+                    {% elif purchase.status == Purchase.COMPLETE %}
+                        <p>Complete</p>
+                    {% elif purchase.status == Purchase.CANCELLED %}
+                        <p>Cancelled</p>
                     {% endif %}
                 </div>
                 <div class='col-md-2'>
-                    <a href="{% url 'cancel_purchase' transaction.pk %}">Cancel</a>
+                    {% if purchase.status != Purchase.COMPLETE and purchase.status != Purchase.CANCELLED %}
+                        <a href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

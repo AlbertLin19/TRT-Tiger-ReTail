@@ -171,9 +171,9 @@ def deleteItem(request, pk):
 def listPurchases(request):
     account = Account.objects.get(username=request.session.get("username"))
 
-    # get transactions for which user is the buyer
-    transactions = Transaction.objects.filter(buyer=account)
-    context = {'transactions': transactions}
+    # get purchases for which user is the buyer
+    purchases = Transaction.objects.filter(buyer=account)
+    context = {'purchases': purchases}
     return render(request, "marketplace/list_purchases.html", context)
 
 
@@ -204,8 +204,8 @@ def newPurchase(request):
     item.status = Item.FROZEN
     item.save()
 
-    transaction = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
-    transaction.save()
+    purchase = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
+    purchase.save()
 
     return redirect("list_purchases")
 
