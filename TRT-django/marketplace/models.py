@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 from cloudinary.models import CloudinaryField
 
 # above as in sample https://github.com/cloudinary/cloudinary-django-sample/blob/master/photo_album/models.py
@@ -39,7 +41,7 @@ class Item(models.Model):
     name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateTimeField()
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    price = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     condition = models.DecimalField(
         max_digits=1,
         decimal_places=0,

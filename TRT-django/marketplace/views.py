@@ -130,7 +130,7 @@ def editItem(request, pk):
 
     # if item is frozen or complete, do not allow editing
     if item.status != item.AVAILABLE:
-        messages.error(request, "Cannot edit an item in the unavailable state.")
+        messages.warning(request, "Cannot edit an item in the unavailable state.")
         return redirect("list_items")
 
     # populate the Django model form and validate data
@@ -165,7 +165,7 @@ def deleteItem(request, pk):
 
     # if item is frozen or complete, do not allow deleting
     if item.status != item.AVAILABLE:
-        messages.error(request, "Cannot delete an item in the unavailable state.")
+        messages.warning(request, "Cannot delete an item in the unavailable state.")
         return redirect("list_items")
 
     item.delete()
@@ -201,13 +201,13 @@ def newPurchase(request):
     item = Item.objects.get(pk=pk)
     if item.status != Item.AVAILABLE:
         # rejected
-        messages.error(request, "Item unavailable for purchase.")
+        messages.warning(request, "Item unavailable for purchase.")
         return redirect("gallery")
 
     # buyer must not be the seller of this item
     if item.seller == account:
         # rejected
-        messages.error(request, "Cannot purchase an item you are selling.")
+        messages.warning(request, "Cannot purchase an item you are selling.")
         return redirect("gallery")
 
     # freeze item
@@ -238,13 +238,13 @@ def confirmPurchase(request, pk):
 
     # transaction cannot be INITIATED, S_PENDING, COMPLETE, or CANCELLED
     if purchase.status == Transaction.INITIATED:
-        messages.error(request, "Cannot confirm - awaiting seller acknowledgement.")
+        messages.warning(request, "Cannot confirm - awaiting seller acknowledgement.")
     elif purchase.status == Transaction.S_PENDING:
-        messages.error(request, "Already confirmed - awaiting seller confirmation.")
+        messages.warning(request, "Already confirmed - awaiting seller confirmation.")
     elif purchase.status == Transaction.COMPLETE:
-        messages.error(request, "Already confirmed - purchase has already been completed.")
+        messages.warning(request, "Already confirmed - purchase has already been completed.")
     elif purchase.status == Transaction.CANCELLED:
-        messages.error(request, "Cannot confirm - purchase has already been cancelled.")
+        messages.warning(request, "Cannot confirm - purchase has already been cancelled.")
     # elif ACKNOWLEDGED, move to S_PENDING
     elif purchase.status == Transaction.ACKNOWLEDGED:
         purchase.status = Transaction.S_PENDING
@@ -280,9 +280,9 @@ def cancelPurchase(request, pk):
 
     # transaction cannot be COMPLETE or CANCELLED
     if purchase.status == Transaction.COMPLETE:
-        messages.error(request, "Cannot cancel a purchase which has already been completed.")
+        messages.warning(request, "Cannot cancel a purchase which has already been completed.")
     elif purchase.status == Transaction.CANCELLED:
-        messages.error(request, "Already cancelled.")
+        messages.warning(request, "Already cancelled.")
     # move to CANCELLED and move item to AVAILABLE
     else:
         item = purchase.item
@@ -316,7 +316,7 @@ def acceptSale(request, pk):
         sale.save()
         messages.success(request, "Sale acknowledged.")
     else:
-        messages.error(request, "Cannot acknowledge - sale not in INITIATED state.")
+        messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
     
     return redirect("list_items")
 
@@ -338,13 +338,13 @@ def confirmSale(request, pk):
 
     # transaction cannot be INITIATED, B_PENDING, COMPLETE, or CANCELLED
     if sale.status == Transaction.INITIATED:
-        messages.error(request, "Cannot confirm - acknowledge the sale first.")
+        messages.warning(request, "Cannot confirm - acknowledge the sale first.")
     elif sale.status == Transaction.B_PENDING:
-        messages.error(request, "Already confirmed - awaiting buyer confirmation.")
+        messages.warning(request, "Already confirmed - awaiting buyer confirmation.")
     elif sale.status == Transaction.COMPLETE:
-        messages.error(request, "Already confirmed - sale has already been completed.")
+        messages.warning(request, "Already confirmed - sale has already been completed.")
     elif sale.status == Transaction.CANCELLED:
-        messages.error(request, "Cannot confirm - sale has already been cancelled.")
+        messages.warning(request, "Cannot confirm - sale has already been cancelled.")
     # elif ACKNOWLEDGED, move to B_PENDING
     elif sale.status == Transaction.ACKNOWLEDGED:
         sale.status = Transaction.B_PENDING
@@ -379,9 +379,9 @@ def cancelSale(request, pk):
 
     # transaction cannot be COMPLETE or CANCELLED
     if sale.status == Transaction.COMPLETE:
-        messages.error(request, "Cannot cancel a sale which has already been completed.")
+        messages.warning(request, "Cannot cancel a sale which has already been completed.")
     elif sale.status == Transaction.CANCELLED:
-        messages.error(request, "Already cancelled.")
+        messages.warning(request, "Already cancelled.")
     # move to CANCELLED and move item to AVAILABLE
     else:
         item = sale.item
