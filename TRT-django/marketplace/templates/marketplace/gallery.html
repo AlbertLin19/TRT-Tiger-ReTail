@@ -2,13 +2,12 @@
 {% load cloudinary %}
 {% block content %}
     <!--<div class="container">-->
-        <script> var ret_items = [];</script>
         <div class="topbar header3 justify-content-around" style="display: flex; flex-direction: row;">
             <br />
             <!--<form style="text-align: left; width: 50%;">-->
                 <div class="input-group rounded">
                     <input type="search" id="searchbar" placeholder="Search" class="form-control"/>
-                    <button class="btn btn-secondary" type="submit" onclick="search(ret_items)"><i class=" fa fa-search"></i></button>
+                <button class="btn btn-secondary" type="submit" onclick="var ret_items=search()"><i class=" fa fa-search"></i></button>
                 </div>
             <!--</form>-->
             <div style="text-align: right; width: 50%;">
