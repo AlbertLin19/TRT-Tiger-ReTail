@@ -1,40 +1,47 @@
 {% extends "marketplace/base.html" %}
+{% load cloudinary %}
 {% block content %}
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
 </div>
+<div class="gallery_back container-fliud mb-3">
+    <br>  
     <div class="container">
+        <div id="gallery_title">MY PURCHASES</div><hr>
         {% if not purchases %}
             <h3>You have not started any purchases yet!</h3>
         {% endif %}
+        <div class="row">
         {% for purchase in purchases %}
-            <div class="row">
-                <div class='col-md-3'>
-                    {{purchase.item}}
-                </div>
-                <div class='col-md-5'>
-                    {{purchase.item.seller}}
-                </div>
-                <div class='col-md-2'>
+        <div class="card col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+            <div class="card-img-top rounded-corners">
+                {% cloudinary purchase.image format="jpg" width=120 height=80 crop="fill"%}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{purchase.item}}</h5>
+                <p class="card-text">{{purchase.item.seller}}</p>
                     {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
-                        <a href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
+                        <a class="btn btn-outline-success" href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
                     {% elif purchase.status == Transaction_INITIATED %}
                         <p>Confirm (grey out and add popup with text: awaiting seller acknowledgement)</p>
                     {% elif purchase.status == Transaction_S_PENDING %}
                         <p>Already Confirmed (grey out and add popup with text: awaiting seller confirmation)</p>
                     {% elif purchase.status == Transaction_COMPLETE %}
-                        <p>Complete</p>
+                        <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                     {% elif purchase.status == Transaction_CANCELLED %}
-                        <p>Cancelled</p>
+                        <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                     {% endif %}
-                </div>
                 <div class='col-md-2'>
                     {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
-                        <a href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                        <a class="btn btn-outline-danger" href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
                     {% endif %}
                 </div>
             </div>
+        </div>
+        </div>
         {% endfor %}
+        </div>
     </div>
+</div>
 {% endblock content %}
