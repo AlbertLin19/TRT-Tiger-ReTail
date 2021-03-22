@@ -1,64 +1,64 @@
 {% extends "marketplace/base.html" %}
+{% load cloudinary %}
 {% block content %}
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
 </div>
+<div class="gallery_back container-fliud mb-3">
+    <br>  
     <div class="container">
+        <div id="gallery_title">MY ITEMS</div><hr>
         {% if not items %}
             <h3>You have not posted any items yet!</h3>
         {% endif %}
+        <div class="row">
         {% for item in items %}
-            <div class="row">
-                <div class='col-md-3'>
-                    {{item.name}}
-                </div>
-                <div class='col-md-3'>
-                    {{item.description}}
-                </div>
-                <div class='col-md-2'>
+        <div class="card col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+            <div class="card-img-top rounded-corners">
+                {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{item.name}}</h5>
+                <p class="card-text">{{item.description}}</p>
                     {% if item.status == Item_AVAILABLE %}
-                        <p>AVAILABLE</p>
+                        <p style="color:rgb(31, 182, 12); font-weight: bold;">AVAILABLE</p>
                     {% elif item.status == Item_FROZEN %}
-
                         {% for sale in item.transaction_set.all %}
-
                             <div class='row'>
                                 {% if sale.status == Transaction_INITIATED %}
-                                    <a href="{% url 'accept_sale' sale.pk %}">Accept</a>
+                                    <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}">Accept</a>
                                 {% elif sale.status == Transaction_ACKNOWLEDGED or sale.status == Transaction_S_PENDING %}
-                                    <a href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
+                                    <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
                                 {% elif sale.status == Transaction_B_PENDING %}
                                     <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
                                 {% elif sale.status == Transaction_COMPLETE %}
-                                    <p>COMPLETE</p>
+                                    <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                                 {% elif sale.status == Transaction_CANCELLED %}
-                                    <p>CANCELLED</p>
+                                    <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                                 {% endif %}
                             </div>
                             <div class='row'>
                                 {% if sale.status != Transaction_COMPLETE and sale.status != Transaction_CANCELLED %}
-                                    <a href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
+                                    <a class="btn btn-outline-danger" href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
                                 {% endif %}
                             </div>
 
                         {% endfor %}
                         
                     {% elif item.status == Item_COMPLETE %}
-                        <p>COMPLETE</p>
+                        <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                     {% endif %}
-                </div>
-                <div class='col-md-2'>
                     {% if item.status == Item_AVAILABLE %}
-                        <a href="{% url 'edit_item' item.pk %}">Edit</a> <br>
+                        <a class="btn btn-outline-danger" href="{% url 'delete_item' item.pk %}">Delete</a>
                     {% endif %}
-                </div>
-                <div class='col-md-2'>
                     {% if item.status == Item_AVAILABLE %}
-                        <a href="{% url 'delete_item' item.pk %}">Delete</a> <br>
+                        <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;" href="{% url 'edit_item' item.pk %}">Edit</a>
                     {% endif %}
-                </div>
             </div>
+        </div>
         {% endfor %}
+        </div>
     </div>
+</div>
 {% endblock content %}
