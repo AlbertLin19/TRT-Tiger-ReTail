@@ -41,7 +41,9 @@ class Item(models.Model):
     name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateTimeField()
-    price = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    price = models.DecimalField(
+        max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.00"))]
+    )
     condition = models.DecimalField(
         max_digits=1,
         decimal_places=0,
@@ -67,7 +69,7 @@ class Item(models.Model):
     )
 
     def __str__(self):
-        return self.name + ' - ' + str(self.seller)
+        return self.name + " - " + str(self.seller)
 
 
 class Transaction(models.Model):
@@ -92,3 +94,23 @@ class Transaction(models.Model):
             (CANCELLED, "cancelled"),
         ],
     )
+
+
+class ItemLog(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="logs")
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="item_logs"
+    )
+    datetime = models.DateTimeField()
+    log = models.CharField(max_length=100)
+
+
+class TransactionLog(models.Model):
+    transaction = models.ForeignKey(
+        Transaction, on_delete=models.CASCADE, related_name="logs"
+    )
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="transaction_logs"
+    )
+    datetime = models.DateTimeField()
+    log = models.CharField(max_length=100)

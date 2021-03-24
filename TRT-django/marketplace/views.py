@@ -104,7 +104,13 @@ def newItem(request):
 
             messages.success(request, "New item posted.")
             # send confirmation email
-            send_mail('Item Post Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+            send_mail(
+                "Item Post Confirmation",
+                "yeppers peppers",
+                settings.EMAIL_HOST_USER,
+                [account.email],
+                fail_silently=False,
+            )
             return redirect("list_items")
 
     # did not receive form data via POST, so send a blank form
@@ -174,7 +180,13 @@ def deleteItem(request, pk):
     item.delete()
     messages.success(request, "Item deleted.")
     # send confirmation email
-    send_mail('Item Delete Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+    send_mail(
+        "Item Delete Confirmation",
+        "yeppers peppers",
+        settings.EMAIL_HOST_USER,
+        [account.email],
+        fail_silently=False,
+    )
     return redirect("list_items")
 
 
@@ -182,13 +194,14 @@ def deleteItem(request, pk):
 
 # personal purchases page
 
+
 @authentication_required
 def listPurchases(request):
     account = Account.objects.get(username=request.session.get("username"))
 
     # get purchases for which user is the buyer
     purchases = Transaction.objects.filter(buyer=account)
-    context = {'purchases': purchases}
+    context = {"purchases": purchases}
     return render(request, "marketplace/list_purchases.html", context)
 
 
@@ -197,12 +210,13 @@ def listPurchases(request):
 # buyer makes new purchase
 # POST request with pk of item to purchase will create new transaction
 
+
 @authentication_required
 def newPurchase(request):
     account = Account.objects.get(username=request.session.get("username"))
 
     # item must be available for a transaction to associate with
-    pk = request.POST['pk']
+    pk = request.POST["pk"]
     item = Item.objects.get(pk=pk)
     if item.status != Item.AVAILABLE:
         # rejected
@@ -223,7 +237,13 @@ def newPurchase(request):
     purchase.save()
 
     # send confirmation email
-    send_mail('Purchase Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+    send_mail(
+        "Purchase Confirmation",
+        "yeppers peppers",
+        settings.EMAIL_HOST_USER,
+        [account.email],
+        fail_silently=False,
+    )
 
     return redirect("list_purchases")
 
@@ -232,6 +252,7 @@ def newPurchase(request):
 
 # confirm purchase
 # buyer confirms purchase
+
 
 @authentication_required
 def confirmPurchase(request, pk):
@@ -250,16 +271,26 @@ def confirmPurchase(request, pk):
     elif purchase.status == Transaction.S_PENDING:
         messages.warning(request, "Already confirmed - awaiting seller confirmation.")
     elif purchase.status == Transaction.COMPLETE:
-        messages.warning(request, "Already confirmed - purchase has already been completed.")
+        messages.warning(
+            request, "Already confirmed - purchase has already been completed."
+        )
     elif purchase.status == Transaction.CANCELLED:
-        messages.warning(request, "Cannot confirm - purchase has already been cancelled.")
+        messages.warning(
+            request, "Cannot confirm - purchase has already been cancelled."
+        )
     # elif ACKNOWLEDGED, move to S_PENDING
     elif purchase.status == Transaction.ACKNOWLEDGED:
         purchase.status = Transaction.S_PENDING
         purchase.save()
         messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
         # send confirmation email
-        send_mail('Purchase Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+        send_mail(
+            "Purchase Confirm Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif purchase.status == Transaction.B_PENDING:
         item = purchase.item
@@ -269,8 +300,14 @@ def confirmPurchase(request, pk):
         purchase.save()
         messages.success(request, "Purchase confirmed by both parties and completed.")
         # send confirmation email
-        send_mail('Purchase Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
-    
+        send_mail(
+            "Purchase Confirm Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
+
     return redirect("list_purchases")
 
 
@@ -278,6 +315,7 @@ def confirmPurchase(request, pk):
 
 # cancel purchase
 # buyer cancels purchase
+
 
 @authentication_required
 def cancelPurchase(request, pk):
@@ -292,7 +330,9 @@ def cancelPurchase(request, pk):
 
     # transaction cannot be COMPLETE or CANCELLED
     if purchase.status == Transaction.COMPLETE:
-        messages.warning(request, "Cannot cancel a purchase which has already been completed.")
+        messages.warning(
+            request, "Cannot cancel a purchase which has already been completed."
+        )
     elif purchase.status == Transaction.CANCELLED:
         messages.warning(request, "Already cancelled.")
     # move to CANCELLED and move item to AVAILABLE
@@ -304,14 +344,21 @@ def cancelPurchase(request, pk):
         purchase.save()
         messages.success(request, "Purchase cancelled.")
         # send confirmation email
-        send_mail('Purchase Cancel Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
-    
+        send_mail(
+            "Purchase Cancel Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
+
     return redirect("list_purchases")
 
 
 # ----------------------------------------------------------------------
 
 # seller accepts sale
+
 
 @authentication_required
 def acceptSale(request, pk):
@@ -330,16 +377,23 @@ def acceptSale(request, pk):
         sale.save()
         messages.success(request, "Sale acknowledged.")
         # send confirmation email
-        send_mail('Sale Acceptance Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+        send_mail(
+            "Sale Acceptance Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
     else:
         messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
-    
+
     return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
 
 # seller confirms sale
+
 
 @authentication_required
 def confirmSale(request, pk):
@@ -358,7 +412,9 @@ def confirmSale(request, pk):
     elif sale.status == Transaction.B_PENDING:
         messages.warning(request, "Already confirmed - awaiting buyer confirmation.")
     elif sale.status == Transaction.COMPLETE:
-        messages.warning(request, "Already confirmed - sale has already been completed.")
+        messages.warning(
+            request, "Already confirmed - sale has already been completed."
+        )
     elif sale.status == Transaction.CANCELLED:
         messages.warning(request, "Cannot confirm - sale has already been cancelled.")
     # elif ACKNOWLEDGED, move to B_PENDING
@@ -367,7 +423,13 @@ def confirmSale(request, pk):
         sale.save()
         messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
         # send confirmation email
-        send_mail('Sale Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
+        send_mail(
+            "Sale Confirm Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif sale.status == Transaction.S_PENDING:
         item = sale.item
@@ -377,14 +439,21 @@ def confirmSale(request, pk):
         sale.save()
         messages.success(request, "Sale confirmed by both parties and completed.")
         # send confirmation email
-        send_mail('Sale Confirm Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
-    
+        send_mail(
+            "Sale Confirm Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
+
     return redirect("list_items")
 
 
 # ----------------------------------------------------------------------
 
 # seller cancels sale
+
 
 @authentication_required
 def cancelSale(request, pk):
@@ -399,7 +468,9 @@ def cancelSale(request, pk):
 
     # transaction cannot be COMPLETE or CANCELLED
     if sale.status == Transaction.COMPLETE:
-        messages.warning(request, "Cannot cancel a sale which has already been completed.")
+        messages.warning(
+            request, "Cannot cancel a sale which has already been completed."
+        )
     elif sale.status == Transaction.CANCELLED:
         messages.warning(request, "Already cancelled.")
     # move to CANCELLED and move item to AVAILABLE
@@ -411,8 +482,14 @@ def cancelSale(request, pk):
         sale.save()
         messages.success(request, "Sale cancelled.")
         # send confirmation email
-        send_mail('Sale Cancel Confirmation', 'yeppers peppers', settings.EMAIL_HOST_USER, [account.email], fail_silently=False)
-    
+        send_mail(
+            "Sale Cancel Confirmation",
+            "yeppers peppers",
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
+
     return redirect("list_items")
 
 
@@ -430,12 +507,12 @@ def editAccount(request):
     if request.method == "POST":
         account_form = AccountForm(request.POST, instance=account)
         if account_form.is_valid():
-            new_email = account_form.cleaned_data['email']
+            new_email = account_form.cleaned_data["email"]
             account_form.save()
             # do not save new email yet
             if new_email != old_email:
                 account = Account.objects.get(username=request.session.get("username"))
-                account.email = old_email 
+                account.email = old_email
                 account.save()
 
                 # store new_email and random token into cache
@@ -444,13 +521,15 @@ def editAccount(request):
                 cache.set(token, [account.username, new_email], 900)
 
                 # send verification email
-                send_mail('Tiger ReTail Email Verification',
-                    'Please visit the following link to verify your email.\n' + \
-                    'If you did not make this request, you can safely ignore this message.\n' + \
-                    request.build_absolute_uri(reverse('verify_email', args=[token])),
+                send_mail(
+                    "Tiger ReTail Email Verification",
+                    "Please visit the following link to verify your email.\n"
+                    + "If you did not make this request, you can safely ignore this message.\n"
+                    + request.build_absolute_uri(reverse("verify_email", args=[token])),
                     settings.EMAIL_HOST_USER,
                     [new_email],
-                    fail_silently=False)
+                    fail_silently=False,
+                )
                 messages.info(request, "Verification email sent.")
 
             messages.success(request, "Account updated.")
@@ -465,20 +544,25 @@ def editAccount(request):
 
 # ----------------------------------------------------------------------
 
+
 @authentication_required
 def verifyEmail(request, token):
     account = Account.objects.get(username=request.session.get("username"))
     if cache.get(token):
         username, new_email = cache.get(token)
         if username != account.username:
-            messages.warning(request, "Permission denied. Ensure you are logged in with the correct account.")
+            messages.warning(
+                request,
+                "Permission denied. Ensure you are logged in with the correct account.",
+            )
         else:
             account.email = new_email
             account.save()
             messages.success(request, "Email verified.")
     else:
         messages.warning(request, "Verification link has expired.")
-    return redirect('edit_account')
+    return redirect("edit_account")
+
 
 # ----------------------------------------------------------------------
 
