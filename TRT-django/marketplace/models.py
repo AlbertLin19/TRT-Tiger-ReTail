@@ -15,7 +15,7 @@ class Account(models.Model):
     email = models.EmailField()
 
     def __str__(self):
-        return self.name + " - " + self.username
+        return self.username
 
 
 class Category(models.Model):
@@ -69,7 +69,7 @@ class Item(models.Model):
     )
 
     def __str__(self):
-        return self.name + " - " + str(self.seller)
+        return self.name + " by " + str(self.seller)
 
 
 class Transaction(models.Model):
@@ -95,6 +95,9 @@ class Transaction(models.Model):
         ],
     )
 
+    def __str__(self):
+        return str(self.item) + " - status: " + str(self.status)
+
 
 class ItemLog(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="logs")
@@ -103,6 +106,9 @@ class ItemLog(models.Model):
     )
     datetime = models.DateTimeField()
     log = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.item) + " at " + str(self.datetime)
 
 
 class TransactionLog(models.Model):
@@ -114,3 +120,6 @@ class TransactionLog(models.Model):
     )
     datetime = models.DateTimeField()
     log = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.transaction) + " at " + str(self.datetime)
