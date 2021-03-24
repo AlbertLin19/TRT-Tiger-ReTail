@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
-from .models import Account, Item, Transaction
+from .models import Account, Item, Transaction, ItemLog, TransactionLog
 from .forms import AccountForm, ItemForm
 from utils import CASClient
 
@@ -16,6 +16,31 @@ import datetime
 
 from django.core.exceptions import PermissionDenied
 import secrets
+
+# ----------------------------------------------------------------------
+
+# helper method to log an item action
+
+
+def logItemAction(item, account, log):
+    ItemLog(
+        item=item, account=account, datetime=datetime.datetime.now(), log=log
+    ).save()
+
+
+# ----------------------------------------------------------------------
+
+# helper method to log a transaction action
+
+
+def logTransactionAction(transaction, account, log):
+    TransactionLog(
+        transaction=transaction,
+        account=account,
+        datetime=datetime.datetime.now(),
+        log=log,
+    ).save()
+
 
 # ----------------------------------------------------------------------
 
@@ -101,6 +126,7 @@ def newItem(request):
             item.posted_date = datetime.datetime.now()
             item.status = Item.AVAILABLE
             item.save()
+            logItemAction(item, account, "created")
 
             messages.success(request, "New item posted.")
             # send confirmation email
@@ -148,6 +174,7 @@ def editItem(request, pk):
         if item_form.is_valid():
             # save changes to item
             item_form.save()
+            logItemAction(item, account, "edited")
 
             messages.success(request, "Item updated.")
 
@@ -232,9 +259,11 @@ def newPurchase(request):
     # freeze item
     item.status = Item.FROZEN
     item.save()
+    logItemAction(item, account, "froze")
 
     purchase = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
     purchase.save()
+    logTransactionAction(purchase, account, "created")
 
     # send confirmation email
     send_mail(
@@ -282,6 +311,7 @@ def confirmPurchase(request, pk):
     elif purchase.status == Transaction.ACKNOWLEDGED:
         purchase.status = Transaction.S_PENDING
         purchase.save()
+        logTransactionAction(purchase, account, "confirmed")
         messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
         # send confirmation email
         send_mail(
@@ -296,8 +326,10 @@ def confirmPurchase(request, pk):
         item = purchase.item
         item.status = Item.COMPLETE
         item.save()
+        logItemAction(item, account, "completed")
         purchase.status = Transaction.COMPLETE
         purchase.save()
+        logTransactionAction(purchase, account, "confirmed and completed")
         messages.success(request, "Purchase confirmed by both parties and completed.")
         # send confirmation email
         send_mail(
@@ -340,8 +372,10 @@ def cancelPurchase(request, pk):
         item = purchase.item
         item.status = Item.AVAILABLE
         item.save()
+        logItemAction(item, account, "unfroze")
         purchase.status = Transaction.CANCELLED
         purchase.save()
+        logTransactionAction(purchase, account, "cancelled")
         messages.success(request, "Purchase cancelled.")
         # send confirmation email
         send_mail(
@@ -375,6 +409,7 @@ def acceptSale(request, pk):
     if sale.status == Transaction.INITIATED:
         sale.status = Transaction.ACKNOWLEDGED
         sale.save()
+        logTransactionAction(sale, account, "acknowledged")
         messages.success(request, "Sale acknowledged.")
         # send confirmation email
         send_mail(
@@ -421,6 +456,7 @@ def confirmSale(request, pk):
     elif sale.status == Transaction.ACKNOWLEDGED:
         sale.status = Transaction.B_PENDING
         sale.save()
+        logTransactionAction(sale, account, "confirmed")
         messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
         # send confirmation email
         send_mail(
@@ -435,8 +471,10 @@ def confirmSale(request, pk):
         item = sale.item
         item.status = Item.COMPLETE
         item.save()
+        logItemAction(item, account, "completed")
         sale.status = Transaction.COMPLETE
         sale.save()
+        logTransactionAction(sale, account, "confirmed and completed")
         messages.success(request, "Sale confirmed by both parties and completed.")
         # send confirmation email
         send_mail(
@@ -478,8 +516,10 @@ def cancelSale(request, pk):
         item = sale.item
         item.status = Item.AVAILABLE
         item.save()
+        logItemAction(item, account, "unfrozen")
         sale.status = Transaction.CANCELLED
         sale.save()
+        logTransactionAction(purchase, account, "cancelled")
         messages.success(request, "Sale cancelled.")
         # send confirmation email
         send_mail(
