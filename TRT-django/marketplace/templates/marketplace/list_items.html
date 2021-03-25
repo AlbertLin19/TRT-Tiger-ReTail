@@ -25,9 +25,8 @@
                         <p style="color:rgb(31, 182, 12); font-weight: bold;">AVAILABLE</p>
                     {% elif item.status == Item_FROZEN %}
                         {% for sale in item.transaction_set.all %}
-                            <div class='row'>
                                 {% if sale.status == Transaction_INITIATED %}
-                                    <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}">Accept</a>
+                                    <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}" style="padding-left: 20px; padding-right: 20px;">Accept</a>
                                 {% elif sale.status == Transaction_ACKNOWLEDGED or sale.status == Transaction_S_PENDING %}
                                     <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
                                 {% elif sale.status == Transaction_B_PENDING %}
@@ -37,12 +36,9 @@
                                 {% elif sale.status == Transaction_CANCELLED %}
                                     <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                                 {% endif %}
-                            </div>
-                            <div class='row'>
                                 {% if sale.status != Transaction_COMPLETE and sale.status != Transaction_CANCELLED %}
-                                    <a class="btn btn-outline-danger" href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
+                                    <a class="btn btn-outline-danger" style="padding-left: 20px; padding-right: 20px;" href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
                                 {% endif %}
-                            </div>
 
                         {% endfor %}
                         
