@@ -118,3 +118,15 @@ html,
    padding: 3px 20px 3px 20px;
    font-family: 'Source Sans Pro', sans-serif;
 }
+
+.card{
+   border-radius: 4px;
+   background: #fff;
+   box-shadow: 6px 6px 6px 6px rgba(0,0,0,.2);
+   cursor: pointer;
+}
+
+.card:hover{
+   background: #d2f0d1;
+   box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.50);
+}
