@@ -141,3 +141,17 @@ html,
    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
    background: #d9f0d8;
 }
+
+.only-round-right {
+   border-top-left-radius: .0rem !important;
+   border-bottom-left-radius: .0rem !important;
+   border-top-right-radius: .2rem !important;
+   border-bottom-right-radius: .2rem !important;
+ }
+
+ .only-round-left {
+   border-top-right-radius: .0rem !important;
+   border-bottom-right-radius: .0rem !important;
+   border-top-left-radius: .2rem !important;
+   border-bottom-left-radius: .2rem !important;
+ }

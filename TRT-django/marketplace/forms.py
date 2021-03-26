@@ -22,7 +22,12 @@ class ItemForm(forms.ModelForm):
             "deadline": "",
             "price": "",
         }
-        widgets = {"description": forms.Textarea(attrs={"cols": 80, "rows": 3})}
+        widgets = {
+            "description": forms.Textarea(attrs={"cols": 80, "rows": 3}),
+            "name": forms.TextInput(attrs={"class": "only-round-right"}),
+            "price": forms.TextInput(attrs={"class": "only-round-right"}),
+            "deadline": forms.TextInput(attrs={"class": "only-round-right"}),
+        }
 
 
 class AccountForm(forms.ModelForm):
@@ -35,4 +40,8 @@ class AccountForm(forms.ModelForm):
         labels = {
             "name": "",
             "email": "",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "only-round-right"}),
+            "email": forms.TextInput(attrs={"class": "only-round-right"}),
         }
