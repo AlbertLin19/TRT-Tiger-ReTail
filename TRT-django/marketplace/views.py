@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
+from django.utils import timezone
 from .models import Account, Item, Transaction, ItemLog, TransactionLog
 from .forms import AccountForm, ItemForm
 from utils import CASClient
@@ -11,8 +12,6 @@ from utils import CASClient
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
-import datetime
 
 from django.core.exceptions import PermissionDenied
 import secrets
@@ -23,9 +22,7 @@ import secrets
 
 
 def logItemAction(item, account, log):
-    ItemLog(
-        item=item, account=account, datetime=datetime.datetime.now(), log=log
-    ).save()
+    ItemLog(item=item, account=account, datetime=timezone.now(), log=log).save()
 
 
 # ----------------------------------------------------------------------
@@ -37,7 +34,7 @@ def logTransactionAction(transaction, account, log):
     TransactionLog(
         transaction=transaction,
         account=account,
-        datetime=datetime.datetime.now(),
+        datetime=timezone.now(),
         log=log,
     ).save()
 
@@ -123,7 +120,7 @@ def newItem(request):
             # create new item, but do not save yet until changes made
             item = item_form.save(commit=False)
             item.seller = account
-            item.posted_date = datetime.datetime.now()
+            item.posted_date = timezone.now()
             item.status = Item.AVAILABLE
             item.save()
             logItemAction(item, account, "created")
