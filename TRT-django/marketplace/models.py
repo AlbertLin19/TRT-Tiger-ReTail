@@ -15,8 +15,8 @@ from datetime import timedelta
 class Account(models.Model):
     # username is matched by what is returned from CAS authentication
     username = models.CharField(unique=True, max_length=50)
-    name = models.CharField(max_length=50, verbose_name="")
-    email = models.EmailField(verbose_name="")
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
 
     def __str__(self):
         return self.username
@@ -44,19 +44,21 @@ class Item(models.Model):
     MAX_TIME_DELTA = timedelta(days=365)
 
     seller = models.ForeignKey(Account, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, verbose_name="")
+    name = models.CharField(max_length=50)
     posted_date = models.DateTimeField()
     deadline = models.DateField(
         help_text="Latest allowed is " + str((timezone.now() + MAX_TIME_DELTA).date()),
-        verbose_name="",
         validators=[
             MinValueValidator(timezone.now().date()),
             MaxValueValidator((timezone.now() + MAX_TIME_DELTA).date()),
         ],
     )
     price = models.DecimalField(
-        verbose_name="", max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.00")),
-        ]
+        max_digits=8,
+        decimal_places=2,
+        validators=[
+            MinValueValidator(Decimal("0.00")),
+        ],
     )
     condition = models.DecimalField(
         max_digits=1,

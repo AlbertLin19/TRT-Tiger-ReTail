@@ -17,9 +17,13 @@ class ItemForm(forms.ModelForm):
             "categories",
             "image",
         ]
-        widgets = {
-            'description': forms.Textarea(attrs={'cols': 80, 'rows': 3})
+        labels = {
+            "name": "",
+            "deadline": "",
+            "price": "",
         }
+        widgets = {"description": forms.Textarea(attrs={"cols": 80, "rows": 3})}
+
 
 class AccountForm(forms.ModelForm):
     class Meta:
@@ -28,3 +32,7 @@ class AccountForm(forms.ModelForm):
             "name",
             "email",
         ]
+        labels = {
+            "name": "",
+            "email": "",
+        }
