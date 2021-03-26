@@ -47,7 +47,7 @@ class Item(models.Model):
     name = models.CharField(max_length=50, verbose_name="Item Name")
     posted_date = models.DateTimeField()
     deadline = models.DateField(
-        help_text="Latest allowed is " + (timezone.now() + MAX_TIME_DELTA).date(),
+        help_text="Latest allowed is " + str((timezone.now() + MAX_TIME_DELTA).date()),
         verbose_name="Deadline to Sell",
         validators=[
             MinValueValidator(timezone.now().date()),
