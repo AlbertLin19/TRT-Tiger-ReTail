@@ -131,8 +131,9 @@ def newItem(request):
             messages.success(request, "New item posted.")
             # send confirmation email
             send_mail(
-                "Item Post Confirmation",
-                "yeppers peppers",
+                "Item Posted",
+                "You have posted a new item for sale!\n"
+                + request.build_absolute_uri(reverse("list_items")),
                 settings.EMAIL_HOST_USER,
                 [account.email],
                 fail_silently=False,
@@ -208,8 +209,9 @@ def deleteItem(request, pk):
     messages.success(request, "Item deleted.")
     # send confirmation email
     send_mail(
-        "Item Delete Confirmation",
-        "yeppers peppers",
+        "Item Deleted",
+        "You have removed an item for sale.\n"
+        + request.build_absolute_uri((reverse("list_items"))),
         settings.EMAIL_HOST_USER,
         [account.email],
         fail_silently=False,
@@ -267,10 +269,20 @@ def newPurchase(request):
 
     # send confirmation email
     send_mail(
-        "Purchase Confirmation",
-        "yeppers peppers",
+        "Purchase Requested",
+        "You have requested to purchase an item.\n"
+        + request.build_absolute_uri(reverse("list_purchases")),
         settings.EMAIL_HOST_USER,
         [account.email],
+        fail_silently=False,
+    )
+    # send notification email to seller
+    send_mail(
+        "Sale Requested by a Buyer",
+        "Your item has been requested for sale!\n"
+        + request.build_absolute_uri(reverse("list_items")),
+        settings.EMAIL_HOST_USER,
+        [item.seller.email],
         fail_silently=False,
     )
 
@@ -313,12 +325,21 @@ def confirmPurchase(request, pk):
         purchase.save()
         logTransactionAction(purchase, account, "confirmed")
         messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
-        # send confirmation email
+        # send confirmation emails
         send_mail(
-            "Purchase Confirm Confirmation",
-            "yeppers peppers",
+            "Purchase Confirmed",
+            "You have confirmed a purchase.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Sale Awaiting Confirmation",
+            "Your sale has been confirmed by the buyer and awaits your confirmation.\n"
+            + request.build_absolute_uri(reverse("list_items")),
+            settings.EMAIL_HOST_USER,
+            [purchase.item.seller.email],
             fail_silently=False,
         )
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
@@ -331,12 +352,21 @@ def confirmPurchase(request, pk):
         purchase.save()
         logTransactionAction(purchase, account, "confirmed and completed")
         messages.success(request, "Purchase confirmed by both parties and completed.")
-        # send confirmation email
+        # send confirmation emails
         send_mail(
-            "Purchase Confirm Confirmation",
-            "yeppers peppers",
+            "Purchase Completed",
+            "Your purchase has been completed.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Sale Completed",
+            "Your sale has been confirmed by the buyer and is completed.\n"
+            + request.build_absolute_uri(reverse("list_items")),
+            settings.EMAIL_HOST_USER,
+            [item.seller.email],
             fail_silently=False,
         )
 
@@ -377,12 +407,21 @@ def cancelPurchase(request, pk):
         purchase.save()
         logTransactionAction(purchase, account, "cancelled")
         messages.success(request, "Purchase cancelled.")
-        # send confirmation email
+        # send confirmation emails
         send_mail(
-            "Purchase Cancel Confirmation",
-            "yeppers peppers",
+            "Purchase Cancelled",
+            "You have cancelled a purchase.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Sale Cancelled by Buyer",
+            "Your sale has been cancelled by the buyer.\n"
+            + request.build_absolute_uri(reverse("list_items")),
+            settings.EMAIL_HOST_USER,
+            [item.seller.email],
             fail_silently=False,
         )
 
@@ -413,10 +452,19 @@ def acceptSale(request, pk):
         messages.success(request, "Sale acknowledged.")
         # send confirmation email
         send_mail(
-            "Sale Acceptance Confirmation",
-            "yeppers peppers",
+            "Sale Accepted",
+            "You have accepted a sale request.\n"
+            + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Purchase Request Accepted by Seller",
+            "Your purchase request has been accepted by the seller.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
+            settings.EMAIL_HOST_USER,
+            [sale.buyer.email],
             fail_silently=False,
         )
     else:
@@ -460,10 +508,19 @@ def confirmSale(request, pk):
         messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
         # send confirmation email
         send_mail(
-            "Sale Confirm Confirmation",
-            "yeppers peppers",
+            "Sale Confirmed",
+            "You have confirmed a sale.\n"
+            + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Purchase Awaiting Confirmation",
+            "Your purchase has been confirmed by the seller and awaits your confirmation\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
+            settings.EMAIL_HOST_USER,
+            [sale.buyer.email],
             fail_silently=False,
         )
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
@@ -478,10 +535,19 @@ def confirmSale(request, pk):
         messages.success(request, "Sale confirmed by both parties and completed.")
         # send confirmation email
         send_mail(
-            "Sale Confirm Confirmation",
-            "yeppers peppers",
+            "Sale Completed",
+            "You have confirmed and completed your sale.\n"
+            + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Purchase Completed",
+            "Your purchase has been confirmed by the seller and is completed.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
+            settings.EMAIL_HOST_USER,
+            [sale.buyer.email],
             fail_silently=False,
         )
 
@@ -519,14 +585,23 @@ def cancelSale(request, pk):
         logItemAction(item, account, "unfrozen")
         sale.status = Transaction.CANCELLED
         sale.save()
-        logTransactionAction(purchase, account, "cancelled")
+        logTransactionAction(sale, account, "cancelled")
         messages.success(request, "Sale cancelled.")
         # send confirmation email
         send_mail(
-            "Sale Cancel Confirmation",
-            "yeppers peppers",
+            "Sale Cancelled",
+            "You have cancelled a sale.\n"
+            + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
+            fail_silently=False,
+        )
+        send_mail(
+            "Purchase Cancelled by Seller",
+            "Your purchase has been cancelled by the seller.\n"
+            + request.build_absolute_uri(reverse("list_purchases")),
+            settings.EMAIL_HOST_USER,
+            [sale.buyer.email],
             fail_silently=False,
         )
 
