@@ -1,9 +1,10 @@
 from django.db import models
 from django.forms.widgets import NumberInput
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 from decimal import Decimal
 from cloudinary.models import CloudinaryField
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 # above as in sample https://github.com/cloudinary/cloudinary-django-sample/blob/master/photo_album/models.py
@@ -40,17 +41,19 @@ class Item(models.Model):
     WELL_LOVED = 3
     POOR = 4
 
+    MAX_TIME_DELTA = timedelta(days=365)
+
     seller = models.ForeignKey(Account, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, verbose_name="Item Name")
     posted_date = models.DateTimeField()
-    #deadline = models.DateTimeField()
-    def getDeadline():
-        yrLater = datetime.now() + timedelta(days=365)
-        return yrLater.strftime("%m/%d/%Y")
-
-    deadlineNotice = "Furthest deadline is 1 year from today (" + getDeadline() + ")"
-    deadline = models.DateField(default = 'mm/dd/yyyy', help_text=deadlineNotice, verbose_name="Deadline to Sell")
-
+    deadline = models.DateField(
+        help_text="Latest allowed is " + (timezone.now() + MAX_TIME_DELTA).date(),
+        verbose_name="Deadline to Sell",
+        validators=[
+            MinValueValidator(timezone.now().date()),
+            MaxValueValidator((timezone.now() + MAX_TIME_DELTA).date()),
+        ],
+    )
     price = models.DecimalField(
         max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.00"))]
     )
