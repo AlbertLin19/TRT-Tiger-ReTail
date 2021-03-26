@@ -123,6 +123,8 @@ def newItem(request):
             item.posted_date = timezone.now()
             item.status = Item.AVAILABLE
             item.save()
+            # save the m2m fields, which did not yet bc of commit=False
+            item_form.save_m2m()
             logItemAction(item, account, "created")
 
             messages.success(request, "New item posted.")
