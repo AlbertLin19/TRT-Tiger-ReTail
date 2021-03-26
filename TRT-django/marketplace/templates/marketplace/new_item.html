@@ -25,28 +25,44 @@
                       {{ item_form.name|as_crispy_field }}
                 </div>
             </div>
+
             <br>
             <div class="row">
                 <div class="col-6">
                     {{ item_form.description|as_crispy_field }}
                 </div>
             </div>
-            <br>
+            <br><br>
+
             <div class="row">
-                <div class="col-6">
-                    <span style="font-size: 20px; color: rgb(61, 61, 61);">
-                        <i class="fas fa-dollar-sign"></i> 
-                    </span>
-                    {{ item_form.price|as_crispy_field }}
+                <div class="col-3">
+                    <label>Price*</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <span style="font-size: 16px; color: rgb(0, 0, 0);">
+                                <i class="fas fa-dollar-sign"></i> 
+                            </span>
+                          </div>
+                        </div>
+                        {{ item_form.price|as_crispy_field }}
+                    </div>
                 </div>
                 <div class="col-6">
-                    <span style="font-size: 20px; color: rgb(61, 61, 61);">
-                        <i class="fas fa-calendar"></i> 
-                    </span>
-                    {{ item_form.deadline|as_crispy_field }}
+                    <label>Deadline to Sell*</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <span style="font-size: 16px; color: rgb(0, 0, 0);">
+                                <i class="fas fa-calendar"></i> 
+                            </span>
+                          </div>
+                        </div>
+                        {{ item_form.deadline|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <br>
+            <br> <br>
             <div class="row">
                 <div class="col-6">
                     {{ item_form.categories|as_crispy_field }}
