@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <br>
+            <br><br>
             <div class="row">
                 <div class="col-6">
                     {{ item_form.description|as_crispy_field }}
@@ -48,7 +48,7 @@
                         {{ item_form.price|as_crispy_field }}
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <label>Deadline to Sell*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
@@ -61,36 +61,25 @@
                         {{ item_form.deadline|as_crispy_field }}
                     </div>
                 </div>
-            </div>
-            <br> <br>
-            <div class="row">
-                <div class="col-6">
+                <div class="col-3">
                     {{ item_form.categories|as_crispy_field }}
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     {{ item_form.condition|as_crispy_field }}
                 </div>
             </div>
-            <br>
+            <br> <br> <br>
             <div class="row">
-                <div class="col-1">
-                    <span style="font-size: 30px; color: rgb(61, 61, 61);">
-                        <i class="fas fa-images"></i> 
-                    </span>
-                </div>
                 <div class="col-6">
                     {{ item_form.image|as_crispy_field }}
                 </div>
             </div>
-            
-            
-            <!-- {{ item_form|crispy }} -->
-            
-           
+
             <br>
             <div class="text-center">
                 <button type="submit" value="Submit" class="btn btn-success">Submit</button>
-                <br> <br> <br>
+            </div>
+            <br> <br> <br>
             </div>
         </form>
     </div>
