@@ -1,6 +1,7 @@
 {% extends "marketplace/base.html" %}
 {% load cloudinary %}
 {% block content %}
+
     <!--<div class="container">-->
         <div class="topbar header3 justify-content-around" style="display: flex; flex-direction: row;">
             <br />
@@ -27,9 +28,9 @@
                         {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title">{{item.name}}</h5>
-                      <p class="card-text">${{item.price}} USD<br>Merchant: {{item.seller}}</p>
-                      {% if item.status == Item_AVAILABLE %}
+                    <h5 class="card-title">{{item.name}}</h5>
+                    <p class="card-text">${{item.price}} USD<br>Merchant: {{item.seller}}</p>
+                    {% if item.status == Item_AVAILABLE %}
                         <form action="{% url 'new_purchase' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value={{item.pk}}>
