@@ -5,15 +5,21 @@
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">BACK TO IMAGE GALLERY</a>
 </div>
     <div class="container">
-        <display>Please beautify this form. Like add input icons next to the input fields or somethin</display>
-        <display>And add a date picker tool to help with the deadline input (for now, you can type mm/dd/yyyy manually) </display>
+        <br> <h2>Item Post Form</h2> <hr>
+        <!-- Please beautify this form. Like add input icons next to the input fields or somethin</display> -->
+        <!-- And add a date picker tool to help with the deadline input (for now, you can type mm/dd/yyyy manually=) -->
         <form action="{% url 'new_item' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- SHOULD TRY TO CUSTOMIZE FORM TO LOOK NICE -->
             <!-- i.e. ADD INPUT ICONS NEXT TO THE FIELDS -->
             <!-- ESPECIALLY BY ADDING A DATE PICKER TOOL FOR DEADLINE INPUT -->
             {{ item_form|crispy }}
-            <input type="submit" value="Submit">
+            <br>
+            <div class="text-center">
+                <button type="submit" value="Submit" class="btn btn-success">Submit</button>
+                <!-- <input type="submit" value="Submit"> -->
+                <br> <br> <br>
+            </div>
         </form>
     </div>
 

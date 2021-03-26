@@ -1,7 +1,10 @@
 from django.db import models
+from django.forms.widgets import NumberInput
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from cloudinary.models import CloudinaryField
+from datetime import datetime, timedelta
+
 
 # above as in sample https://github.com/cloudinary/cloudinary-django-sample/blob/master/photo_album/models.py
 
@@ -33,14 +36,21 @@ class Item(models.Model):
 
     NEW = 0
     LIKE_NEW = 1
-    GOOD = 2
-    FAIR = 3
+    GENTLY_LOVED = 2
+    WELL_LOVED = 3
     POOR = 4
 
     seller = models.ForeignKey(Account, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, verbose_name="Item Name")
     posted_date = models.DateTimeField()
-    deadline = models.DateTimeField()
+    #deadline = models.DateTimeField()
+    def getDeadline():
+        yrLater = datetime.now() + timedelta(days=365)
+        return yrLater.strftime("%m/%d/%Y")
+
+    deadlineNotice = "Furthest deadline is 1 year from today (" + getDeadline() + ")"
+    deadline = models.DateField(default = 'mm/dd/yyyy', help_text=deadlineNotice, verbose_name="Deadline to Sell")
+
     price = models.DecimalField(
         max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.00"))]
     )
@@ -48,11 +58,11 @@ class Item(models.Model):
         max_digits=1,
         decimal_places=0,
         choices=[
-            (NEW, "new"),
-            (LIKE_NEW, "like_new"),
-            (GOOD, "good"),
-            (FAIR, "fair"),
-            (POOR, "poor"),
+            (NEW, "New"),
+            (LIKE_NEW, "Like new"),
+            (GENTLY_LOVED, "Gently-loved"),
+            (WELL_LOVED, "Well-loved"),
+            (POOR, "Poor"),
         ],
     )
     categories = models.ManyToManyField(Category)
