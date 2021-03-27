@@ -134,6 +134,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 CAS_URL = "https://fed.princeton.edu/cas/"
+ALBUM_LIMIT = 5
 
 # setting up cloudinary image storage
 cloudinary.config(

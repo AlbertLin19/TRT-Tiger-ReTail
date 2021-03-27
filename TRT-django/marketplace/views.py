@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
-from .models import Account, Item, Transaction, ItemLog, TransactionLog
+from .models import Account, Item, Transaction, ItemLog, TransactionLog, AlbumImage
 from .forms import AccountForm, ItemForm
 from utils import CASClient
 
@@ -131,6 +131,13 @@ def newItem(request):
             # save the m2m fields, which did not yet bc of commit=False
             item_form.save_m2m()
             logItemAction(item, account, "created")
+
+            # create linked album images from uploaded files
+            album = request.FILES.getlist("album")
+            for i in range(len(album)):
+                if i >= settings.ALBUM_LIMIT:
+                    break
+                AlbumImage(image=album[i], item=item).save()
 
             messages.success(request, "New item posted.")
             # send confirmation email

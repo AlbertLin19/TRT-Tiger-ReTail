@@ -93,6 +93,9 @@ class AlbumImage(models.Model):
     image = CloudinaryField("image")
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.item)
+
 
 class Transaction(models.Model):
     INITIATED = 0
