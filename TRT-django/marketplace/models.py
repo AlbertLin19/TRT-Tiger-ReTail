@@ -30,11 +30,6 @@ class Category(models.Model):
         return self.name
 
 
-# wrapper for CloudinaryField to use in M2Ms
-class Image(models.Model):
-    image = CloudinaryField("image")
-
-
 class Item(models.Model):
     AVAILABLE = 0
     FROZEN = 1
@@ -79,7 +74,6 @@ class Item(models.Model):
     categories = models.ManyToManyField(Category)
     description = models.TextField()
     image = CloudinaryField("image")
-    album = models.ManyToManyField(Image)
     status = models.DecimalField(
         max_digits=1,
         decimal_places=0,
@@ -92,6 +86,12 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name + " by " + str(self.seller)
+
+
+# wrapper for CloudinaryField, used for item albums
+class AlbumImage(models.Model):
+    image = CloudinaryField("image")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
 
 class Transaction(models.Model):
