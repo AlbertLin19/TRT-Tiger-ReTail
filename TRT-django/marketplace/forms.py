@@ -26,7 +26,9 @@ class ItemForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"cols": 80, "rows": 3}),
             "name": forms.TextInput(attrs={"class": "only-round-right"}),
             "price": forms.TextInput(attrs={"class": "only-round-right"}),
-            "deadline": forms.TextInput(attrs={"class": "only-round-right"}),
+            "deadline": forms.NumberInput(
+                attrs={"type": "date", "class": "only-round-right"}
+            ),
         }
 
 

@@ -30,6 +30,11 @@ class Category(models.Model):
         return self.name
 
 
+# wrapper for CloudinaryField to use in M2Ms
+class Image(models.Model):
+    image = CloudinaryField("image")
+
+
 class Item(models.Model):
     AVAILABLE = 0
     FROZEN = 1
@@ -74,6 +79,7 @@ class Item(models.Model):
     categories = models.ManyToManyField(Category)
     description = models.TextField()
     image = CloudinaryField("image")
+    album = models.ManyToManyField(Image)
     status = models.DecimalField(
         max_digits=1,
         decimal_places=0,

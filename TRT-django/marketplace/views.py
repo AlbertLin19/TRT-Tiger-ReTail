@@ -68,7 +68,12 @@ def authentication_required(view_function):
                 # call view as normal
                 request.session["username"] = username
                 if not Account.objects.filter(username=username).exists():
-                    Account(username=username).save()
+                    # note this assumes use of princeton email
+                    Account(
+                        username=username,
+                        name=username,
+                        email=username + "@princeton.edu",
+                    ).save()
                 return view_function(request, *args, **kwargs)
 
         # user could NOT be authenticated, so redirect to CAS login
