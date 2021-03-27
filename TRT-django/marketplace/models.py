@@ -91,7 +91,7 @@ class Item(models.Model):
 # wrapper for CloudinaryField, used for item albums
 class AlbumImage(models.Model):
     image = CloudinaryField("image")
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="album")
 
     def __str__(self):
         return str(self.item)

@@ -188,6 +188,14 @@ def editItem(request, pk):
             item_form.save()
             logItemAction(item, account, "edited")
 
+            # overwrite the album images
+            item.album.all().delete()
+            album = request.FILES.getlist("album")
+            for i in range(len(album)):
+                if i >= settings.ALBUM_LIMIT:
+                    break
+                AlbumImage(image=album[i], item=item).save()
+
             messages.success(request, "Item updated.")
 
     # did not receive form data via POST, so send stored item form
