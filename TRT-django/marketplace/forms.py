@@ -21,6 +21,7 @@ class ItemForm(forms.ModelForm):
             "name": "",
             "deadline": "",
             "price": "",
+            "image": "",
         }
         widgets = {
             "description": forms.Textarea(attrs={"cols": 80, "rows": 3}),
