@@ -50,6 +50,9 @@
                     {% if account and not account.name %}
                         <div class="alert alert-info">Please set a display name in your account settings.</div>
                     {% endif %}
+                    {% if account and not account.contact %}
+                        <div class="alert alert-info">Please let other users know how to contact you in your account settings.</div>
+                    {% endif %}
                     {% if messages %} 
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }}">{{ message }}</div>

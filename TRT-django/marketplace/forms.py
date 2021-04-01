@@ -39,12 +39,15 @@ class AccountForm(forms.ModelForm):
         fields = [
             "name",
             "email",
+            "contact",
         ]
         labels = {
             "name": "",
             "email": "",
+            "contact": "",
         }
         widgets = {
             "name": forms.TextInput(attrs={"class": "only-round-right"}),
             "email": forms.TextInput(attrs={"class": "only-round-right"}),
+            "contact": forms.Textarea(attrs={"cols": 80, "rows": 3}),
         }
