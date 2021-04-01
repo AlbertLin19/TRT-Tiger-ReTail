@@ -5,12 +5,12 @@
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
 </div>
     <div class="container my-4">
-        <h2>Item Post Edit Form</h2> <hr>
+        <h2>Item Edit Form</h2> <hr>
         <form action="{% url 'edit_item' item.pk %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="row my-2">
-                <div class="col-6">
+                <div class="col-lg-6 col-sm-12">
                     <label>Item Name*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
@@ -25,13 +25,13 @@
             </div>
 
             <div class="row my-2">
-                <div class="col-6">
+                <div class="col-lg-6 col-sm-12">
                     {{ item_form.description|as_crispy_field }}
                 </div>
             </div>
 
             <div class="row my-4">
-                <div class="col-3">
+                <div class="col-lg-3 col-sm-6">
                     <label>Price*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
@@ -44,7 +44,7 @@
                         {{ item_form.price|as_crispy_field }}
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-lg-3 col-sm-6">
                     <label>Deadline to Sell*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
@@ -57,28 +57,28 @@
                         {{ item_form.deadline|as_crispy_field }}
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-lg-3 col-xs-4">
                     {{ item_form.categories|as_crispy_field }}
                 </div>
-                <div class="col-3">
+                <div class="col-lg-3 col-xs-4">
                     {{ item_form.condition|as_crispy_field }}
                 </div>
             </div>
 
             <div class="row my-2">
-                <div class="col-6">
-                    <div class="row">
+                <div class="col-lg-6 col-sm-6">
+                    <div class="row my-2">
                         <label>Lead Image*</label>
                     </div>
-                    <div class="row">
+                    <div class="row my-2">
                         {{ item_form.image|as_crispy_field }}
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="row">
+                <div class="col-lg-6 col-sm-6">
+                    <div class="row my-2">
                         <label>Album (up to 5 supplimentary images)</label>
                     </div>
-                    <div class="row">
+                    <div class="row my-2">
                         <input type="file" name="album" accept="image/*" multiple/>
                     </div>
                 </div>

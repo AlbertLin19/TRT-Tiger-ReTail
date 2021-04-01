@@ -107,6 +107,13 @@ html,
    background: #f3dfc9;
  }
 
+ /* message notifications */
+ .notification{
+    position: absolute;
+    top: 5rem;
+    right: 1rem;
+ }
+
 /* search bar */
  #topnav {
    background-color: #9cdef8;
