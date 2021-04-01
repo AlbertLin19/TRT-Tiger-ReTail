@@ -4,10 +4,8 @@
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">BACK TO IMAGE GALLERY</a>
 </div>
-    <div class="container">
+    <div class="container my-4">
         <h2>Item Post Form</h2> <hr>
-        <!-- Please beautify this form. Like add input icons next to the input fields or somethin</display> -->
-        <!-- And add a date picker tool to help with the deadline input (for now, you can type mm/dd/yyyy manually=) -->
         <form action="{% url 'new_item' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 

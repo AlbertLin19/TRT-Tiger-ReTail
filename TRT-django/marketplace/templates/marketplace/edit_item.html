@@ -4,13 +4,12 @@
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
 </div>
-    <div class="container">
-        <br> <h2>Item Post Edit Form</h2> <hr>
+    <div class="container my-4">
+        <h2>Item Post Edit Form</h2> <hr>
         <form action="{% url 'edit_item' item.pk %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
-
-            <div class="row">
+            <div class="row my-2">
                 <div class="col-6">
                     <label>Item Name*</label>
                     <div class="input-group mb-2">
@@ -25,15 +24,13 @@
                 </div>
             </div>
 
-            <br><br>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col-6">
                     {{ item_form.description|as_crispy_field }}
                 </div>
             </div>
-            <br><br>
 
-            <div class="row">
+            <div class="row my-4">
                 <div class="col-3">
                     <label>Price*</label>
                     <div class="input-group mb-2">
@@ -67,18 +64,30 @@
                     {{ item_form.condition|as_crispy_field }}
                 </div>
             </div>
-            <br> <br> <br>
-            <div class="row">
+
+            <div class="row my-2">
                 <div class="col-6">
-                    {{ item_form.image|as_crispy_field }}
+                    <div class="row">
+                        <label>Lead Image*</label>
+                    </div>
+                    <div class="row">
+                        {{ item_form.image|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <label>Album (up to 5 supplimentary images)</label>
+                    </div>
+                    <div class="row">
+                        <input type="file" name="album" accept="image/*" multiple/>
+                    </div>
                 </div>
             </div>
 
-            <br>
-            <div class="text-center">
+
+            <div class="text-center my-4">
                 <button type="submit" value="Save" class="btn btn-success">Save</button>
             </div>
-            <br> <br> <br>
 
         </form>
     </div>
