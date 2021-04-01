@@ -1,0 +1,32 @@
+{% extends "marketplace/base.html" %}
+{% load cloudinary %}
+{% block content %}
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'new_item_request' %}" class="btn btn-outline-light" style="font-weight: bold;">MAKE REQUEST</a>
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+</div>
+<div class="gallery_back container-fliud mb-3">
+    <br>  
+    <div class="container">
+        <div id="gallery_title">MY REQUESTS</div><hr>
+        {% if not item_requests %}
+            <h3>You have not made any requests yet!</h3>
+        {% endif %}
+        <div class="row">
+        {% for item_request in item_requests %}
+        <div class="card col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+            <div class="card-img-top rounded-corners">
+                {% cloudinary item_request.image format="jpg" width=120 height=80 crop="fill"%}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{item_request.name}}</h5>
+                <p class="card-text">{{item_request.description}}</p>
+                <a class="btn btn-outline-danger" href="{% url 'delete_item_request' item_request.pk %}">Delete</a>
+                <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;" href="{% url 'edit_item_request' item_request.pk %}">Edit</a>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

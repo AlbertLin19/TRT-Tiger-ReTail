@@ -5,8 +5,16 @@ from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
-from .models import Account, Item, Transaction, ItemLog, TransactionLog, AlbumImage
-from .forms import AccountForm, ItemForm
+from .models import (
+    Account,
+    Item,
+    Transaction,
+    ItemLog,
+    TransactionLog,
+    AlbumImage,
+    ItemRequest,
+)
+from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
 
 import cloudinary
@@ -625,6 +633,125 @@ def cancelSale(request, pk):
         )
 
     return redirect("list_items")
+
+
+# ----------------------------------------------------------------------
+
+# personal item_requests page
+
+
+@authentication_required
+def listItemRequests(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    item_requests = account.itemrequest_set.all()
+    context = {"item_requests": item_requests}
+    return render(request, "marketplace/list_item_requests.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# new item_request form
+# GET requests get a blank form
+# POST requests get a form with error feedback, else new item_request created
+# and redirected to list item_requests page
+
+
+@authentication_required
+def newItemRequest(request):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_request_form = ItemRequestForm(request.POST, request.FILES)
+        if item_request_form.is_valid():
+            # create new item_request, but do not save yet until changes made
+            item_request = item_request_form.save(commit=False)
+            item_request.requester = account
+            item_request.posted_date = timezone.now()
+            item_request.save()
+            # save the m2m fields, which did not yet bc of commit=False
+            item_request_form.save_m2m()
+
+            messages.success(request, "New item request posted.")
+            # send confirmation email
+            send_mail(
+                "Item Request Posted",
+                "You have posted a new item request!\n"
+                + request.build_absolute_uri(reverse("list_item_requests")),
+                settings.EMAIL_HOST_USER,
+                [account.email],
+                fail_silently=False,
+            )
+            return redirect("list_item_requests")
+
+    # did not receive form data via POST, so send a blank form
+    else:
+        item_request_form = ItemRequestForm()
+
+    context = {"item_request_form": item_request_form}
+    return render(request, "marketplace/new_item_request.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# edit item_request form
+# GET requests given pre-populated item_request form
+# POST requests given form with error feedback, else item_request edited
+
+
+@authentication_required
+def editItemRequest(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # if the item_request does not belong to this account, permission denied
+    item_request = ItemRequest.objects.get(pk=pk)
+    if item_request.requester != account:
+        raise PermissionDenied
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_request_form = ItemRequestForm(
+            request.POST, request.FILES, instance=item_request
+        )
+        if item_request_form.is_valid():
+            # save changes to item_request
+            item_request_form.save()
+
+            messages.success(request, "Item request updated.")
+
+    # did not receive form data via POST, so send stored item_request form
+    else:
+        item_request_form = ItemRequestForm(instance=item_request)
+    context = {"item_request": item_request, "item_request_form": item_request_form}
+    return render(request, "marketplace/edit_item_request.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# delete item_request
+
+
+@authentication_required
+def deleteItemRequest(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    # if the item_request does not belong to this account, permission denied
+    item_request = ItemRequest.objects.get(pk=pk)
+    if item_request.requester != account:
+        raise PermissionDenied
+
+    item_request.delete()
+    messages.success(request, "Item request deleted.")
+    # send confirmation email
+    send_mail(
+        "Item Request Deleted",
+        "You have removed an item request.\n"
+        + request.build_absolute_uri((reverse("list_item_requests"))),
+        settings.EMAIL_HOST_USER,
+        [account.email],
+        fail_silently=False,
+    )
+    return redirect("list_item_requests")
 
 
 # ----------------------------------------------------------------------

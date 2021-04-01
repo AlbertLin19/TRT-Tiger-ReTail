@@ -149,3 +149,43 @@ class TransactionLog(models.Model):
 
     def __str__(self):
         return str(self.transaction) + " at " + str(self.datetime)
+
+
+class ItemRequest(models.Model):
+
+    MAX_TIME_DELTA = timedelta(days=365)
+
+    requester = models.ForeignKey(Account, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    posted_date = models.DateTimeField()
+    deadline = models.DateField(
+        help_text="Latest allowed is " + str((timezone.now() + MAX_TIME_DELTA).date()),
+        validators=[
+            MinValueValidator(timezone.now().date()),
+            MaxValueValidator((timezone.now() + MAX_TIME_DELTA).date()),
+        ],
+    )
+    price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        validators=[
+            MinValueValidator(Decimal("0.00")),
+        ],
+    )
+    condition = models.DecimalField(
+        max_digits=1,
+        decimal_places=0,
+        choices=[
+            (Item.NEW, "New"),
+            (Item.LIKE_NEW, "Like new"),
+            (Item.GENTLY_LOVED, "Gently-loved"),
+            (Item.WELL_LOVED, "Well-loved"),
+            (Item.POOR, "Poor"),
+        ],
+    )
+    categories = models.ManyToManyField(Category)
+    description = models.TextField()
+    image = CloudinaryField("image")
+
+    def __str__(self):
+        return self.name + " by " + str(self.requester)

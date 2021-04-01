@@ -7,6 +7,7 @@ from .models import (
     ItemLog,
     TransactionLog,
     AlbumImage,
+    ItemRequest,
 )
 
 # Register your models here.
@@ -18,3 +19,4 @@ admin.site.register(Transaction)
 admin.site.register(ItemLog)
 admin.site.register(TransactionLog)
 admin.site.register(AlbumImage)
+admin.site.register(ItemRequest)

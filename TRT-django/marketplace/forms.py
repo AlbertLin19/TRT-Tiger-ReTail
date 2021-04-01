@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import NumberInput
-from .models import Account, Item
+from .models import Account, Item, ItemRequest
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -8,6 +8,34 @@ from crispy_forms.layout import Submit
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
+        fields = [
+            "name",
+            "description",
+            "price",
+            "deadline",
+            "condition",
+            "categories",
+            "image",
+        ]
+        labels = {
+            "name": "",
+            "deadline": "",
+            "price": "",
+            "image": "",
+        }
+        widgets = {
+            "description": forms.Textarea(attrs={"cols": 80, "rows": 3}),
+            "name": forms.TextInput(attrs={"class": "only-round-right"}),
+            "price": forms.TextInput(attrs={"class": "only-round-right"}),
+            "deadline": forms.NumberInput(
+                attrs={"type": "date", "class": "only-round-right"}
+            ),
+        }
+
+
+class ItemRequestForm(forms.ModelForm):
+    class Meta:
+        model = ItemRequest
         fields = [
             "name",
             "description",
