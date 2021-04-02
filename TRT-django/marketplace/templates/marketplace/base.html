@@ -33,6 +33,8 @@
                     {% if account %}
                     <a class="nav-item nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span
                             class="sr-only">(current)</span></a>
+                    <a class="nav-item nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span
+                            class="sr-only">(current)</span></a>
                     <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
                     {% else %}
                     <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span

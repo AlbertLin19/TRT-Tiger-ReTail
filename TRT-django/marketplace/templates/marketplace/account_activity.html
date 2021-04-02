@@ -1,0 +1,106 @@
+{% extends "marketplace/base.html" %}
+{% load cloudinary %}
+{% block content %}
+
+<!-- Bootstrap collapsables and tables referenced from online documentation. -->
+
+  <div class="card" data-toggle="collapse" data-target="#own_activity_transaction">
+    <div class="card-header" id="own_activity_transaction_data">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#own_activity_transaction" aria-expanded="false" aria-controls="own_activity_transaction">
+          Your Activity
+        </button>
+    </div>
+
+    <div id="own_activity_transaction" class="collapse show" aria-labelledby="own_activity_transaction_data">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Account</th>
+              <th scope="col">Target</th>
+              <th scope="col">Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for own_activity in own_activity_transaction %}
+            <tr>
+              <th scope="col">{{ own_activity.datetime }}</th>
+              <th scope="col">{{ own_activity.account }}</th>
+              <th scope="col">{{ own_activity.transaction }}</th>
+              <th scope="col">{{ own_activity.log }}</th>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-toggle="collapse" data-target="#item_activity">
+    <div class="card-header" id="item_activity_data">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#item_activity" aria-expanded="false" aria-controls="item_activity">
+          Item Activity
+        </button>
+    </div>
+
+    <div id="item_activity" class="collapse show" aria-labelledby="item_activity_data">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Account</th>
+              <th scope="col">Target</th>
+              <th scope="col">Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for activity in item_activity %}
+            <tr>
+              <th scope="col">{{ activity.datetime }}</th>
+              <th scope="col">{{ activity.account }}</th>
+              <th scope="col">{{ activity.item }}</th>
+              <th scope="col">{{ activity.log }}</th>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-toggle="collapse" data-target="#transaction_activity">
+    <div class="card-header" id="transaction_activity_data">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#transaction_activity" aria-expanded="false" aria-controls="transaction_activity">
+          Transaction Activity
+        </button>
+    </div>
+
+    <div id="transaction_activity" class="collapse show" aria-labelledby="transaction_activity_data">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Account</th>
+              <th scope="col">Target</th>
+              <th scope="col">Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for activity in transaction_activity %}
+            <tr>
+              <th scope="col">{{ activity.datetime }}</th>
+              <th scope="col">{{ activity.account }}</th>
+              <th scope="col">{{ activity.transaction }}</th>
+              <th scope="col">{{ activity.log }}</th>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

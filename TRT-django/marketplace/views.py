@@ -30,8 +30,7 @@ import secrets
 
 
 def logItemAction(item, account, log):
-    ItemLog(item=item, account=account,
-            datetime=timezone.now(), log=log).save()
+    ItemLog(item=item, account=account, datetime=timezone.now(), log=log).save()
 
 
 # ----------------------------------------------------------------------
@@ -186,8 +185,7 @@ def editItem(request, pk):
 
     # if item is frozen or complete, do not allow editing
     if item.status != item.AVAILABLE:
-        messages.warning(
-            request, "Cannot edit an item in the unavailable state.")
+        messages.warning(request, "Cannot edit an item in the unavailable state.")
         return redirect("list_items")
 
     # populate the Django model form and validate data
@@ -231,8 +229,7 @@ def deleteItem(request, pk):
 
     # if item is frozen or complete, do not allow deleting
     if item.status != item.AVAILABLE:
-        messages.warning(
-            request, "Cannot delete an item in the unavailable state.")
+        messages.warning(request, "Cannot delete an item in the unavailable state.")
         return redirect("list_items")
 
     item.delete()
@@ -293,8 +290,7 @@ def newPurchase(request):
     item.save()
     logItemAction(item, account, "froze")
 
-    purchase = Transaction(item=item, buyer=account,
-                           status=Transaction.INITIATED)
+    purchase = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
     purchase.save()
     logTransactionAction(purchase, account, "created")
 
@@ -339,11 +335,9 @@ def confirmPurchase(request, pk):
 
     # transaction cannot be INITIATED, S_PENDING, COMPLETE, or CANCELLED
     if purchase.status == Transaction.INITIATED:
-        messages.warning(
-            request, "Cannot confirm - awaiting seller acknowledgement.")
+        messages.warning(request, "Cannot confirm - awaiting seller acknowledgement.")
     elif purchase.status == Transaction.S_PENDING:
-        messages.warning(
-            request, "Already confirmed - awaiting seller confirmation.")
+        messages.warning(request, "Already confirmed - awaiting seller confirmation.")
     elif purchase.status == Transaction.COMPLETE:
         messages.warning(
             request, "Already confirmed - purchase has already been completed."
@@ -357,8 +351,7 @@ def confirmPurchase(request, pk):
         purchase.status = Transaction.S_PENDING
         purchase.save()
         logTransactionAction(purchase, account, "confirmed")
-        messages.success(
-            request, "Purchase confirmed, awaiting seller confirmation.")
+        messages.success(request, "Purchase confirmed, awaiting seller confirmation.")
         # send confirmation emails
         send_mail(
             "Purchase Confirmed",
@@ -385,8 +378,7 @@ def confirmPurchase(request, pk):
         purchase.status = Transaction.COMPLETE
         purchase.save()
         logTransactionAction(purchase, account, "confirmed and completed")
-        messages.success(
-            request, "Purchase confirmed by both parties and completed.")
+        messages.success(request, "Purchase confirmed by both parties and completed.")
         # send confirmation emails
         send_mail(
             "Purchase Completed",
@@ -503,8 +495,7 @@ def acceptSale(request, pk):
             fail_silently=False,
         )
     else:
-        messages.warning(
-            request, "Cannot acknowledge - sale not in INITIATED state.")
+        messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
 
     return redirect("list_items")
 
@@ -527,25 +518,21 @@ def confirmSale(request, pk):
 
     # transaction cannot be INITIATED, B_PENDING, COMPLETE, or CANCELLED
     if sale.status == Transaction.INITIATED:
-        messages.warning(
-            request, "Cannot confirm - acknowledge the sale first.")
+        messages.warning(request, "Cannot confirm - acknowledge the sale first.")
     elif sale.status == Transaction.B_PENDING:
-        messages.warning(
-            request, "Already confirmed - awaiting buyer confirmation.")
+        messages.warning(request, "Already confirmed - awaiting buyer confirmation.")
     elif sale.status == Transaction.COMPLETE:
         messages.warning(
             request, "Already confirmed - sale has already been completed."
         )
     elif sale.status == Transaction.CANCELLED:
-        messages.warning(
-            request, "Cannot confirm - sale has already been cancelled.")
+        messages.warning(request, "Cannot confirm - sale has already been cancelled.")
     # elif ACKNOWLEDGED, move to B_PENDING
     elif sale.status == Transaction.ACKNOWLEDGED:
         sale.status = Transaction.B_PENDING
         sale.save()
         logTransactionAction(sale, account, "confirmed")
-        messages.success(
-            request, "Sale confirmed, awaiting buyer confirmation.")
+        messages.success(request, "Sale confirmed, awaiting buyer confirmation.")
         # send confirmation email
         send_mail(
             "Sale Confirmed",
@@ -572,8 +559,7 @@ def confirmSale(request, pk):
         sale.status = Transaction.COMPLETE
         sale.save()
         logTransactionAction(sale, account, "confirmed and completed")
-        messages.success(
-            request, "Sale confirmed by both parties and completed.")
+        messages.success(request, "Sale confirmed by both parties and completed.")
         # send confirmation email
         send_mail(
             "Sale Completed",
@@ -736,8 +722,7 @@ def editItemRequest(request, pk):
     # did not receive form data via POST, so send stored item_request form
     else:
         item_request_form = ItemRequestForm(instance=item_request)
-    context = {"item_request": item_request,
-               "item_request_form": item_request_form}
+    context = {"item_request": item_request, "item_request_form": item_request_form}
     return render(request, "marketplace/edit_item_request.html", context)
 
 
@@ -771,6 +756,32 @@ def deleteItemRequest(request, pk):
 
 # ----------------------------------------------------------------------
 
+# account activity page
+
+
+@authentication_required
+def accountActivity(request):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    own_activity_transaction = TransactionLog.objects.filter(account=account).order_by(
+        "datetime"
+    )
+
+    item_activity = ItemLog.objects.filter(item__seller=account).order_by("datetime")
+    transaction_activity = TransactionLog.objects.filter(
+        transaction__item__seller=account
+    ).order_by("datetime")
+
+    context = {
+        "own_activity_transaction": own_activity_transaction,
+        "item_activity": item_activity,
+        "transaction_activity": transaction_activity,
+    }
+    return render(request, "marketplace/account_activity.html", context)
+
+
+# ----------------------------------------------------------------------
+
 # account settings page
 
 
@@ -787,8 +798,7 @@ def editAccount(request):
             account_form.save()
             # do not save new email yet
             if new_email != old_email:
-                account = Account.objects.get(
-                    username=request.session.get("username"))
+                account = Account.objects.get(username=request.session.get("username"))
                 account.email = old_email
                 account.save()
 
@@ -847,6 +857,7 @@ def verifyEmail(request, token):
 def faq(request):
     return render(request, "marketplace/faq.html", {})
 
+
 # ----------------------------------------------------------------------
 
 # contact us page
@@ -854,6 +865,7 @@ def faq(request):
 
 def contact(request):
     return render(request, "marketplace/contact.html", {})
+
 
 # ----------------------------------------------------------------------
 
