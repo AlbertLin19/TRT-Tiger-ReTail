@@ -1,24 +1,49 @@
-{% for message in messages %}
-  <div class="toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-    <div class="toast-header">
-      <strong class="mr-auto">
-        {% if message.tags == 'error' %}
-          <i class="fas fa-times mr-2"></i>
-        {% elif message.tags == 'warning' %}
-          <i class="fas fa-exclamation mr-2"></i>
-        {% elif message.tags == 'info' %}
-          <i class="fas fa-info mr-2"></i>
-        {% elif message.tags == 'success' %}
-          <i class="fas fa-check mr-2"></i>
-        {% endif %}
-        {{message.tags|capfirst}}
-      </strong>
-      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body">
-      {{message|safe}}
+<!-- adapted from https://stackoverflow.com/questions/58863057/displaying-a-message-as-a-popup-alert-in-django -->
+<div style="position:relative;">
+
+  {% if account and not account.email %}
+  <div class="toast notification account-alert bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
+    <div class="toast-body" style="background-color:rgb(142, 177, 216);">
+      <i class="fas fa-exclamation mr-2"></i> Please set an email in your account settings.
     </div>
   </div>
+  {% endif %}
+
+
+  {% if account and not account.name %}
+  <div class="toast notification account-alert bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
+    <div class="toast-body" style="background-color:rgb(142, 177, 216);">
+      <i class="fas fa-exclamation mr-2"></i> Please set a display name in your account settings.
+    </div>
+  </div>
+  {% endif %}
+
+
+  {% if account and not account.contact %}
+  <div class="toast notification account-alert bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
+    <div class="toast-body" style="background-color:rgb(142, 177, 216);">
+      <i class="fas fa-exclamation mr-2"></i> Please let other users know how to contact you in your account settings.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- messages from back-end-->
+{% for message in messages %}
+<div class="toast notification message-pop bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="7000">
+  <div class="toast-body" style="background-color:rgb(130, 175, 136);">
+    {% if message.tags == 'error' %}
+      <i class="fas fa-times mr-2"></i>
+    {% elif message.tags == 'warning' %}
+      <i class="fas fa-exclamation mr-2"></i>
+    {% elif message.tags == 'info' %}
+      <i class="fas fa-info mr-2"></i>
+    {% elif message.tags == 'success' %}
+      <i class="fas fa-check mr-2"></i>
+    {% endif %}
+    {{message.tags|capfirst}}: {{message|safe}}
+  </div>
+</div>
 {% endfor %}
+
+
+</div>

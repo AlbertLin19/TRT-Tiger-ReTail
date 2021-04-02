@@ -308,6 +308,7 @@ def newPurchase(request):
     purchase = Transaction(item=item, buyer=account, status=Transaction.INITIATED)
     purchase.save()
     logTransactionAction(purchase, account, "created")
+    messages.success(request, "Purchase started!")
 
     # send confirmation email
     send_mail(
