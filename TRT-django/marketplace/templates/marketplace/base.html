@@ -21,6 +21,7 @@
 
 
 <body>
+    {% include 'marketplace/message.html' %}
     {% with Item_AVAILABLE=0 Item_FROZEN=1 Item_COMPLETE=2 %}
     {% with Transaction_INITIATED=0 Transaction_ACKNOWLEDGED=1 Transaction_S_PENDING=2 %}
     {% with Transaction_B_PENDING=3 Transaction_COMPLETE=4 Transaction_CANCELLED=5 %}
@@ -53,31 +54,26 @@
         <br><br>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            {% if account and not account.email %}
-            <div class="alert alert-info">Please set an email in your account settings.</div>
-            {% endif %}
-            {% if account and not account.name %}
-            <div class="alert alert-info">Please set a display name in your account settings.</div>
-            {% endif %}
-            {% if account and not account.contact %}
-            <div class="alert alert-info">Please let other users know how to contact you in your account settings.</div>
-            {% endif %}
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-
     {% block content %}{% endblock content %}
+    <!-- jQuery stuff for messages -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <!-- adapted from https://stackoverflow.com/questions/58863057/displaying-a-message-as-a-popup-alert-in-django -->
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                $(document).ready(function () {
+                    $('.toast').toast('show');
+                });
+            {% endfor %}
+        </script>
+    {% endif %}
 
     <!-- Bootstrap Popper, JS plugins -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
         crossorigin="anonymous"></script>
+    
     {% endwith %}
     {% endwith %}
     {% endwith %}

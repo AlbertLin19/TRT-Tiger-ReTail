@@ -142,6 +142,13 @@ html,
    /* background: #e4fbff; */
 }
 
+.rounded {
+   border-top-left-radius: .5rem !important;
+   border-bottom-left-radius: .5rem !important;
+   border-top-right-radius: .5rem !important;
+   border-bottom-right-radius: .5rem !important;
+}
+
 .only-round-right {
    border-top-left-radius: .0rem !important;
    border-bottom-left-radius: .0rem !important;
@@ -155,6 +162,22 @@ html,
    border-top-left-radius: .2rem !important;
    border-bottom-left-radius: .2rem !important;
  }
+
+.message-pop{
+   position: fixed !important;
+   top: 7px !important; 
+   right: 7px !important;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-size: medium;
+}
+
+.account-alert{
+   position: fixed !important;
+   top: 7px !important; 
+   right: 380px !important;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-size: medium;
+}
 
  div.dropdown-menu.show { 
    background-color: #fd9652; 
