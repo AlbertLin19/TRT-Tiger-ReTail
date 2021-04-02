@@ -134,13 +134,17 @@ html,
    cursor: pointer;
 }
 
+/*
 .card:hover{
    /* background: #d2f0d1;
    box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.50); */
-   transform: scale(1.04);
-   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+   
+   /*transform: scale(1.04);
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);*/
+
    /* background: #e4fbff; */
-}
+/*}*/
+
 
 .only-round-right {
    border-top-left-radius: .0rem !important;
@@ -156,9 +160,11 @@ html,
    border-bottom-left-radius: .2rem !important;
  }
 
- div.dropdown-menu.show { 
+ div.dropdown-menu.dropdown-menu-right.show { 
    background-color: #fd9652; 
    opacity: 100%;
    text-align: center;
    position: fixed;
+   z-index:1;
 }
+
