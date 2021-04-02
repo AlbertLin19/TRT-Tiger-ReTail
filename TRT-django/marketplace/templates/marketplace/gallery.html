@@ -16,6 +16,7 @@
                   FILTER
                 </button>
                 <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <button onclick="filter('')" class="dropdown-item">NO FILTER</button>
                     <button onclick="filter('appliances')" class="dropdown-item">APPLIANCES</button>
                     <button onclick="filter('book')" class="dropdown-item">BOOK</button>
                     <button onclick="filter('clothes')" class="dropdown-item">CLOTHES</button>
@@ -58,7 +59,7 @@
                     </div>
                     <div class="item_categories">
                     {% for category in item.categories.all %}
-                        <div class="item_category" style="display:none;">{{category}}</div>
+                        <div class="item_category">{{category}}</div>
                     {% endfor %}
                     </div>
                     <div class="card-body">
