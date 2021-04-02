@@ -166,10 +166,6 @@ html,
    border-top-left-radius: .2rem !important;
    border-bottom-left-radius: .2rem !important;
  }
-
-<<<<<<< HEAD
- div.dropdown-menu.dropdown-menu-right.show { 
-=======
 .message-pop{
    position: fixed !important;
    top: 7px !important; 
@@ -187,7 +183,6 @@ html,
 }
 
  div.dropdown-menu.show { 
->>>>>>> 43794e6433ec77cd58874b4cf0a79761e49e4c4f
    background-color: #fd9652; 
    opacity: 100%;
    text-align: center;
