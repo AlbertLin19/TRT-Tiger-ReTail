@@ -6,7 +6,7 @@ html,
    height: 100%;*/
    left: 0px;
    top: 0px;
-   background: url(Header_pic.png) no-repeat;
+   background: url("Header_pic.720ae4f7f80d.png") no-repeat;
    background-size: 100%;
 }
 
@@ -98,7 +98,7 @@ html,
  .topbar{
     padding: 20px 20px 20px 20px;
     /*background: #d0eede;*/
-    background: url(tiger.jpg);
+    background: url("tiger.4efb42bde9ea.jpg");
     background-size: 100%;
     opacity: 90%;
  }
@@ -155,10 +155,3 @@ html,
    border-top-left-radius: .2rem !important;
    border-bottom-left-radius: .2rem !important;
  }
-
- div.dropdown-menu.show { 
-   background-color: #fd9652; 
-   opacity: 100%;
-   text-align: center;
-   position: fixed;
-}
