@@ -1,0 +1,17 @@
+{% extends "marketplace/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
+</div>
+
+<div class="container">
+    <p>
+    <div class="row">
+        <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSdG0tUu83mnzcQVjfoT_Xke7HIUfDiV7JiGfeDIr93w_xIIzQ/viewform?embedded=true"
+            width="640" height="688" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe></p>
+    </div>
+</div>
+{% endblock content %}

@@ -4,23 +4,24 @@
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
 </div>
-    <div class="container my-4">
-        <h2>Request Edit Form</h2> <hr>
-        <form action="{% url 'edit_item_request' item_request.pk %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="row my-2">
-                <div class="col-lg-6 col-sm-12">
-                    <label>Name of Requested Item*</label>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                          <div class="input-group-text only-round-left">
+<div class="container my-4">
+    <h2>Request Edit Form</h2>
+    <hr>
+    <form action="{% url 'edit_item_request' item_request.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row my-2">
+            <div class="col-lg-6 col-sm-12">
+                <label>Name of Requested Item*</label>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text only-round-left">
                             <span style="font-size: 16px; color: rgb(0, 0, 0);">
-                                <i class="fas fa-box-open"></i> 
+                                <i class="fas fa-box-open"></i>
                             </span>
                         </div>
-                      </div>
-                      {{ item_request_form.name|as_crispy_field }}
+                    </div>
+                    {{ item_request_form.name|as_crispy_field }}
                 </div>
             </div>
 
@@ -35,11 +36,11 @@
                     <label>Price*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
-                          <div class="input-group-text only-round-left">
-                            <span style="font-size: 16px; color: rgb(0, 0, 0);">
-                                <i class="fas fa-dollar-sign"></i> 
-                            </span>
-                          </div>
+                            <div class="input-group-text only-round-left">
+                                <span style="font-size: 16px; color: rgb(0, 0, 0);">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
                         </div>
                         {{ item_request_form.price|as_crispy_field }}
                     </div>
@@ -48,11 +49,11 @@
                     <label>Deadline to Sell*</label>
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
-                          <div class="input-group-text only-round-left">
-                            <span style="font-size: 16px; color: rgb(0, 0, 0);">
-                                <i class="fas fa-calendar"></i> 
-                            </span>
-                          </div>
+                            <div class="input-group-text only-round-left">
+                                <span style="font-size: 16px; color: rgb(0, 0, 0);">
+                                    <i class="fas fa-calendar"></i>
+                                </span>
+                            </div>
                         </div>
                         {{ item_request_form.deadline|as_crispy_field }}
                     </div>
@@ -81,7 +82,7 @@
                 <button type="submit" value="Save" class="btn btn-success">Save</button>
             </div>
 
-        </form>
-    </div>
+    </form>
+</div>
 
 {% endblock content %}

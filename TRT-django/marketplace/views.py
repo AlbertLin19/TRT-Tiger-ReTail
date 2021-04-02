@@ -849,6 +849,14 @@ def faq(request):
 
 # ----------------------------------------------------------------------
 
+# contact us page
+
+
+def contact(request):
+    return render(request, "marketplace/contact.html", {})
+
+# ----------------------------------------------------------------------
+
 
 def logout(request):
     request.session.pop("username")
