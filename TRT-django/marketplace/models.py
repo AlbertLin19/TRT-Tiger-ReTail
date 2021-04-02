@@ -191,3 +191,17 @@ class ItemRequest(models.Model):
 
     def __str__(self):
         return self.name + " by " + str(self.requester)
+
+
+class ItemRequestLog(models.Model):
+    item_request = models.ForeignKey(
+        ItemRequest, on_delete=models.CASCADE, related_name="logs"
+    )
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="item_request_logs"
+    )
+    datetime = models.DateTimeField()
+    log = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.item_request) + " at " + str(self.datetime)

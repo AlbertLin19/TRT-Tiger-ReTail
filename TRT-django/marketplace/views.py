@@ -13,6 +13,7 @@ from .models import (
     TransactionLog,
     AlbumImage,
     ItemRequest,
+    ItemRequestLog,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
@@ -41,6 +42,20 @@ def logItemAction(item, account, log):
 def logTransactionAction(transaction, account, log):
     TransactionLog(
         transaction=transaction,
+        account=account,
+        datetime=timezone.now(),
+        log=log,
+    ).save()
+
+
+# ----------------------------------------------------------------------
+
+# helper method to log an item_request action
+
+
+def logItemRequestAction(item_request, account, log):
+    ItemRequestLog(
+        item_request=item_request,
         account=account,
         datetime=timezone.now(),
         log=log,
@@ -672,6 +687,7 @@ def newItemRequest(request):
             # save the m2m fields, which did not yet bc of commit=False
             item_request_form.save_m2m()
 
+            logItemRequestAction(item_request, account, "created")
             messages.success(request, "New item request posted.")
             # send confirmation email
             send_mail(
@@ -717,6 +733,7 @@ def editItemRequest(request, pk):
             # save changes to item_request
             item_request_form.save()
 
+            logItemRequestAction(item_request, account, "edited")
             messages.success(request, "Item request updated.")
 
     # did not receive form data via POST, so send stored item_request form
@@ -741,6 +758,7 @@ def deleteItemRequest(request, pk):
         raise PermissionDenied
 
     item_request.delete()
+    logItemRequestAction(item_request, account, "deleted")
     messages.success(request, "Item request deleted.")
     # send confirmation email
     send_mail(
@@ -763,19 +781,25 @@ def deleteItemRequest(request, pk):
 def accountActivity(request):
     account = Account.objects.get(username=request.session.get("username"))
 
-    own_activity_transaction = TransactionLog.objects.filter(account=account).order_by(
-        "datetime"
-    )
+    own_activity_item = account.item_logs.order_by("datetime")
+    own_activity_transaction = account.transaction_logs.order_by("datetime")
+    own_activity_item_request = account.item_request_logs.order_by("datetime")
 
     item_activity = ItemLog.objects.filter(item__seller=account).order_by("datetime")
     transaction_activity = TransactionLog.objects.filter(
-        transaction__item__seller=account
+        transaction__buyer=account
+    ).order_by("datetime")
+    item_request_activity = ItemRequestLog.objects.filter(
+        item_request__requester=account
     ).order_by("datetime")
 
     context = {
         "own_activity_transaction": own_activity_transaction,
+        "own_activity_item": own_activity_item,
+        "own_activity_item_request": own_activity_item_request,
         "item_activity": item_activity,
         "transaction_activity": transaction_activity,
+        "item_request_activity": item_request_activity,
     }
     return render(request, "marketplace/account_activity.html", context)
 
