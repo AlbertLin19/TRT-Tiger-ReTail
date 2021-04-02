@@ -61,6 +61,7 @@ class Item(models.Model):
             MinValueValidator(Decimal("0.00")),
         ],
     )
+    negotiable = models.BooleanField()
     condition = models.DecimalField(
         max_digits=1,
         decimal_places=0,
@@ -172,6 +173,7 @@ class ItemRequest(models.Model):
             MinValueValidator(Decimal("0.00")),
         ],
     )
+    negotiable = models.BooleanField()
     condition = models.DecimalField(
         max_digits=1,
         decimal_places=0,

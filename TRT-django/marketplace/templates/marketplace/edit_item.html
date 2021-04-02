@@ -44,6 +44,10 @@
                         {{ item_form.price|as_crispy_field }}
                     </div>
                 </div>
+                <div class="col-lg-2 col-sm-4">
+                    <label>Price Negotiable*</label>
+                    {{ item_form.negotiable|as_crispy_field }}
+                </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Deadline to Sell*</label>
                     <div class="input-group mb-2">
@@ -57,6 +61,9 @@
                         {{ item_form.deadline|as_crispy_field }}
                     </div>
                 </div>
+            </div>
+
+            <div class="row my-4">
                 <div class="col-lg-3 col-xs-4">
                     {{ item_form.categories|as_crispy_field }}
                 </div>

@@ -46,6 +46,10 @@
                         {{ item_request_form.price|as_crispy_field }}
                     </div>
                 </div>
+                <div class="col-lg-2 col-sm-4">
+                    <label>Price Negotiable*</label>
+                    {{ item_request_form.negotiable|as_crispy_field }}
+                </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Request Expiration Date*</label>
                     <div class="input-group mb-2">
@@ -59,6 +63,9 @@
                         {{ item_request_form.deadline|as_crispy_field }}
                     </div>
                 </div>
+            </div>
+            
+            <div class="row my-4">
                 <div class="col-lg-3 col-sm-6">
                     {{ item_request_form.categories|as_crispy_field }}
                 </div>

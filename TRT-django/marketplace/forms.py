@@ -12,6 +12,7 @@ class ItemForm(forms.ModelForm):
             "name",
             "description",
             "price",
+            "negotiable",
             "deadline",
             "condition",
             "categories",
@@ -21,6 +22,7 @@ class ItemForm(forms.ModelForm):
             "name": "",
             "deadline": "",
             "price": "",
+            "negotiable": "",
             "image": "",
         }
         widgets = {
@@ -40,6 +42,7 @@ class ItemRequestForm(forms.ModelForm):
             "name",
             "description",
             "price",
+            "negotiable",
             "deadline",
             "condition",
             "categories",
@@ -49,6 +52,7 @@ class ItemRequestForm(forms.ModelForm):
             "name": "",
             "deadline": "",
             "price": "",
+            "negotiable": "",
             "image": "",
         }
         widgets = {
