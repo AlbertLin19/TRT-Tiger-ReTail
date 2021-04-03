@@ -18,6 +18,7 @@ class Account(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField()
     contact = models.CharField(max_length=200)
+    contacts = models.ManyToManyField("self")
 
     def __str__(self):
         return self.username
@@ -205,3 +206,13 @@ class ItemRequestLog(models.Model):
 
     def __str__(self):
         return str(self.item_request) + " at " + str(self.datetime)
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="sent_messages"
+    )
+    receiver = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="received_messages"
+    )
+    text = models.TextField()
