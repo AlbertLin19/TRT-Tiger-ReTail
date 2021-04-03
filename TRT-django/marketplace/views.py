@@ -830,10 +830,10 @@ def getMessages(request, pk):
 @authentication_required
 def sendMessage(request):
     account = Account.objects.get(username=request.session.get("username"))
+    # NOTE: using request.body instead of request.POST bc of frontend fetch() API
     body = json.loads(request.body)
 
     try:
-        # NOTE: using request.body instead of request.POST bc of frontend fetch() API
         contact = Account.objects.get(pk=body["pk"])
         text = body["text"]
     except:
