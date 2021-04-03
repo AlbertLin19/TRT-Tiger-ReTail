@@ -110,32 +110,41 @@
 
         sendInputText()
         {
-            // disable the button
-            document.getElementById("send_button").disabled = true;
-            // clear text input
-            document.getElementById("text_input").value = '';
-            // send the state text 
-            this.setState({sending: true});
+            if (!this.state.sending && this.state.text != '') {
+                // disable the button
+                document.getElementById("send_button").disabled = true;
+                // clear text input
+                document.getElementById("text_input").value = '';
+                // send the state text 
+                this.setState({sending: true});
 
-            const url = '/inbox/send/';
-            fetch(url, {
-                method: 'post',
-                headers: {"X-CSRFToken": $('[name="csrfmiddlewaretoken"]').attr('value'), 'Content-Type': 'application/json'},
-                body: JSON.stringify({"pk": this.state.active_contact_pk, "text": this.state.text}),
-            })
-                   .then((resp) => {return resp;})
-                   .then((data) => {
-                       this.setState({sending: false});
-                       console.log(data);
-                    })
-                   .catch((error) => {
-                       this.setState({sending: false});
-                       console.log(error);
-                    });
+                const text = this.state.text;
 
+                const url = '/inbox/send/';
+                fetch(url, {
+                    method: 'post',
+                    headers: {"X-CSRFToken": $('[name="csrfmiddlewaretoken"]').attr('value'), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({"pk": this.state.active_contact_pk, "text": text}),
+                })
+                    .then((resp) => {return resp;})
+                    .then((data) => {
+                        let messages = this.state.messages;
+                        messages.push({type: 'sent', datetime: Date.now(), text: text})
+                        this.setState({sending: false, messages: messages});
+                        })
+                    .catch((error) => {
+                        this.setState({sending: false});
+                        console.log(error);
+                        });
+
+                
+                // clear the state text 
+                this.setInputText('');
+            }
+            else {
+                return;
+            }
             
-            // clear the state text 
-            this.setInputText('');
         }
 
         componentDidMount()
@@ -151,6 +160,12 @@
             text_input.addEventListener('input', () => this.setInputText(event.target.value));
             const send_button = document.getElementById("send_button");
             send_button.addEventListener('click', () => this.sendInputText());
+            text_input.addEventListener('keydown', () => {
+                // check for enter press
+                if (event.keyCode === 13) {
+                    this.sendInputText();
+                }
+            })
 
             // clear the input initially
             this.setInputText('');
