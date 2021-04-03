@@ -215,4 +215,5 @@ class Message(models.Model):
     receiver = models.ForeignKey(
         Account, on_delete=models.CASCADE, related_name="received_messages"
     )
+    datetime = models.DateTimeField()
     text = models.TextField()

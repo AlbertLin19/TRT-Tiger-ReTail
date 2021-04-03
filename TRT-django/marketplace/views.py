@@ -827,11 +827,11 @@ def sendMessage(request):
 
     try:
         contact = Account.objects.get(pk=request.POST["pk"])
-        text = request.POST["pk"]
+        text = request.POST["text"]
     except:
         return HttpResponse(status=400)
 
-    Message(sender=account, receiver=contact, text=text).save()
+    Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
     return HttpResponse(status=200)
 
 
