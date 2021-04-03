@@ -1,7 +1,202 @@
 {% extends "marketplace/base.html" %}
 {% block content %}
+{% csrf_token %}
 
-  <div class="container-fluid">
-  </div>
+    <div class="container-fluid py-2" style="height: 55vh;">
+
+        <div class="row" style="height: 100%;">
+
+            <div class="col-4 col-sm-3 col-lg-2" style="height: 100%; overflow-y: scroll;">
+                
+                <div class="d-flex align-items-start">
+                    <div class="nav flex-column nav-pills me-3" id="contact_tabs" role="tablist" aria-orientation="vertical">
+                        {% for contact in contacts %}
+                            <button class="nav-link" id="{{ contact.pk }}" style="text-align: right !important;" data-bs-toggle="pill" type="button" role="tab">{{contact.name}}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="col-8 col-sm-9 col-lg-10 overflow-auto" style="height: 100%;">
+                <div class="row" style="height: 85%;">
+
+                    <div class="col" style="height: 100%; overflow-y: scroll;">
+                        <div id="inbox_root"></div>
+                    </div>
+
+                </div>
+
+                <div class="row align-items-end pt-2" style="height: 15%;">
+                    <div class="col" style="height: 100%;">
+                        <div class="input-group">
+                            <input type="text" class="form-control only-round-left" id="text_input">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary only-round-right" id="send_button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+    'use strict';
+
+    class Inbox extends React.Component
+    {
+        constructor(props)
+        {
+            super(props);
+            this.state = {active_contact_pk: null, contact_pks: [{% for contact in contacts %}{{contact.pk}}, {% endfor %}], messages: [], text: '', loading: false, sending: false};
+        }
+
+        getMessages()
+        {
+            if (this.state.active_contact_pk && !this.state.loading)
+            {
+                this.setState({loading: true});
+                const url = "/inbox/" + this.state.active_contact_pk + "/get/";
+                fetch(url)
+                   .then((resp) => {return resp.json();})
+                   .then((data) => {
+                       let messages = [];
+                       for (const sent_message of data['sent'])
+                       {
+                           messages.push({type: 'sent', datetime: new Date(sent_message[0]), text: sent_message[1]});
+                       }
+                       for (const received_message of data['received'])
+                       {
+                           messages.push({type: 'received', datetime: new Date(received_message[0]), text: received_message[1]});
+                       }
+                       // sort by date
+                       messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
+                       this.setState({messages: messages, loading: false});
+                    })
+                   .catch((error) => {
+                       this.setState({loading: false}); 
+                       return console.log(error);
+                    });
+            }
+            else 
+            {
+                return;
+            }
+        }
+
+        setActiveContactPk(contact_pk)
+        {
+            this.setState({active_contact_pk: contact_pk});
+            this.setInputText(this.state.text);
+            this.getMessages();
+        }
+
+        setInputText(text)
+        {
+            this.setState({text: text});
+            // disable button if empty text or sending or no active_contact_pk
+            document.getElementById("send_button").disabled = false;
+            if (text === '' || this.state.sending || !this.state.active_contact_pk)
+            {
+                document.getElementById("send_button").disabled = true;
+            }
+        }
+
+        sendInputText()
+        {
+            // disable the button
+            document.getElementById("send_button").disabled = true;
+            // clear text input
+            document.getElementById("text_input").value = '';
+            // send the state text 
+            this.setState({sending: true});
+
+            const url = '/inbox/send/';
+            fetch(url, {
+                method: 'post',
+                headers: {"X-CSRFToken": $('[name="csrfmiddlewaretoken"]').attr('value'), 'Content-Type': 'application/json'},
+                body: JSON.stringify({"pk": this.state.active_contact_pk, "text": this.state.text}),
+            })
+                   .then((resp) => {return resp;})
+                   .then((data) => {
+                       this.setState({sending: false});
+                       console.log(data);
+                    })
+                   .catch((error) => {
+                       this.setState({sending: false});
+                       console.log(error);
+                    });
+
+            
+            // clear the state text 
+            this.setInputText('');
+        }
+
+        componentDidMount()
+        {
+            // add listeners to all the contact tabs
+            for (const contact_pk of this.state.contact_pks)
+            {
+                const contact_tab = document.getElementById(contact_pk);
+                contact_tab.addEventListener('click', () => this.setActiveContactPk(contact_pk));
+            }
+            // add listeners to input field and send button
+            const text_input = document.getElementById("text_input");
+            text_input.addEventListener('input', () => this.setInputText(event.target.value));
+            const send_button = document.getElementById("send_button");
+            send_button.addEventListener('click', () => this.sendInputText());
+
+            // clear the input initially
+            this.setInputText('');
+            text_input.value = '';
+
+            window.setInterval(() => {this.getMessages()}, 2500);
+
+        }
+
+        render()
+        {
+            if (this.state.active_contact_pk)
+            {
+                if (this.state.messages.length > 0)
+                {
+                    return this.state.messages.map(message => React.createElement("div", {
+                        class: "row mt-1" + ((message['type'] === 'sent') ? ' justify-content-end':' justify-content-start')
+                    }, React.createElement("div", {
+                        class: "col-5"
+                    }, React.createElement("div", {
+                        class: "card"
+                    }, React.createElement("div", {
+                        class: "card-body"
+                    }, React.createElement("p", {
+                        class: "card-text"
+                    }, message['text']), React.createElement("p", {
+                        class: "card-text"
+                    }, React.createElement("small", {
+                        class: "text-muted"
+                    }, message['datetime'].toLocaleString())))))));
+                }
+                else 
+                {
+                    return React.createElement('h5', null, 'No message history.');
+                }
+            }
+            else
+            {
+                return React.createElement('h5', null, 'Please select a contact from the left panel to chat with.');
+            }
+            
+        }
+    }
+
+    ReactDOM.render(React.createElement(Inbox, null), document.getElementById('inbox_root'));
+
+    </script>
 
 {% endblock content %}

@@ -26,6 +26,7 @@ import cloudinary.api
 from django.core.exceptions import PermissionDenied
 import secrets
 from django.http import HttpResponse, JsonResponse
+import json
 
 # ----------------------------------------------------------------------
 
@@ -811,9 +812,14 @@ def getMessages(request, pk):
         contact = Account.objects.get(pk=pk)
     except:
         return HttpResponse(status=400)
-    sent = account.sent_messages.filter(receiver=contact)
-    received = account.received_messages.filter(sender=contact)
-    return JsonResponse({"sent": sent, "received": received})
+    sent = account.sent_messages.filter(receiver=contact).order_by("datetime")
+    received = account.received_messages.filter(sender=contact).order_by("datetime")
+    return JsonResponse(
+        {
+            "sent": list(sent.values_list("datetime", "text")),
+            "received": list(received.values_list("datetime", "text")),
+        }
+    )
 
 
 # ----------------------------------------------------------------------
@@ -824,10 +830,12 @@ def getMessages(request, pk):
 @authentication_required
 def sendMessage(request):
     account = Account.objects.get(username=request.session.get("username"))
+    body = json.loads(request.body)
 
     try:
-        contact = Account.objects.get(pk=request.POST["pk"])
-        text = request.POST["text"]
+        # NOTE: using request.body instead of request.POST bc of frontend fetch() API
+        contact = Account.objects.get(pk=body["pk"])
+        text = body["text"]
     except:
         return HttpResponse(status=400)
 
