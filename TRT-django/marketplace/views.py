@@ -102,6 +102,9 @@ def authentication_required(view_function):
                 return view_function(request, *args, **kwargs)
 
         # user could NOT be authenticated, so redirect to CAS login
+        # before redirection, store POST details for use once redirected back
+        if request.method == "POST":
+            request.session[request.path] = request.POST
         return redirect(CASClient.getLoginUrl(request.build_absolute_uri()))
 
     return wrapper
@@ -287,6 +290,14 @@ def listPurchases(request):
 @authentication_required
 def newPurchase(request):
     account = Account.objects.get(username=request.session.get("username"))
+
+    # check for possible GET instead of POST, caused by CAS redirect for login upon trying to purchase an item
+    if request.method == "GET":
+        if request.path in request.session:
+            request.POST = request.session.pop(request.path)
+        else:
+            # GET request with no prev POST data in session is an error
+            return HttpResponse(status=400)
 
     # item must be available for a transaction to associate with
     pk = request.POST["pk"]
