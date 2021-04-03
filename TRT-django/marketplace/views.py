@@ -14,6 +14,7 @@ from .models import (
     AlbumImage,
     ItemRequest,
     ItemRequestLog,
+    Message,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
@@ -24,6 +25,7 @@ import cloudinary.api
 
 from django.core.exceptions import PermissionDenied
 import secrets
+from django.http import HttpResponse, JsonResponse
 
 # ----------------------------------------------------------------------
 
@@ -83,7 +85,7 @@ def authentication_required(view_function):
         if "ticket" in request.GET:
             username = CASClient.validate(
                 request.build_absolute_uri(), request.GET["ticket"]
-            )
+            ).strip()
 
             if username is not None:
                 # store authenticated username,
@@ -771,6 +773,55 @@ def deleteItemRequest(request, pk):
         fail_silently=False,
     )
     return redirect("list_item_requests")
+
+
+# ----------------------------------------------------------------------
+
+# messaging system page
+
+
+@authentication_required
+def inbox(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    contacts = account.contacts.all()
+    context = {"contacts": contacts}
+    return render(request, "marketplace/inbox.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# get messages sent to and received from account pk
+
+
+@authentication_required
+def getMessages(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    try:
+        contact = Account.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+    sent = account.sent_messages.filter(receiver=contact)
+    received = account.received_messages.filter(sender=contact)
+    return JsonResponse({"sent": sent, "received": received})
+
+
+# ----------------------------------------------------------------------
+
+# send message to account pk
+
+
+@authentication_required
+def sendMessage(request):
+    account = Account.objects.get(username=request.session.get("username"))
+
+    try:
+        contact = Account.objects.get(pk=request.POST["pk"])
+        text = request.POST["pk"]
+    except:
+        return HttpResponse(status=400)
+
+    Message(sender=account, receiver=contact, text=text).save()
+    return HttpResponse(status=200)
 
 
 # ----------------------------------------------------------------------
