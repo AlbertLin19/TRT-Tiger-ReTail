@@ -92,7 +92,7 @@
 
         setActiveContactPk(contact_pk)
         {
-            this.setState({active_contact_pk: contact_pk});
+            this.setState({active_contact_pk: contact_pk, autoscroll: true});
             this.setInputText(this.state.text);
             this.getMessages();
         }
