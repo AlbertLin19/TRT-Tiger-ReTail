@@ -507,6 +507,8 @@ def acceptSale(request, pk):
         sale.save()
         logTransactionAction(sale, account, "acknowledged")
         messages.success(request, "Sale acknowledged.")
+        # open contact between buyer and seller
+        account.contacts.add(sale.buyer)  # (m2m goes both ways)
         # send confirmation email
         send_mail(
             "Sale Accepted",
