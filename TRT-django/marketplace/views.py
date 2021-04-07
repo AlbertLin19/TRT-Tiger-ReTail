@@ -775,7 +775,6 @@ def deleteItemRequest(request, pk):
         raise PermissionDenied
 
     item_request.delete()
-    logItemRequestAction(item_request, account, "deleted")
     messages.success(request, "Item request deleted.")
     # send confirmation email
     send_mail(
