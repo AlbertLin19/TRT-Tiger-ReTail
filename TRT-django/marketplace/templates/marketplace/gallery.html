@@ -80,32 +80,46 @@
                           <div class="modal fade" id="{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="{{item.pk}}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                               <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                <div class="modal-header" style="background-color: rgb(54, 188, 250);">
+                                  <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
+                                  <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                                    <span style="font-size:30px" aria-hidden="true">&times;</span>
                                   </button>
                                 </div>
-                                <script>var counter = 0;</script>
                                 <div class="modal-body">
-                                    <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
-                                        <div class="carousel-inner">
+                                  <h2 style="text-align:center;">ITEM DETAILS</h2>
+                                    <div id="myCarousel{{item.pk}}" class="carousel slide text-center multi-item-carousel" data-ride="carousel">
+                                      <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
+                                      <br>
+                                      <div class="carousel-inner" role="listbox">
                                             <!--carousel-item active-->
-                                          <div class="carousel-item active" data-interval="100">
-                                            {% cloudinary item.image format="jpg" width=240 height=160 crop="fill"%}
+                                          <div class="carousel-item active">
+                                            {% cloudinary item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
                                           </div>
                                           {%for image in item.album.all%}
-                                            <div class="carousel-item" data-interval="200">
-                                                {% cloudinary image.image format="jpg" width=240 height=160 crop="fill"%}
+                                            <div class="carousel-item">
+                                                {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
                                             </div>
                                           {%endfor%}
                                         </div>
-                                        <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                                        <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                                        <br>
+                                        <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button" data-slide="prev">
+                                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                          <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button" data-slide="next">
+                                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                          <span class="sr-only">Next</span>
+                                        </a>
+                                      <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
                                     </div>
-                                    <br>
-                                    ${{item.price}} USD <br>
-                                    Merchant: {{item.seller}}
+                                    <hr style="border-top: 2px solid black;">
+                                    <div style="background:#bdecf7; border-radius:10px;" id="description">
+                                      <br>
+                                      &nbsp;&nbsp;${{item.price}} USD <br>
+                                      &nbsp;&nbsp;Merchant: {{item.seller}}<br>
+                                      <br>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -2,8 +2,8 @@ html,
 
 /* big big picture on the gallery */
 #gallery_top_bar{
-   /*width: 100%;
-   height: 100%;*/
+   /*height: 100%;
+   width:100%;*/
    left: 0px;
    top: 0px;
    background: url(Header_pic.png) no-repeat;
@@ -25,7 +25,8 @@ html,
 #tiger_retail_title{
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
-   font-size: 120px;
+   /*font-size: 120px;*/
+   font-size: 600%;
    color: #F9F9F9;
    font-weight: bold;
    text-align: center;
@@ -36,7 +37,8 @@ html,
 #trt_title{
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
-   font-size: 50px;
+   /*font-size: 50px;*/
+   font-size: 300%;
    color: #ff7301;
    font-weight: bold;
    text-align: center;
@@ -190,3 +192,48 @@ html,
    z-index:1;
 }
 
+/*https://stackoverflow.com/questions/46249541/change-arrow-colors-in-bootstraps-carousel*/
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}
+/*
+.multi-item-carousel {
+   overflow: hidden;
+ }
+ 
+ .multi-item-carousel .carousel-control-prev,
+ .multi-item-carousel .carousel-control-next {
+   background: rgba(255, 255, 255, 0.5);
+   width: 5%;
+ }
+ 
+ .multi-item-carousel .carousel-inner {
+   width: 100%;
+   /*left: -30%;*/
+    /*
+ }
+ /*
+ 
+ .carousel-inner .carousel-item-right.active,
+ .carousel-inner .carousel-item-next {
+   transform: translateX(100%);
+ }
+ 
+ .carousel-inner .carousel-item-left.active,
+ .carousel-inner .carousel-item-prev {
+   transform: translateX(-100%)
+ }
+ 
+ .carousel-inner .carousel-item-right,
+ .carousel-inner .carousel-item-left {
+   transform: translateX(100%);
+ }
+ 
+ .item__third {
+   float: left;
+   width: 25%;
+   background-size: cover;
+   height: 400px;
+ }*/
+ 
