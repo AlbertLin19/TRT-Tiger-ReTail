@@ -239,9 +239,13 @@ def editItem(request, pk):
 
     # populate the Django model form and validate data
     if request.method == "POST":
+        old_image = item.image
         item_form = ItemForm(request.POST, request.FILES, instance=item)
         if item_form.is_valid():
             try:
+                # remove the old image from storage (if different)
+                if item_form.cleaned_data["image"] != old_image:
+                    cloudinary.uploader.destroy(str(old_image))
                 # save changes to item
                 item_form.save()
                 logItemAction(item, account, "edited")
@@ -792,11 +796,15 @@ def editItemRequest(request, pk):
 
     # populate the Django model form and validate data
     if request.method == "POST":
+        old_image = item_request.image
         item_request_form = ItemRequestForm(
             request.POST, request.FILES, instance=item_request
         )
         if item_request_form.is_valid():
             try:
+                # remove the old image from storage (if different)
+                if item_request_form.cleaned_data["image"] != old_image:
+                    cloudinary.uploader.destroy(str(old_image))
                 # save changes to item_request
                 item_request_form.save()
 

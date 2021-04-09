@@ -2,8 +2,11 @@ from django.db import models
 from django.forms.widgets import NumberInput
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 from decimal import Decimal
 from cloudinary.models import CloudinaryField
+import cloudinary.uploader
 from datetime import timedelta
 
 
@@ -238,3 +241,19 @@ class Notification(models.Model):
     datetime = models.DateTimeField()
     text = models.CharField(max_length=100)
     seen = models.BooleanField(default=False)
+
+
+############## DELETE CLOUDINARY IMAGES POST_DELETE ###################
+@receiver(post_delete, sender=Item)
+def deleteItemImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))
+
+
+@receiver(post_delete, sender=AlbumImage)
+def deleteAlbumImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))
+
+
+@receiver(post_delete, sender=ItemRequest)
+def deleteItemRequestImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))

@@ -52,6 +52,9 @@
         <button onclick="filter('other')" class="btn btn-sm">Other</button>
       </div>
       <div class="col-md-10 row">
+        {% if not items %}
+          <h4>No items posted yet.</h4>
+        {% endif %}
         {% for item in items %}
         {% if item.status != Item_FROZEN and item.status != Item_COMPLETE%}
         <div class="card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
