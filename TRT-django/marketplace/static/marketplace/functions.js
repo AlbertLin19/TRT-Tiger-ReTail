@@ -39,6 +39,20 @@ function filter(input){
    }
 }
 
+function disableHover() {
+   cards = document.getElementsByClassName("card");
+   for (i = 0; i < cards.length; i++) {
+      cards[i].classList.remove('hover');
+   }
+}
+
+function enableHover() {
+   cards = document.getElementsByClassName("card");
+   for (i = 0; i < cards.length; i++) {
+      cards[i].classList.add('hover');
+   }
+}
+
 $('.multi-item-carousel .carousel-item').each(function() {
    var next = $(this).next();
    if (!next.length) next = $(this).siblings(':first');
@@ -49,6 +63,7 @@ $('.multi-item-carousel .carousel-item').each(function() {
    if (!prev.length) prev = $(this).siblings(':last');
    prev.children(':nth-last-child(2)').clone().prependTo($(this));
  });
+
 /*
 function imageScroll(counter){
    images = document.getElementsByClassName("imageAlbum");
