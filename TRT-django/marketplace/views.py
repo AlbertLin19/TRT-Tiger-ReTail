@@ -28,6 +28,20 @@ import secrets
 from django.http import HttpResponse, JsonResponse
 import json
 
+from sys import stderr
+
+# ----------------------------------------------------------------------
+
+# helper method to log an error to server stderr
+
+
+def logError(account, exception):
+    print(
+        "[" + str(timezone.now()) + "] " + account.username + ": " + str(exception),
+        file=stderr,
+    )
+
+
 # ----------------------------------------------------------------------
 
 # helper method to log an item action
@@ -156,29 +170,43 @@ def newItem(request):
             item.seller = account
             item.posted_date = timezone.now()
             item.status = Item.AVAILABLE
-            item.save()
-            # save the m2m fields, which did not yet bc of commit=False
-            item_form.save_m2m()
-            logItemAction(item, account, "created")
+            try:
+                item.save()
+                # save the m2m fields, which did not yet bc of commit=False
+                item_form.save_m2m()
+                logItemAction(item, account, "created")
 
-            # create linked album images from uploaded files
-            album = request.FILES.getlist("album")
-            for i in range(len(album)):
-                if i >= settings.ALBUM_LIMIT:
-                    break
-                AlbumImage(image=album[i], item=item).save()
+                # create linked album images from uploaded files
+                album = request.FILES.getlist("album")
+                for i in range(len(album)):
+                    if i >= settings.ALBUM_LIMIT:
+                        break
+                    try:
+                        AlbumImage(image=album[i], item=item).save()
+                    except Exception as e:
+                        messages.error(
+                            request,
+                            "Could not save album image. Check that your album images are each < 10MB and proper image files.",
+                        )
+                        logError(account, e)
 
-            messages.success(request, "New item posted.")
-            # send confirmation email
-            send_mail(
-                "Item Posted",
-                "You have posted a new item for sale!\n"
-                + request.build_absolute_uri(reverse("list_items")),
-                settings.EMAIL_HOST_USER,
-                [account.email],
-                fail_silently=False,
-            )
-            return redirect("list_items")
+                messages.success(request, "New item posted.")
+                # send confirmation email
+                send_mail(
+                    "Item Posted",
+                    "You have posted a new item for sale!\n"
+                    + request.build_absolute_uri(reverse("list_items")),
+                    settings.EMAIL_HOST_USER,
+                    [account.email],
+                    fail_silently=False,
+                )
+                return redirect("list_items")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not post item. Check that your lead image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send a blank form
     else:
@@ -213,19 +241,33 @@ def editItem(request, pk):
     if request.method == "POST":
         item_form = ItemForm(request.POST, request.FILES, instance=item)
         if item_form.is_valid():
-            # save changes to item
-            item_form.save()
-            logItemAction(item, account, "edited")
+            try:
+                # save changes to item
+                item_form.save()
+                logItemAction(item, account, "edited")
 
-            # overwrite the album images
-            item.album.all().delete()
-            album = request.FILES.getlist("album")
-            for i in range(len(album)):
-                if i >= settings.ALBUM_LIMIT:
-                    break
-                AlbumImage(image=album[i], item=item).save()
+                # overwrite the album images
+                item.album.all().delete()
+                album = request.FILES.getlist("album")
+                for i in range(len(album)):
+                    if i >= settings.ALBUM_LIMIT:
+                        break
+                    try:
+                        AlbumImage(image=album[i], item=item).save()
+                    except Exception as e:
+                        messages.error(
+                            request,
+                            "Could not save album image. Check that your album images are each < 10MB and proper image files.",
+                        )
+                        logError(account, e)
 
-            messages.success(request, "Item updated.")
+                messages.success(request, "Item updated.")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not edit item. Check that your lead image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send stored item form
     else:
@@ -700,22 +742,29 @@ def newItemRequest(request):
             item_request = item_request_form.save(commit=False)
             item_request.requester = account
             item_request.posted_date = timezone.now()
-            item_request.save()
-            # save the m2m fields, which did not yet bc of commit=False
-            item_request_form.save_m2m()
+            try:
+                item_request.save()
+                # save the m2m fields, which did not yet bc of commit=False
+                item_request_form.save_m2m()
 
-            logItemRequestAction(item_request, account, "created")
-            messages.success(request, "New item request posted.")
-            # send confirmation email
-            send_mail(
-                "Item Request Posted",
-                "You have posted a new item request!\n"
-                + request.build_absolute_uri(reverse("list_item_requests")),
-                settings.EMAIL_HOST_USER,
-                [account.email],
-                fail_silently=False,
-            )
-            return redirect("list_item_requests")
+                logItemRequestAction(item_request, account, "created")
+                messages.success(request, "New item request posted.")
+                # send confirmation email
+                send_mail(
+                    "Item Request Posted",
+                    "You have posted a new item request!\n"
+                    + request.build_absolute_uri(reverse("list_item_requests")),
+                    settings.EMAIL_HOST_USER,
+                    [account.email],
+                    fail_silently=False,
+                )
+                return redirect("list_item_requests")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not post item request. Check that your reference image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send a blank form
     else:
@@ -747,11 +796,18 @@ def editItemRequest(request, pk):
             request.POST, request.FILES, instance=item_request
         )
         if item_request_form.is_valid():
-            # save changes to item_request
-            item_request_form.save()
+            try:
+                # save changes to item_request
+                item_request_form.save()
 
-            logItemRequestAction(item_request, account, "edited")
-            messages.success(request, "Item request updated.")
+                logItemRequestAction(item_request, account, "edited")
+                messages.success(request, "Item request updated.")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not edit item request. Check that your reference image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send stored item_request form
     else:
