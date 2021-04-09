@@ -42,6 +42,7 @@
     {% with Item_AVAILABLE=0 Item_FROZEN=1 Item_COMPLETE=2 %}
     {% with Transaction_INITIATED=0 Transaction_ACKNOWLEDGED=1 Transaction_S_PENDING=2 %}
     {% with Transaction_B_PENDING=3 Transaction_COMPLETE=4 Transaction_CANCELLED=5 %}
+    {% with Condition_POOR=4 Condition_WELLLOVED=3 Condition_GENTLYLOVED=2 Condition_LIKENEW=1 Condition_NEW=0 %}
 
     <div id="gallery_top_bar" class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-dark" style="padding-left: 20px;">
@@ -53,7 +54,7 @@
                             class="sr-only">(current)</span></a>
                     <a class="nav-item nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span
                             class="sr-only">(current)</span></a>
-                    <a class="nav-item nav-link active" href="{% url 'inbox' %}">Inbox<span
+                    <a class="nav-item nav-link active" href="{% url 'inbox' %}">INBOX<span
                             class="sr-only">(current)</span></a>
                     <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
                     {% else %}
@@ -85,6 +86,7 @@
         </script>
     {% endif %}
     
+    {% endwith %}
     {% endwith %}
     {% endwith %}
     {% endwith %}
