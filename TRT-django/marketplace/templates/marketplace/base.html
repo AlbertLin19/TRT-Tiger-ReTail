@@ -62,6 +62,13 @@
                             class="sr-only">(current)</span></a>
                     {% endif %}
                     <a class="nav-item nav-link" href="{% url 'contact' %}">CONTACT US</a>
+                    {% if account %}
+                        <button class="btn btn-light mx-2 p-1"><i class="far fa-bell mx-1"></i>
+                            {% if unseen_notifications %}
+                                <span class="badge bg-dark text-light mx-1">{{ unseen_notifications.count }}</span>
+                            {% endif %}
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </nav>

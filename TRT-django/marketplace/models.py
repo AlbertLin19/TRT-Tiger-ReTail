@@ -217,3 +217,12 @@ class Message(models.Model):
     )
     datetime = models.DateTimeField()
     text = models.TextField()
+
+
+class Notification(models.Model):
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="notifications"
+    )
+    datetime = models.DateTimeField()
+    text = models.CharField(max_length=100)
+    seen = models.BooleanField(default=False)

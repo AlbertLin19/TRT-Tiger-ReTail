@@ -74,8 +74,9 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # custom context processor to include account info
+                # custom context processors
                 "marketplace.context_processors.account",
+                "marketplace.context_processors.unseenNotifications",
             ],
         },
     },
