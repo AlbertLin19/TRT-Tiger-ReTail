@@ -6,7 +6,7 @@ html,
    width:100%;*/
    left: 0px;
    top: 0px;
-   background: url(Header_pic.png) no-repeat;
+   background: url(Background.jpg) no-repeat;
    background-size: 100%;
 }
 
@@ -61,15 +61,36 @@ html,
 
 /* image gallery title */
 #gallery_title{
-   font-size: 60px;
+   font-size: 50px;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
+   padding-top: 10px;
 }
 
 /* bar that holds both the buttons for post itmes and my items */
 #posting_bar{
    text-align: right;
+}
+
+/* category header above filters */
+#category_label{
+   font-size: 20px;
+   text-decoration: underline;
+   font-weight: bold;
+   padding-bottom: 10px;
+}
+
+/* category sub header above labels */
+#category_sublabel{
+   font-size: 20px;
+   font-weight: bold;
+}
+
+/* individual category links */
+#category_link{
+   color: black;
+   font-size: 25px;
 }
 
 .card{
@@ -100,7 +121,7 @@ html,
  .topbar{
     padding: 20px 20px 20px 20px;
     /*background: #d0eede;*/
-    background: url(tiger.jpg);
+    background: url(tiger2.jpg);
     background-size: 100%;
     z-index:1;
  }
