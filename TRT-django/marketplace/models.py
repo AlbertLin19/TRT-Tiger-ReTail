@@ -76,7 +76,11 @@ class Item(models.Model):
     )
     categories = models.ManyToManyField(Category)
     description = models.TextField()
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
     status = models.DecimalField(
         max_digits=1,
         decimal_places=0,
@@ -93,7 +97,11 @@ class Item(models.Model):
 
 # wrapper for CloudinaryField, used for item albums
 class AlbumImage(models.Model):
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="album")
 
     def __str__(self):
@@ -188,7 +196,11 @@ class ItemRequest(models.Model):
     )
     categories = models.ManyToManyField(Category)
     description = models.TextField()
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
 
     def __str__(self):
         return self.name + " by " + str(self.requester)
