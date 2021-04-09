@@ -52,104 +52,106 @@
             <br>
             <div class="row">
                 {% for item in items %}
-                <div class="card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
-                  <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
-                  <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
-                    <br>
-                    <div style="text-align:center;" class="card-img-top rounded-corners">
-                        {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
-                    </div>
-                    <div style="display:none;" class="item_categories">
-                    {% for category in item.categories.all %}
-                        <div class="item_category">{{category}}</div>
-                    {% endfor %}
-                    </div>
-                    <hr>
-                    <div class="card-body">
-                    <p class="card-text">PRICE: ${{item.price}} USD</p>
-                    {% if item.condition == Condition_NEW%}
-                      <p class="card-text">CONDITION: New</p>
-                    {% elif item.condition == Condition_LIKENEW %}
-                      <p class="card-text">CONDITION: Like New</p>
-                    {% elif item.condition == Condition_GENTLYLOVED %}
-                      <p class="card-text">CONDITION: Gently Loved</p>
-                    {% elif item.condition == Condition_WELLLOVED %}
-                      <p class="card-text">CONDITION: Well Loved</p>
-                    {% elif item.condition == Condition_POOR %}
-                      <p class="card-text">CONDITION: Poor</p>
-                    {% endif %}
-                    <p class="card-text">DEADLINE: {{item.deadline}}</p>
-                    {% if item.status == Item_AVAILABLE %}
-                        <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
-                            {% csrf_token %}
-                            <input type="hidden" name="pk" value={{item.pk}}>
-                            <input type="submit" class="btn btn-success" value="Purchase" style="padding-left: 20px; padding-right: 20px;">
-                            <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
-                        </form>
-                        <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-toggle="modal" data-target="#{{item.pk}}">
-                            View Details
-                        </button>
-                          
-                          <!-- Modal -->
-                          <div class="modal fade" id="{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="{{item.pk}}" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header" style="background-color: rgb(54, 188, 250);">
-                                  <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
-                                  <button type="button" class="btn close" onclick="enableHover()" data-dismiss="modal" aria-label="Close">
-                                    <span style="font-size:30px" aria-hidden="true">&times;</span>
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                  <h2 style="text-align:center;">ITEM DETAILS</h2>
-                                    <div id="myCarousel{{item.pk}}" class="carousel slide text-center multi-item-carousel" data-ride="carousel">
-                                      <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
-                                      <br>
-                                      <div class="carousel-inner" role="listbox">
-                                            <!--carousel-item active-->
-                                          <div class="carousel-item active">
-                                            {% cloudinary item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
-                                          </div>
-                                          {%for image in item.album.all%}
-                                            <div class="carousel-item">
-                                                {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
-                                            </div>
-                                          {%endfor%}
-                                        </div>
-                                        <br>
-                                        <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button" data-slide="prev">
-                                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                          <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button" data-slide="next">
-                                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                          <span class="sr-only">Next</span>
-                                        </a>
-                                      <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
-                                    </div>
-                                    <hr style="border-top: 2px solid black;">
-                                    <div style="background:#bdecf7; border-radius:10px;" id="description">
-                                      <div class="item_details" style="padding:5%">
-                                        Price: ${{item.price}} USD <br><br>
-                                        Item Description:<br> {{item.description}}<br>
-                                      </div>
-                                      <br>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" onclick="enableHover()" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
-                            </div>
+                  {% if item.status != Item_FROZEN and item.status != Item_COMPLETE%}
+                      <div class="card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+                        <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
+                        <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
+                          <br>
+                          <div style="text-align:center;" class="card-img-top rounded-corners">
+                              {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
                           </div>
-                    {% elif item.status == Item_FROZEN %}
-                        <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">FROZEN</p>
-                    {% elif item.status == Item_COMPLETE %}
-                        <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">SOLD</p>
+                          <div style="display:none;" class="item_categories">
+                          {% for category in item.categories.all %}
+                              <div class="item_category">{{category}}</div>
+                          {% endfor %}
+                          </div>
+                          <hr>
+                          <div class="card-body">
+                          <p class="card-text">PRICE: ${{item.price}} USD</p>
+                          {% if item.condition == Condition_NEW%}
+                            <p class="card-text">CONDITION: New</p>
+                          {% elif item.condition == Condition_LIKENEW %}
+                            <p class="card-text">CONDITION: Like New</p>
+                          {% elif item.condition == Condition_GENTLYLOVED %}
+                            <p class="card-text">CONDITION: Gently Loved</p>
+                          {% elif item.condition == Condition_WELLLOVED %}
+                            <p class="card-text">CONDITION: Well Loved</p>
+                          {% elif item.condition == Condition_POOR %}
+                            <p class="card-text">CONDITION: Poor</p>
+                          {% endif %}
+                          <p class="card-text">DEADLINE: {{item.deadline}}</p>
+                          {% if item.status == Item_AVAILABLE %}
+                              <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="pk" value={{item.pk}}>
+                                  <input type="submit" class="btn btn-success" value="Purchase" style="padding-left: 20px; padding-right: 20px;">
+                                  <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
+                              </form>
+                              <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-toggle="modal" data-target="#{{item.pk}}">
+                                  View Details
+                              </button>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="{{item.pk}}" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header" style="background-color: rgb(54, 188, 250);">
+                                        <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
+                                        <button type="button" class="btn close" onclick="enableHover()" data-dismiss="modal" aria-label="Close">
+                                          <span style="font-size:30px" aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <h2 style="text-align:center;">ITEM DETAILS</h2>
+                                          <div id="myCarousel{{item.pk}}" class="carousel slide text-center multi-item-carousel" data-ride="carousel">
+                                            <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
+                                            <br>
+                                            <div class="carousel-inner" role="listbox">
+                                                  <!--carousel-item active-->
+                                                <div class="carousel-item active">
+                                                  {% cloudinary item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                                                </div>
+                                                {%for image in item.album.all%}
+                                                  <div class="carousel-item">
+                                                      {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                                                  </div>
+                                                {%endfor%}
+                                              </div>
+                                              <br>
+                                              <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>
+                                              </a>
+                                              <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>
+                                              </a>
+                                            <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
+                                          </div>
+                                          <hr style="border-top: 2px solid black;">
+                                          <div style="background:#bdecf7; border-radius:10px;" id="description">
+                                            <div class="item_details" style="padding:5%">
+                                              Price: ${{item.price}} USD <br><br>
+                                              Item Description:<br> {{item.description}}<br>
+                                            </div>
+                                            <br>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" onclick="enableHover()" data-dismiss="modal">Close</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                          {% elif item.status == Item_FROZEN %}
+                              <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">FROZEN</p>
+                          {% elif item.status == Item_COMPLETE %}
+                              <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">SOLD</p>
+                          {% endif %}
+                          </div>
+                        </div>
+                      </div>
                     {% endif %}
-                    </div>
-                  </div>
-                </div>
                 {% endfor %}
             </div>
         </div>
