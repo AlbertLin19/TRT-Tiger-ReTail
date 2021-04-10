@@ -1038,7 +1038,7 @@ def sendMessage(request):
 
     Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
     # sparse notify the receiver
-    text = account.name + " has sent you a message"
+    text = account.name + " has sent a message to your inbox"
     notify(account=contact, text=text, sparse=True)
     return HttpResponse(status=200)
 
