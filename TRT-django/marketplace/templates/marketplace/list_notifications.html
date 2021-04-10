@@ -1,0 +1,30 @@
+{% extends "marketplace/base.html" %}
+{% block content %}
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+</div>
+<div class="gallery_back container-fliud mb-3">
+    <br>  
+    <div class="container">
+        <div id="gallery_title">Notifications</div><hr>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th scope="col">Time</th>
+                    <th scope="col">Notification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notification in notifications %}
+                        <tr>
+                            <th scope="row">{{notification.datetime}}</th>
+                            <td>{{notification.text}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -68,7 +68,17 @@
                         {% endif %}
                         <a class="nav-item nav-link" href="{% url 'contact' %}">CONTACT US</a>
                         {% if account %}
-                        <button class="btn btn-light mx-2 p-1" id="notifications_button"><i class="far fa-bell mx-1"></i></button>
+                            <div class="dropdown">
+                                <button class="btn btn-light mx-2 p-1 dropdown-toggle" type="button" id="notifications_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="far fa-bell mx-1"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="notifications_button">
+                                    <div class="container-fluid overflow-auto" style="height: 30vh;" id="notifications_area">
+                                    </div>
+                                    <hr class="m-1">
+                                    <a class="dropdown-item" href="{% url 'list_notifications' %}">All Notifications</a>
+                                </div>
+                            </div>
                         {% endif %}
                     </div>
                 </div>

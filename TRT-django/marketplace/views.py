@@ -15,6 +15,7 @@ from .models import (
     ItemRequest,
     ItemRequestLog,
     Message,
+    Notification,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
@@ -76,6 +77,20 @@ def logItemRequestAction(item_request, account, log):
         account=account,
         datetime=timezone.now(),
         log=log,
+    ).save()
+
+
+# ----------------------------------------------------------------------
+
+# helper method to send notification
+
+
+def notify(account, text):
+    Notification(
+        account=account,
+        datetime=timezone.now(),
+        text=text,
+        seen=False,
     ).save()
 
 
@@ -388,6 +403,8 @@ def newPurchase(request):
         [item.seller.email],
         fail_silently=False,
     )
+    # notify the seller
+    notify(item.seller, account.name + " has requested to purchase " + item.name)
 
     return redirect("list_purchases")
 
@@ -445,6 +462,15 @@ def confirmPurchase(request, pk):
             [purchase.item.seller.email],
             fail_silently=False,
         )
+        # notify the seller
+        notify(
+            purchase.item.seller,
+            account.name
+            + " has confirmed the purchase of "
+            + purchase.item.name
+            + " and awaits your confirmation.",
+        )
+
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif purchase.status == Transaction.B_PENDING:
         item = purchase.item
@@ -471,6 +497,11 @@ def confirmPurchase(request, pk):
             settings.EMAIL_HOST_USER,
             [item.seller.email],
             fail_silently=False,
+        )
+        # notify the seller
+        notify(
+            item.seller,
+            account.name + " has confirmed and completed the purchase of " + item.name,
         )
 
     return redirect("list_purchases")
@@ -527,6 +558,10 @@ def cancelPurchase(request, pk):
             [item.seller.email],
             fail_silently=False,
         )
+        # notify the seller
+        notify(
+            item.seller, account.name + " has cancelled the purchase of " + item.name
+        )
 
     return redirect("list_purchases")
 
@@ -572,6 +607,12 @@ def acceptSale(request, pk):
             [sale.buyer.email],
             fail_silently=False,
         )
+        # notify the buyer
+        notify(
+            sale.buyer,
+            account.name + " has accepted your purchase request for " + sale.item.name,
+        )
+
     else:
         messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
 
@@ -628,6 +669,15 @@ def confirmSale(request, pk):
             [sale.buyer.email],
             fail_silently=False,
         )
+        # notify the buyer
+        notify(
+            sale.buyer,
+            account.name
+            + " has confirmed your purchase of "
+            + sale.item.name
+            + " and awaits your confirmation",
+        )
+
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif sale.status == Transaction.S_PENDING:
         item = sale.item
@@ -654,6 +704,13 @@ def confirmSale(request, pk):
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
             fail_silently=False,
+        )
+        # notify the buyer
+        notify(
+            sale.buyer,
+            account.name
+            + " has confirmed and completed your purchase of "
+            + sale.item.name,
         )
 
     return redirect("list_items")
@@ -708,6 +765,11 @@ def cancelSale(request, pk):
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
             fail_silently=False,
+        )
+        # notify the buyer
+        notify(
+            sale.buyer,
+            account.name + " has cancelled your purchase of " + sale.item.name,
         )
 
     return redirect("list_items")
@@ -854,6 +916,45 @@ def deleteItemRequest(request, pk):
 
 # ----------------------------------------------------------------------
 
+# notifications page
+
+
+@authentication_required
+def listNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all().order_by("-datetime")
+    notifications.update(seen=True)
+    context = {"notifications": notifications}
+    return render(request, "marketplace/list_notifications.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# count unseen notifications
+
+
+@authentication_required
+def countNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    count = account.notifications.filter(seen=False).count()
+    return JsonResponse({"count": count})
+
+
+# ----------------------------------------------------------------------
+
+# see all notifications
+
+
+@authentication_required
+def seeNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all()
+    notifications.update(seen=True)
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
 # messaging system page
 
 
@@ -917,17 +1018,17 @@ def sendMessage(request):
 def accountActivity(request):
     account = Account.objects.get(username=request.session.get("username"))
 
-    own_activity_item = account.item_logs.order_by("datetime")
-    own_activity_transaction = account.transaction_logs.order_by("datetime")
-    own_activity_item_request = account.item_request_logs.order_by("datetime")
+    own_activity_item = account.item_logs.order_by("-datetime")
+    own_activity_transaction = account.transaction_logs.order_by("-datetime")
+    own_activity_item_request = account.item_request_logs.order_by("-datetime")
 
-    item_activity = ItemLog.objects.filter(item__seller=account).order_by("datetime")
+    item_activity = ItemLog.objects.filter(item__seller=account).order_by("-datetime")
     transaction_activity = TransactionLog.objects.filter(
         transaction__buyer=account
-    ).order_by("datetime")
+    ).order_by("-datetime")
     item_request_activity = ItemRequestLog.objects.filter(
         item_request__requester=account
-    ).order_by("datetime")
+    ).order_by("-datetime")
 
     context = {
         "own_activity_transaction": own_activity_transaction,
