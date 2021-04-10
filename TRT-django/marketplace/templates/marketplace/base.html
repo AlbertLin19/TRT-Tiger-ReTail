@@ -72,11 +72,11 @@
                                 <button class="btn btn-light mx-2 p-1 dropdown-toggle" type="button" id="notifications_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="far fa-bell mx-1"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="notifications_button">
-                                    <div class="container-fluid overflow-auto" style="height: 30vh;" id="notifications_area">
+                                <div class="dropdown-menu p-0 m-0" style="background-color: #F8F8F8;" aria-labelledby="notifications_button">
+                                    <div class="container-fluid overflow-auto" style="max-height: 30vh;" id="notifications_area">
                                     </div>
-                                    <hr class="m-1">
-                                    <a class="dropdown-item" href="{% url 'list_notifications' %}">All Notifications</a>
+                                    <hr class="m-1 mt-2">
+                                    <a class="dropdown-item mb-1" href="{% url 'list_notifications' %}">All Notifications</a>
                                 </div>
                             </div>
                         {% endif %}
@@ -99,6 +99,89 @@
             </div>
         </div>
     </div>
+
+    <!-- script for notifications menu -->
+    <script>
+        'use strict';
+
+        function handleNotifications(response)
+        {
+            const notifications = response['notifications'];
+            let html = '';
+            for (const notification of notifications)
+            {
+                const date = new Date(notification[0]);
+                html += '<hr class="m-0">';
+                html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
+                if (!notification[2])
+                    html += ' background-color: #FCDCBB;';
+                html += '">';
+                html += '<small>';
+                html += notification[1];
+                html += '<br>';
+                html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
+                html += '</small>';
+                html += '</div>';
+            }
+                
+            $('#notifications_area').html(html);
+        }
+
+        let request = null;
+
+        function getResults()
+        {
+            if (request != null)
+                request.abort();
+            
+            request = $.ajax(
+                {
+                    type: "GET",
+                    url: "{% url 'get_notifications' %}",
+                    success: handleNotifications,
+                }
+            );
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "{% url 'see_notifications' %}",
+                }
+            );
+        }
+
+        function handleCount(response)
+        {
+            let html = '<i class="far fa-bell mx-1"></i>';
+            const count = response['count'];
+            if (count > 0)
+            {
+                html += '<span class="badge bg-dark mx-1">';
+                html += count;
+                html += '</span>';
+            }
+            $('#notifications_button').html(html);
+        }
+
+        function getCount()
+        {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "{% url 'count_notifications' %}",
+                    success: handleCount,
+                }
+            );
+        }
+
+        function setup()
+        {
+            $('#notifications_button').on('click', getResults);
+            window.setInterval(getCount, 1000);
+        }
+
+        $('document').ready(setup);
+
+    </script>
 
     {% block content %}{% endblock content %}
     <!-- adapted from https://stackoverflow.com/questions/58863057/displaying-a-message-as-a-popup-alert-in-django -->

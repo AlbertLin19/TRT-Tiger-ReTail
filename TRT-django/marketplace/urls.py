@@ -30,6 +30,7 @@ urlpatterns = [
     path("inbox/<int:pk>/get/", views.getMessages, name="get_messages"),
     path("inbox/send/", views.sendMessage, name="send_message"),
     path("notifications/list/", views.listNotifications, name="list_notifications"),
+    path("notifications/get/", views.getNotifications, name="get_notifications"),
     path("notifications/count/", views.countNotifications, name="count_notifications"),
     path("notifications/see/", views.seeNotifications, name="see_notifications"),
     path("account/activity/", views.accountActivity, name="account_activity"),

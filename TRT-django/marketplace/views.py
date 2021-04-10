@@ -955,6 +955,20 @@ def seeNotifications(request):
 
 # ----------------------------------------------------------------------
 
+# get all notifications
+
+
+@authentication_required
+def getNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all()
+    return JsonResponse(
+        {"notifications": list(notifications.values_list("datetime", "text", "seen"))}
+    )
+
+
+# ----------------------------------------------------------------------
+
 # messaging system page
 
 
