@@ -19,6 +19,7 @@ from .models import (
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
+from datetime import timedelta
 
 import cloudinary
 import cloudinary.uploader
@@ -85,13 +86,29 @@ def logItemRequestAction(item_request, account, log):
 # helper method to send notification
 
 
-def notify(account, text):
-    Notification(
-        account=account,
-        datetime=timezone.now(),
-        text=text,
-        seen=False,
-    ).save()
+def notify(account, text, sparse=False, timeout=timedelta(minutes=5)):
+    if not sparse:
+        Notification(
+            account=account,
+            datetime=timezone.now(),
+            text=text,
+            seen=False,
+        ).save()
+        return
+    else:
+        if Notification.objects.filter(account=account, text=text, seen=False).exists():
+            duplicates = Notification.objects.filter(
+                account=account, text=text, seen=False
+            )
+            recent = duplicates.order_by("-datetime").first()
+            if timezone.now() < recent.datetime + timeout:
+                return
+        Notification(
+            account=account,
+            datetime=timezone.now(),
+            text=text,
+            seen=False,
+        ).save()
 
 
 # ----------------------------------------------------------------------
@@ -468,7 +485,7 @@ def confirmPurchase(request, pk):
             account.name
             + " has confirmed the purchase of "
             + purchase.item.name
-            + " and awaits your confirmation.",
+            + " and awaits your confirmation",
         )
 
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
@@ -1020,6 +1037,9 @@ def sendMessage(request):
         return HttpResponse(status=400)
 
     Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
+    # sparse notify the receiver
+    text = account.name + " has sent you a message"
+    notify(account=contact, text=text, sparse=True)
     return HttpResponse(status=200)
 
 
