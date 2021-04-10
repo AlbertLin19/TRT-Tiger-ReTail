@@ -978,7 +978,7 @@ def seeNotifications(request):
 @authentication_required
 def getNotifications(request):
     account = Account.objects.get(username=request.session.get("username"))
-    notifications = account.notifications.all()
+    notifications = account.notifications.all().order_by("-datetime")
     return JsonResponse(
         {"notifications": list(notifications.values_list("datetime", "text", "seen"))}
     )
