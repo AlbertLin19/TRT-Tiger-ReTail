@@ -32,6 +32,8 @@ import json
 
 from sys import stderr
 
+from background_task import background
+
 # ----------------------------------------------------------------------
 
 # helper method to log an error to server stderr
@@ -83,10 +85,30 @@ def logItemRequestAction(item_request, account, log):
 
 # ----------------------------------------------------------------------
 
+# helper method to send new notification email delayed and sparsely
+# namely, if the notification is seen by the time to send, will not send
+
+
+@background(schedule=300)
+def notifyEmailSparsely(request, account, pk):
+    notification = Notification.objects.get(pk=pk)
+    if not notification.seen:
+        send_mail(
+            "Unread Notification(s) on Tiger ReTail",
+            "You have new notification(s) waiting to be read.\n"
+            + request.build_absolute_uri(reverse("gallery")),
+            settings.EMAIL_HOST_USER,
+            [account.email],
+            fail_silently=False,
+        )
+
+
+# ----------------------------------------------------------------------
+
 # helper method to send notification
 
 
-def notify(account, text, sparse=False, timeout=timedelta(minutes=5)):
+def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
     if not sparse:
         Notification(
             account=account,
@@ -103,12 +125,23 @@ def notify(account, text, sparse=False, timeout=timedelta(minutes=5)):
             recent = duplicates.order_by("-datetime").first()
             if timezone.now() < recent.datetime + timeout:
                 return
-        Notification(
+        notification = Notification(
             account=account,
             datetime=timezone.now(),
             text=text,
             seen=False,
         ).save()
+
+        # if the oldest unseen notification is the one just created,
+        # then delay-sparse send an email (delayed to allow user to see notification and prevent the email)
+        if (
+            Notification.objects.filter(account=account, text=text, seen=False).exists()
+            and Notification.objects.filter(account=account, text=text, seen=False)
+            .order_by("datetime")
+            .first()
+            == notification
+        ):
+            notifyEmailSparsely(request=request, account=account, pk=notification.pk)
 
 
 # ----------------------------------------------------------------------
@@ -421,7 +454,9 @@ def newPurchase(request):
         fail_silently=False,
     )
     # notify the seller
-    notify(item.seller, account.name + " has requested to purchase " + item.name)
+    notify(
+        request, item.seller, account.name + " has requested to purchase " + item.name
+    )
 
     return redirect("list_purchases")
 
@@ -481,6 +516,7 @@ def confirmPurchase(request, pk):
         )
         # notify the seller
         notify(
+            request,
             purchase.item.seller,
             account.name
             + " has confirmed the purchase of "
@@ -517,6 +553,7 @@ def confirmPurchase(request, pk):
         )
         # notify the seller
         notify(
+            request,
             item.seller,
             account.name + " has confirmed and completed the purchase of " + item.name,
         )
@@ -577,7 +614,9 @@ def cancelPurchase(request, pk):
         )
         # notify the seller
         notify(
-            item.seller, account.name + " has cancelled the purchase of " + item.name
+            request,
+            item.seller,
+            account.name + " has cancelled the purchase of " + item.name,
         )
 
     return redirect("list_purchases")
@@ -626,6 +665,7 @@ def acceptSale(request, pk):
         )
         # notify the buyer
         notify(
+            request,
             sale.buyer,
             account.name + " has accepted your purchase request for " + sale.item.name,
         )
@@ -688,6 +728,7 @@ def confirmSale(request, pk):
         )
         # notify the buyer
         notify(
+            request,
             sale.buyer,
             account.name
             + " has confirmed your purchase of "
@@ -724,6 +765,7 @@ def confirmSale(request, pk):
         )
         # notify the buyer
         notify(
+            request,
             sale.buyer,
             account.name
             + " has confirmed and completed your purchase of "
@@ -785,6 +827,7 @@ def cancelSale(request, pk):
         )
         # notify the buyer
         notify(
+            request,
             sale.buyer,
             account.name + " has cancelled your purchase of " + sale.item.name,
         )
@@ -1039,7 +1082,7 @@ def sendMessage(request):
     Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
     # sparse notify the receiver
     text = account.name + " has sent a message to your inbox"
-    notify(account=contact, text=text, sparse=True)
+    notify(request, account=contact, text=text, sparse=True)
     return HttpResponse(status=200)
 
 

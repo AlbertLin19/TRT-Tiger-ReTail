@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "marketplace.apps.MarketplaceConfig",
     "cloudinary",
     "crispy_forms",
+    "background_task",
 ]
 
 MIDDLEWARE = [
