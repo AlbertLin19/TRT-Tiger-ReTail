@@ -32,6 +32,8 @@ import json
 
 from sys import stderr
 
+from background_task import background
+
 # ----------------------------------------------------------------------
 
 # helper method to log an error to server stderr
@@ -87,6 +89,7 @@ def logItemRequestAction(item_request, account, log):
 # namely, if the notification is seen by the time to send, will not send
 
 
+@background(schedule=300)
 def notifyEmailSparsely(pk, email, url):
     notification = Notification.objects.get(pk=pk)
     if not notification.seen:
