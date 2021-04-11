@@ -90,15 +90,14 @@ def logItemRequestAction(item_request, account, log):
 
 
 @background(schedule=300)
-def notifyEmailSparsely(request, account, pk):
+def notifyEmailSparsely(pk, email, url):
     notification = Notification.objects.get(pk=pk)
     if not notification.seen:
         send_mail(
             "Unread Notification(s) on Tiger ReTail",
-            "You have new notification(s) waiting to be read.\n"
-            + request.build_absolute_uri(reverse("gallery")),
+            "You have new notification(s) waiting to be read.\n" + url,
             settings.EMAIL_HOST_USER,
-            [account.email],
+            [email],
             fail_silently=False,
         )
 
@@ -125,23 +124,28 @@ def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
             recent = duplicates.order_by("-datetime").first()
             if timezone.now() < recent.datetime + timeout:
                 return
+
+        should_email = False
+        if not Notification.objects.filter(
+            account=account, text=text, seen=False
+        ).exists():
+            should_email = True
         notification = Notification(
             account=account,
             datetime=timezone.now(),
             text=text,
             seen=False,
-        ).save()
+        )
+        notification.save()
 
         # if the oldest unseen notification is the one just created,
         # then delay-sparse send an email (delayed to allow user to see notification and prevent the email)
-        if (
-            Notification.objects.filter(account=account, text=text, seen=False).exists()
-            and Notification.objects.filter(account=account, text=text, seen=False)
-            .order_by("datetime")
-            .first()
-            == notification
-        ):
-            notifyEmailSparsely(request=request, account=account, pk=notification.pk)
+        if should_email:
+            notifyEmailSparsely(
+                pk=notification.pk,
+                email=account.email,
+                url=request.build_absolute_uri(reverse("gallery")),
+            )
 
 
 # ----------------------------------------------------------------------
