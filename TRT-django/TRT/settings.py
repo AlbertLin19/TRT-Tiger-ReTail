@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "marketplace.apps.MarketplaceConfig",
     "cloudinary",
     "crispy_forms",
+    "background_task",
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # custom context processor to include account info
+                # custom context processors
                 "marketplace.context_processors.account",
             ],
         },

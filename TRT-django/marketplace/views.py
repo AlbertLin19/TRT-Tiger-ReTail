@@ -15,9 +15,11 @@ from .models import (
     ItemRequest,
     ItemRequestLog,
     Message,
+    Notification,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
+from datetime import timedelta
 
 import cloudinary
 import cloudinary.uploader
@@ -27,6 +29,22 @@ from django.core.exceptions import PermissionDenied
 import secrets
 from django.http import HttpResponse, JsonResponse
 import json
+
+from sys import stderr
+
+from background_task import background
+
+# ----------------------------------------------------------------------
+
+# helper method to log an error to server stderr
+
+
+def logError(account, exception):
+    print(
+        "[" + str(timezone.now()) + "] " + account.username + ": " + str(exception),
+        file=stderr,
+    )
+
 
 # ----------------------------------------------------------------------
 
@@ -63,6 +81,71 @@ def logItemRequestAction(item_request, account, log):
         datetime=timezone.now(),
         log=log,
     ).save()
+
+
+# ----------------------------------------------------------------------
+
+# helper method to send new notification email delayed and sparsely
+# namely, if the notification is seen by the time to send, will not send
+
+
+@background(schedule=300)
+def notifyEmailSparsely(pk, email, url):
+    notification = Notification.objects.get(pk=pk)
+    if not notification.seen:
+        send_mail(
+            "Unread Notification(s) on Tiger ReTail",
+            "You have new notification(s) waiting to be read.\n" + url,
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+
+
+# ----------------------------------------------------------------------
+
+# helper method to send notification
+
+
+def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
+    if not sparse:
+        Notification(
+            account=account,
+            datetime=timezone.now(),
+            text=text,
+            seen=False,
+        ).save()
+        return
+    else:
+        if Notification.objects.filter(account=account, text=text, seen=False).exists():
+            duplicates = Notification.objects.filter(
+                account=account, text=text, seen=False
+            )
+            recent = duplicates.order_by("-datetime").first()
+            if timezone.now() < recent.datetime + timeout:
+                return
+
+        should_email = False
+        if not Notification.objects.filter(
+            account=account, text=text, seen=False
+        ).exists():
+            should_email = True
+        notification = Notification(
+            account=account,
+            datetime=timezone.now(),
+            text=text,
+            seen=False,
+        )
+        notification.save()
+
+        # if the oldest unseen notification is the one just created,
+        # then delay-sparse send an email (delayed to allow user to see notification and prevent the email)
+        if should_email:
+            notifyEmailSparsely(
+                pk=notification.pk,
+                email=account.email,
+                url=request.build_absolute_uri(reverse("gallery")),
+            )
 
 
 # ----------------------------------------------------------------------
@@ -156,29 +239,43 @@ def newItem(request):
             item.seller = account
             item.posted_date = timezone.now()
             item.status = Item.AVAILABLE
-            item.save()
-            # save the m2m fields, which did not yet bc of commit=False
-            item_form.save_m2m()
-            logItemAction(item, account, "created")
+            try:
+                item.save()
+                # save the m2m fields, which did not yet bc of commit=False
+                item_form.save_m2m()
+                logItemAction(item, account, "created")
 
-            # create linked album images from uploaded files
-            album = request.FILES.getlist("album")
-            for i in range(len(album)):
-                if i >= settings.ALBUM_LIMIT:
-                    break
-                AlbumImage(image=album[i], item=item).save()
+                # create linked album images from uploaded files
+                album = request.FILES.getlist("album")
+                for i in range(len(album)):
+                    if i >= settings.ALBUM_LIMIT:
+                        break
+                    try:
+                        AlbumImage(image=album[i], item=item).save()
+                    except Exception as e:
+                        messages.error(
+                            request,
+                            "Could not save album image. Check that your album images are each < 10MB and proper image files.",
+                        )
+                        logError(account, e)
 
-            messages.success(request, "New item posted.")
-            # send confirmation email
-            send_mail(
-                "Item Posted",
-                "You have posted a new item for sale!\n"
-                + request.build_absolute_uri(reverse("list_items")),
-                settings.EMAIL_HOST_USER,
-                [account.email],
-                fail_silently=False,
-            )
-            return redirect("list_items")
+                messages.success(request, "New item posted.")
+                # send confirmation email
+                send_mail(
+                    "Item Posted",
+                    "You have posted a new item for sale!\n"
+                    + request.build_absolute_uri(reverse("list_items")),
+                    settings.EMAIL_HOST_USER,
+                    [account.email],
+                    fail_silently=False,
+                )
+                return redirect("list_items")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not post item. Check that your lead image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send a blank form
     else:
@@ -211,21 +308,39 @@ def editItem(request, pk):
 
     # populate the Django model form and validate data
     if request.method == "POST":
+        old_image = item.image
         item_form = ItemForm(request.POST, request.FILES, instance=item)
         if item_form.is_valid():
-            # save changes to item
-            item_form.save()
-            logItemAction(item, account, "edited")
+            try:
+                # remove the old image from storage (if different)
+                if item_form.cleaned_data["image"] != old_image:
+                    cloudinary.uploader.destroy(str(old_image))
+                # save changes to item
+                item_form.save()
+                logItemAction(item, account, "edited")
 
-            # overwrite the album images
-            item.album.all().delete()
-            album = request.FILES.getlist("album")
-            for i in range(len(album)):
-                if i >= settings.ALBUM_LIMIT:
-                    break
-                AlbumImage(image=album[i], item=item).save()
+                # overwrite the album images
+                item.album.all().delete()
+                album = request.FILES.getlist("album")
+                for i in range(len(album)):
+                    if i >= settings.ALBUM_LIMIT:
+                        break
+                    try:
+                        AlbumImage(image=album[i], item=item).save()
+                    except Exception as e:
+                        messages.error(
+                            request,
+                            "Could not save album image. Check that your album images are each < 10MB and proper image files.",
+                        )
+                        logError(account, e)
 
-            messages.success(request, "Item updated.")
+                messages.success(request, "Item updated.")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not edit item. Check that your lead image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send stored item form
     else:
@@ -342,6 +457,10 @@ def newPurchase(request):
         [item.seller.email],
         fail_silently=False,
     )
+    # notify the seller
+    notify(
+        request, item.seller, account.name + " has requested to purchase " + item.name
+    )
 
     return redirect("list_purchases")
 
@@ -399,6 +518,16 @@ def confirmPurchase(request, pk):
             [purchase.item.seller.email],
             fail_silently=False,
         )
+        # notify the seller
+        notify(
+            request,
+            purchase.item.seller,
+            account.name
+            + " has confirmed the purchase of "
+            + purchase.item.name
+            + " and awaits your confirmation",
+        )
+
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif purchase.status == Transaction.B_PENDING:
         item = purchase.item
@@ -425,6 +554,12 @@ def confirmPurchase(request, pk):
             settings.EMAIL_HOST_USER,
             [item.seller.email],
             fail_silently=False,
+        )
+        # notify the seller
+        notify(
+            request,
+            item.seller,
+            account.name + " has confirmed and completed the purchase of " + item.name,
         )
 
     return redirect("list_purchases")
@@ -481,6 +616,12 @@ def cancelPurchase(request, pk):
             [item.seller.email],
             fail_silently=False,
         )
+        # notify the seller
+        notify(
+            request,
+            item.seller,
+            account.name + " has cancelled the purchase of " + item.name,
+        )
 
     return redirect("list_purchases")
 
@@ -526,6 +667,13 @@ def acceptSale(request, pk):
             [sale.buyer.email],
             fail_silently=False,
         )
+        # notify the buyer
+        notify(
+            request,
+            sale.buyer,
+            account.name + " has accepted your purchase request for " + sale.item.name,
+        )
+
     else:
         messages.warning(request, "Cannot acknowledge - sale not in INITIATED state.")
 
@@ -582,6 +730,16 @@ def confirmSale(request, pk):
             [sale.buyer.email],
             fail_silently=False,
         )
+        # notify the buyer
+        notify(
+            request,
+            sale.buyer,
+            account.name
+            + " has confirmed your purchase of "
+            + sale.item.name
+            + " and awaits your confirmation",
+        )
+
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
     elif sale.status == Transaction.S_PENDING:
         item = sale.item
@@ -608,6 +766,14 @@ def confirmSale(request, pk):
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
             fail_silently=False,
+        )
+        # notify the buyer
+        notify(
+            request,
+            sale.buyer,
+            account.name
+            + " has confirmed and completed your purchase of "
+            + sale.item.name,
         )
 
     return redirect("list_items")
@@ -663,6 +829,12 @@ def cancelSale(request, pk):
             [sale.buyer.email],
             fail_silently=False,
         )
+        # notify the buyer
+        notify(
+            request,
+            sale.buyer,
+            account.name + " has cancelled your purchase of " + sale.item.name,
+        )
 
     return redirect("list_items")
 
@@ -700,22 +872,29 @@ def newItemRequest(request):
             item_request = item_request_form.save(commit=False)
             item_request.requester = account
             item_request.posted_date = timezone.now()
-            item_request.save()
-            # save the m2m fields, which did not yet bc of commit=False
-            item_request_form.save_m2m()
+            try:
+                item_request.save()
+                # save the m2m fields, which did not yet bc of commit=False
+                item_request_form.save_m2m()
 
-            logItemRequestAction(item_request, account, "created")
-            messages.success(request, "New item request posted.")
-            # send confirmation email
-            send_mail(
-                "Item Request Posted",
-                "You have posted a new item request!\n"
-                + request.build_absolute_uri(reverse("list_item_requests")),
-                settings.EMAIL_HOST_USER,
-                [account.email],
-                fail_silently=False,
-            )
-            return redirect("list_item_requests")
+                logItemRequestAction(item_request, account, "created")
+                messages.success(request, "New item request posted.")
+                # send confirmation email
+                send_mail(
+                    "Item Request Posted",
+                    "You have posted a new item request!\n"
+                    + request.build_absolute_uri(reverse("list_item_requests")),
+                    settings.EMAIL_HOST_USER,
+                    [account.email],
+                    fail_silently=False,
+                )
+                return redirect("list_item_requests")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not post item request. Check that your reference image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send a blank form
     else:
@@ -743,15 +922,26 @@ def editItemRequest(request, pk):
 
     # populate the Django model form and validate data
     if request.method == "POST":
+        old_image = item_request.image
         item_request_form = ItemRequestForm(
             request.POST, request.FILES, instance=item_request
         )
         if item_request_form.is_valid():
-            # save changes to item_request
-            item_request_form.save()
+            try:
+                # remove the old image from storage (if different)
+                if item_request_form.cleaned_data["image"] != old_image:
+                    cloudinary.uploader.destroy(str(old_image))
+                # save changes to item_request
+                item_request_form.save()
 
-            logItemRequestAction(item_request, account, "edited")
-            messages.success(request, "Item request updated.")
+                logItemRequestAction(item_request, account, "edited")
+                messages.success(request, "Item request updated.")
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Could not edit item request. Check that your reference image is < 10MB and a proper image file.",
+                )
+                logError(account, e)
 
     # did not receive form data via POST, so send stored item_request form
     else:
@@ -786,6 +976,59 @@ def deleteItemRequest(request, pk):
         fail_silently=False,
     )
     return redirect("list_item_requests")
+
+
+# ----------------------------------------------------------------------
+
+# notifications page
+
+
+@authentication_required
+def listNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all().order_by("-datetime")
+    notifications.update(seen=True)
+    context = {"notifications": notifications}
+    return render(request, "marketplace/list_notifications.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# count unseen notifications
+
+
+@authentication_required
+def countNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    count = account.notifications.filter(seen=False).count()
+    return JsonResponse({"count": count})
+
+
+# ----------------------------------------------------------------------
+
+# see all notifications
+
+
+@authentication_required
+def seeNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all()
+    notifications.update(seen=True)
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# get all notifications
+
+
+@authentication_required
+def getNotifications(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    notifications = account.notifications.all().order_by("-datetime")
+    return JsonResponse(
+        {"notifications": list(notifications.values_list("datetime", "text", "seen"))}
+    )
 
 
 # ----------------------------------------------------------------------
@@ -841,6 +1084,9 @@ def sendMessage(request):
         return HttpResponse(status=400)
 
     Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
+    # sparse notify the receiver
+    text = account.name + " has sent a message to your inbox"
+    notify(request, account=contact, text=text, sparse=True)
     return HttpResponse(status=200)
 
 
@@ -853,17 +1099,17 @@ def sendMessage(request):
 def accountActivity(request):
     account = Account.objects.get(username=request.session.get("username"))
 
-    own_activity_item = account.item_logs.order_by("datetime")
-    own_activity_transaction = account.transaction_logs.order_by("datetime")
-    own_activity_item_request = account.item_request_logs.order_by("datetime")
+    own_activity_item = account.item_logs.order_by("-datetime")
+    own_activity_transaction = account.transaction_logs.order_by("-datetime")
+    own_activity_item_request = account.item_request_logs.order_by("-datetime")
 
-    item_activity = ItemLog.objects.filter(item__seller=account).order_by("datetime")
+    item_activity = ItemLog.objects.filter(item__seller=account).order_by("-datetime")
     transaction_activity = TransactionLog.objects.filter(
         transaction__buyer=account
-    ).order_by("datetime")
+    ).order_by("-datetime")
     item_request_activity = ItemRequestLog.objects.filter(
         item_request__requester=account
-    ).order_by("datetime")
+    ).order_by("-datetime")
 
     context = {
         "own_activity_transaction": own_activity_transaction,

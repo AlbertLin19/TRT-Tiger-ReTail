@@ -2,8 +2,11 @@ from django.db import models
 from django.forms.widgets import NumberInput
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 from decimal import Decimal
 from cloudinary.models import CloudinaryField
+import cloudinary.uploader
 from datetime import timedelta
 
 
@@ -76,7 +79,11 @@ class Item(models.Model):
     )
     categories = models.ManyToManyField(Category)
     description = models.TextField()
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
     status = models.DecimalField(
         max_digits=1,
         decimal_places=0,
@@ -93,7 +100,11 @@ class Item(models.Model):
 
 # wrapper for CloudinaryField, used for item albums
 class AlbumImage(models.Model):
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="album")
 
     def __str__(self):
@@ -188,7 +199,11 @@ class ItemRequest(models.Model):
     )
     categories = models.ManyToManyField(Category)
     description = models.TextField()
-    image = CloudinaryField("image")
+    image = CloudinaryField(
+        "image",
+        format="jpeg",
+        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+    )
 
     def __str__(self):
         return self.name + " by " + str(self.requester)
@@ -217,3 +232,28 @@ class Message(models.Model):
     )
     datetime = models.DateTimeField()
     text = models.TextField()
+
+
+class Notification(models.Model):
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="notifications"
+    )
+    datetime = models.DateTimeField()
+    text = models.CharField(max_length=100)
+    seen = models.BooleanField(default=False)
+
+
+############## DELETE CLOUDINARY IMAGES POST_DELETE ###################
+@receiver(post_delete, sender=Item)
+def deleteItemImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))
+
+
+@receiver(post_delete, sender=AlbumImage)
+def deleteAlbumImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))
+
+
+@receiver(post_delete, sender=ItemRequest)
+def deleteItemRequestImage(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(str(instance.image))

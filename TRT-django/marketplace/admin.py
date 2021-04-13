@@ -9,6 +9,7 @@ from .models import (
     AlbumImage,
     ItemRequest,
     Message,
+    Notification,
 )
 
 # Register your models here.
@@ -22,3 +23,4 @@ admin.site.register(TransactionLog)
 admin.site.register(AlbumImage)
 admin.site.register(ItemRequest)
 admin.site.register(Message)
+admin.site.register(Notification)
