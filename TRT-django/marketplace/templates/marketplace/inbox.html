@@ -16,7 +16,7 @@
                     <div class="nav flex-fill nav-pills me-3" id="contact_tabs" role="tablist" aria-orientation="vertical">
                         {% if contacts %}
                             {% for contact in contacts %}
-                                <button class="nav-link" id="{{ contact.pk }}" style="text-align: right !important; width: 100%;" data-bs-toggle="pill" type="button" role="tab">{{contact.name}}</button>
+                                <button class="chat nav-link" id="{{ contact.pk }}" style="text-align: right !important; width: 100%;background:none; border:none" data-bs-toggle="pill" type="button" role="tab">{{contact.name}}</button>
                             {% endfor %}
                         {% else %}
                             No contacts yet. Contacts are made when you initiate a purchase, receive a purchase request, or respond to an item request.
@@ -26,7 +26,7 @@
                 
             </div>
             
-            <div class="col-8 col-sm-9 col-lg-10 overflow-auto" style="height: 100%;">
+            <div class="col-8 col-sm-9 col-lg-10 overflow-auto" style="height: 100%; background-color:#fdebeb">
                 <div class="row" style="height: 85%;">
 
                     <div class="col" style="height: 100%; overflow-y: scroll;" id="chat_scroll">
@@ -37,7 +37,7 @@
 
                 <div class="row align-items-end pt-2" style="height: 15%;">
                     <div class="col" style="height: 100%;">
-                        <div class="input-group">
+                        <div class="input-group" style="background-color: #000000">
                             <input type="text" class="form-control only-round-left" id="text_input">
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-secondary only-round-right" id="send_button">
