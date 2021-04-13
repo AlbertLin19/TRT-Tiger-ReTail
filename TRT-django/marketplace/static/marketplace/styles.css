@@ -33,6 +33,11 @@ html,
    text-shadow: 6px 6px #000000;
 }
 
+a.titleLink{
+   color: white;
+   text-decoration: none;
+}
+
 /* TRT title under the big big title */
 #trt_title{
    font-family: 'Source Sans Pro', sans-serif;
