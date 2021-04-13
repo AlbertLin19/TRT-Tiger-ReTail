@@ -2,11 +2,6 @@
 {% load cloudinary %}
 {% block content %}
 
-<head>
-    <script src="bootstrap.bundle.min.js / bootstrap.bundle.js"></script>
-    <!--https://getbootstrap.com/docs/4.0/components/popovers/-->
-</head>
-
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'new_item' %}" class="btn btn-outline-light" style="font-weight: bold;">POST ITEM</a>
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
@@ -39,31 +34,40 @@
                 <div class="card-body">
                     <h5 class="card-title">{{purchase.item}}</h5>
                     <p class="card-text">{{purchase.item.seller}}</p>
-                    {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
-                    <a class="btn btn-outline-success" href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
-                    {% elif purchase.status == Transaction_INITIATED %}
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-outline-secondary" data-toggle="popover"
-                            data-placement="top" data-content="Awaiting seller acknowledgement.">Confirm</button>
-                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
 
-                    {% elif purchase.status == Transaction_S_PENDING %}
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-outline-secondary" data-toggle="popover"
-                            data-placement="top"
-                            data-content="Already confirmed, awaiting seller acknowledgement.">Confirm</button>
-                    </div>
-                    {% elif purchase.status == Transaction_COMPLETE %}
-                    <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
-                    {% elif purchase.status == Transaction_CANCELLED %}
-                    <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
-                    {% endif %}
-                    <div class='col-md-2'>
-                        {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
-                        <div class="col-xs-6 text-left">
-                            <a class="btn btn-outline-danger" href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                            <a class="btn btn-outline-success"
+                                href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
+
+                            {% elif purchase.status == Transaction_INITIATED %}
+
+
+                            <button type="button" class="btn btn-outline-secondary disabled" data-toggle="popover"
+                                data-placement="top" data-content="Awaiting seller acknowledgement.">Confirm</button>
+
+
+                            {% elif purchase.status == Transaction_S_PENDING %}
+
+                            <button type="button" class="btn btn-outline-secondary" data-toggle="popover"
+                                data-placement="top"
+                                data-content="Already confirmed, awaiting seller acknowledgement.">Confirm</button>
+
+                            {% elif purchase.status == Transaction_COMPLETE %}
+                            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+                            {% elif purchase.status == Transaction_CANCELLED %}
+                            <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
+                            {% endif %}
                         </div>
-                        {% endif %}
+                        <div class='col-6'>
+                            {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
+                            <div class="col-xs-6 text-left">
+                                <a class="btn btn-outline-danger"
+                                    href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
