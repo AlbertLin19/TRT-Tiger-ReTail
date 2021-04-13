@@ -1,7 +1,6 @@
 {% extends "marketplace/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
 </div>
@@ -24,12 +23,26 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">I clicked “purchase” on an
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"> So... how does this site work?
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="panel-body"> Here's a fun comic to illustrate how you can use TRT as a seller and buyer: <br>
+                    <center><img src='../../static/marketplace/Comic.png' id = "comic-image"></center>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">I clicked “purchase” on an
                         item. What now?
                     </a>
                 </h4>
             </div>
-            <div id="collapse1" class="panel-collapse collapse in">
+            <div id="collapse2" class="panel-collapse collapse">
+            <!-- <div id="collapse2" class="panel-collapse collapse in"></div> -->
                 <div class="panel-body">The item will appear on your “My Purchases” page with the message “awaiting
                     seller confirmation”. Once the seller of your item confirms the purchase, reach out to the seller
                     with the provided email address to plan how the two of you can exchange the item and money!
@@ -39,12 +52,12 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">I need to edit information
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">I need to edit information
                         about an item I posted earlier. How do I do that?
                     </a>
                 </h4>
             </div>
-            <div id="collapse2" class="panel-collapse collapse">
+            <div id="collapse3" class="panel-collapse collapse">
                 <div class="panel-body">Navigate to the “My Items” page. As long as your item is not currently involved
                     in a transaction, there will be an option to edit information about any of your items.
                 </div>
@@ -53,25 +66,14 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Why is there no option to
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Why is there no option to
                         purchase some of the items on the gallery page?</a>
                 </h4>
             </div>
-            <div id="collapse3" class="panel-collapse collapse">
+            <div id="collapse4" class="panel-collapse collapse">
                 <div class="panel-body">A frozen item on the gallery page is currently in the process of being purchased
                     by another buyer. If this transaction doesn’t go through, the item will be reinstated on the image
                     gallery as a purchasable item. Check back in a couple of days to see if the item is up for sale!
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Q4</a>
-                </h4>
-            </div>
-            <div id="collapse4" class="panel-collapse collapse">
-                <div class="panel-body">hello hello hello
                 </div>
             </div>
         </div>
@@ -82,14 +84,14 @@
                 </h4>
             </div>
             <div id="collapse5" class="panel-collapse collapse">
-                <div class="panel-body">A5....
+                <div class="panel-body">hello hello hello
                 </div>
             </div>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Q6</a>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Q5</a>
                 </h4>
             </div>
             <div id="collapse6" class="panel-collapse collapse">
@@ -105,6 +107,17 @@
             </div>
             <div id="collapse7" class="panel-collapse collapse">
                 <div class="panel-body">A7
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse8">Q8</a>
+                </h4>
+            </div>
+            <div id="collapse8" class="panel-collapse collapse">
+                <div class="panel-body">A8
                 </div>
             </div>
         </div>
