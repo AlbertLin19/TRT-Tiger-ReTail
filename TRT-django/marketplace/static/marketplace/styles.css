@@ -217,6 +217,12 @@ html,
 .carousel-control-prev /*, .carousel-indicators */ {
     filter: invert(100%);
 }
+
+#comic-image {
+   width: 75%;
+   height: auto;
+   box-shadow: none !important;
+}
 /*
 .multi-item-carousel {
    overflow: hidden;
