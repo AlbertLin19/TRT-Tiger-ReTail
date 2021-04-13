@@ -228,6 +228,11 @@ a.titleLink{
    height: auto;
    box-shadow: none !important;
 }
+
+#chat:hover {
+   transform: scale(1.04);
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+}
 /*
 .multi-item-carousel {
    overflow: hidden;
