@@ -14,7 +14,8 @@
 <div class="gallery_back container-fliud mb-3">
     <br>
     <div class="container">
-        <div id="gallery_title">My Purchases</div><hr>
+        <div id="gallery_title">My Purchases</div>
+        <hr>
         {% if not purchases %}
         <h3>You have not started any purchases yet!</h3>
         {% endif %}
@@ -24,8 +25,10 @@
                 <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">
                     {{purchase.item.name}}
                 </h5>
-                <div style="text-align:center;" class="card-img-top rounded-corners">
-                    {% cloudinary purchase.image format="jpg" width=120 height=80 crop="fill"%}
+                <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
+                    <div style="text-align:center;" class="card-img-top rounded-corners">
+                        {% cloudinary purchase.image format="jpg" width=120 height=80 crop="fill"%}
+                    </div>
                 </div>
                 <div style="display:none;" class="item_categories">
                     {% for category in item.categories.all %}
@@ -39,10 +42,17 @@
                     {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
                     <a class="btn btn-outline-success" href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
                     {% elif purchase.status == Transaction_INITIATED %}
-                    <button type="button" class="btn btn-secondary" data-toggle="popover" data-placement="top"
-                        data-content="Awaiting seller acknowledgement.">Confirm</button>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-outline-secondary" data-toggle="popover"
+                            data-placement="top" data-content="Awaiting seller acknowledgement.">Confirm</button>
+                    </div>
+
                     {% elif purchase.status == Transaction_S_PENDING %}
-                    <p>Already Confirmed (grey out and add popup with text: awaiting seller confirmation)</p>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-outline-secondary" data-toggle="popover"
+                            data-placement="top"
+                            data-content="Already confirmed, awaiting seller acknowledgement.">Confirm</button>
+                    </div>
                     {% elif purchase.status == Transaction_COMPLETE %}
                     <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                     {% elif purchase.status == Transaction_CANCELLED %}
@@ -50,8 +60,8 @@
                     {% endif %}
                     <div class='col-md-2'>
                         {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
-                        <div class="col">
-                            <a class="btn btn-danger" href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                        <div class="col-xs-6 text-left">
+                            <a class="btn btn-outline-danger" href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
                         </div>
                         {% endif %}
                     </div>
