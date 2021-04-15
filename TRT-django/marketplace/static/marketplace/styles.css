@@ -239,6 +239,10 @@ a.titleLink{
 .bg-shadow {
    background-color: #a3a3a388;
 }
+
+.active-grey.active {
+   background-color: rgb(167, 167, 167) !important;
+}
 /*
 .multi-item-carousel {
    overflow: hidden;

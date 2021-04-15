@@ -650,6 +650,22 @@ def acceptSale(request, pk):
         messages.success(request, "Sale acknowledged.")
         # open contact between buyer and seller
         account.contacts.add(sale.buyer)  # (m2m goes both ways)
+        # notify the buyer
+        notify(
+            request,
+            sale.buyer,
+            account.name
+            + " has connected with you. You can now send direct messages to the seller through the inbox regarding "
+            + sale.item.name,
+        )
+        # notify the seller
+        notify(
+            request,
+            account,
+            sale.buyer.name
+            + " has been added as a contact. You can now send direct messages to the buyer through the inbox regarding "
+            + sale.item.name,
+        )
         # send confirmation email
         send_mail(
             "Sale Accepted",
