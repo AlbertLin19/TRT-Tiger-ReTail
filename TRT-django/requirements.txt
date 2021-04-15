@@ -8,6 +8,7 @@ cloudinary==1.24.0
 dj-database-url==0.5.0
 Django==3.1.7
 django-background-tasks==1.2.5
+django-compat==1.0.15
 django-crispy-forms==1.11.1
 django-heroku==0.3.1
 gunicorn==20.0.4
@@ -24,6 +25,6 @@ sqlparse==0.4.1
 toml==0.10.2
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
 whitenoise==5.2.0
 yapf==0.31.0
