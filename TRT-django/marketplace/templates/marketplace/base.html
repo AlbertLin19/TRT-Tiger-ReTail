@@ -33,42 +33,53 @@
     {% with Condition_POOR=4 Condition_WELLLOVED=3 Condition_GENTLYLOVED=2 Condition_LIKENEW=1 Condition_NEW=0 %}
 
     <div style="position: relative; min-height: 200px;">
-        <div id="gallery_top_bar" class="container-fluid">
-            <nav class="navbar navbar-expand-lg navbar-dark" style="padding-left: 20px;">
-                <a class="navbar-brand" href="{% url 'faq' %}">FAQ</a>
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        {% if account %}
-                        <a class="nav-item nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span
-                                class="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span
-                                class="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link active" href="{% url 'inbox' %}">INBOX<span
-                                class="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
-                        {% else %}
-                        <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span
-                                class="sr-only">(current)</span></a>
-                        {% endif %}
-                        <a class="nav-item nav-link" href="{% url 'contact' %}">CONTACT US</a>
-                        {% if account %}
-                        <div class="dropdown">
-                            <button class="btn btn-light mx-2 p-1 dropdown-toggle" type="button"
-                                id="notifications_button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="far fa-bell mx-1"></i>
-                            </button>
-                            <div class="dropdown-menu p-0 m-0" style="background-color: #F8F8F8;"
-                                aria-labelledby="notifications_button">
-                                <div class="container-fluid overflow-auto" style="max-height: 30vh;"
-                                    id="notifications_area">
-                                </div>
-                                <hr class="m-1 mt-2">
-                                <a class="dropdown-item mb-1" href="{% url 'list_notifications' %}">All
-                                    Notifications</a>
-                            </div>
-                        </div>
-                        {% endif %}
+        <div id="gallery_top_bar" class="container-fluid px-0">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <div class="container-fluid px-0">
+                    <button class="navbar-toggler bg-dark mx-2 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse bg-shadow" id="navbarToggle" style="padding-left: 60px;">
+                        <a class="navbar-brand" href="{% url 'faq' %}">FAQ</a>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            
+                            {% if account %}
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link active" href="{% url 'inbox' %}">INBOX<span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
+                                </li>
+                            {% endif %}
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link" href="{% url 'contact' %}">CONTACT US</a>
+                                </li>
+                            {% if account %}
+                                <li class="nav-item dropdown">
+                                    
+                                    <a class="nav-link dropdown-toggle active" href="#" role="button" id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="far fa-bell mx-1"></i>
+                                    </a>
+                                    <ul class="dropdown-menu p-0 m-0" style="background-color: #F8F8F8;" aria-labelledby="notifications_button">
+                                        <div class="container-fluid overflow-auto" style="max-height: 30vh;" id="notifications_area"></div>
+                                        <hr class="m-1 mt-2">
+                                        <a class="dropdown-item mb-1" href="{% url 'list_notifications' %}">All Notifications</a>
+                                    </ul>
+                                    
+                                </li>
+                            {% endif %}
+                            
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -140,7 +151,7 @@
                 let html = '<i class="far fa-bell mx-1"></i>';
                 const count = response['count'];
                 if (count > 0) {
-                    html += '<span class="badge bg-dark mx-1">';
+                    html += '<span class="badge text-dark bg-light mx-1">';
                     html += count;
                     html += '</span>';
                 }

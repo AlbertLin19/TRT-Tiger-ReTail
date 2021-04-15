@@ -231,6 +231,14 @@ a.titleLink{
    transform: scale(1.04);
    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
 }
+
+.hover-grey:hover {
+   background-color: rgb(231, 231, 231) !important;
+}
+
+.bg-shadow {
+   background-color: #a3a3a388;
+}
 /*
 .multi-item-carousel {
    overflow: hidden;
