@@ -40,34 +40,34 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse bg-shadow" id="navbarToggle" style="padding-left: 60px;">
-                        <a class="navbar-brand" href="{% url 'faq' %}">FAQ</a>
+                        <a class="navbar-brand hover-light px-2 mx-0" href="{% url 'faq' %}">FAQ</a>
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             
                             {% if account %}
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span class="sr-only">(current)</span></a>
+                                    <a class="nav-item hover-light nav-link active" href="{% url 'edit_account' %}">MY ACCOUNT<span class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span class="sr-only">(current)</span></a>
+                                    <a class="nav-item hover-light nav-link active" href="{% url 'account_activity' %}">ACTIVITY LOG<span class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link active" href="{% url 'inbox' %}">INBOX<span class="sr-only">(current)</span></a>
+                                    <a class="nav-item hover-light nav-link active" href="{% url 'inbox' %}">INBOX<span class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link" href="{% url 'logout' %}">LOGOUT</a>
+                                    <a class="nav-item hover-light nav-link" href="{% url 'logout' %}">LOGOUT</a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link active" href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
+                                    <a class="nav-item hover-light nav-link active" href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
                                 </li>
                             {% endif %}
                                 <li class="nav-item">
-                                    <a class="nav-item nav-link" href="{% url 'contact' %}">CONTACT US</a>
+                                    <a class="nav-item hover-light nav-link" href="{% url 'contact' %}">CONTACT US</a>
                                 </li>
                             {% if account %}
                                 <li class="nav-item dropdown">
                                     
-                                    <a class="nav-link dropdown-toggle active" href="#" role="button" id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle active hover-light" href="#" role="button" id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="far fa-bell mx-1"></i>
                                     </a>
                                     <ul class="dropdown-menu p-0 m-0" style="background-color: #F8F8F8;" aria-labelledby="notifications_button">

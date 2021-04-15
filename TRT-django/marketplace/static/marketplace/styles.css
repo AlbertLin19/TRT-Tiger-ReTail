@@ -243,6 +243,12 @@ a.titleLink{
 .active-grey.active {
    background-color: rgb(167, 167, 167) !important;
 }
+
+.hover-light:hover {
+   background-color: #dfdfdf !important;
+   color: #000000 !important;
+}
+
 /*
 .multi-item-carousel {
    overflow: hidden;
