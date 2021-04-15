@@ -1229,5 +1229,5 @@ def contact(request):
 
 
 def logout(request):
-    request.session.pop("username")
+    request.session.pop("username", default=None)
     return redirect(CASClient.getLogoutUrl())
