@@ -98,11 +98,6 @@ a.titleLink{
    font-size: 25px;
 }
 
-.card{
-   margin-bottom: 20px;
-   margin-right: 10px;
-   margin-left: 10px;
-}
 /* post items and my items buttons */
 /*
 #button_topnav {
@@ -147,11 +142,14 @@ a.titleLink{
    font-family: 'Source Sans Pro', sans-serif;
 }
 
-.card{
+.item-card{
    /*border-radius: 4px;
    background: #fff;
    box-shadow: 6px 6px 6px 6px rgba(0,0,0,.2);
    cursor: pointer;*/
+   margin-bottom: 20px;
+   margin-right: 10px;
+   margin-left: 10px;
    border-radius: 4px;
    background: rgb(190, 190, 190);
    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);

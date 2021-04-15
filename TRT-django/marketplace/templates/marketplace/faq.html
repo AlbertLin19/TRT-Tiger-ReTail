@@ -1,126 +1,122 @@
 {% extends "marketplace/base.html" %}
-{% load crispy_forms_tags %}
 {% block content %}
 <div class="topbar" style="text-align: right;">
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
 </div>
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
-
-<div class="container">
+<div class="container pb-4">
+    <br>
     <h2>Frequently Asked Questions</h2>
+    <hr>
 
-    <!------------------------------------------------------------------------------------------->
+    <p><strong>Note:</strong> If you have questions that are not addressed on this page, please submit them via our "Contact Us" page!</p>
 
-    <p><strong>Note:</strong> If you have questions that are not addressed on this page, please submit them via our
-        "Contact Us" page!</p>
-    <div class="panel-group" id="accordion">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"> So... how does this site work?
-                    </a>
-                </h4>
-            </div>
-            <div id="collapse1" class="panel-collapse collapse">
-                <div class="panel-body"> Here's a fun comic to illustrate how you can use TRT as a seller and buyer: <br>
+    <div class="accordion" id="accordionParent">
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                So... how does this site work?
+            </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Here's a fun comic to illustrate how you can use TRT as a seller and buyer: <br>
                     <center><img src='../../static/marketplace/Comic.png' id = "comic-image"></center>
-                </div>
+            </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">I clicked “purchase” on an
-                        item. What now?
-                    </a>
-                </h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                I clicked “purchase” on an item. What now?
+            </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                The item will appear on your “My Purchases” page. Once the seller of your item confirms the purchase, reach out to the seller with the provided email address to plan how the two of you can exchange the item and money!
             </div>
-            <div id="collapse2" class="panel-collapse collapse">
-            <!-- <div id="collapse2" class="panel-collapse collapse in"></div> -->
-                <div class="panel-body">The item will appear on your “My Purchases” page. Once the seller of your item confirms the purchase, reach out to the seller
-                    with the provided email address to plan how the two of you can exchange the item and money!
-                </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">I need to edit information
-                        about an item I posted earlier. How do I do that?
-                    </a>
-                </h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                I need to edit information about an item I posted earlier. How do I do that?
+            </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Navigate to the “My Items” page. As long as your item is not currently involved in a transaction, there will be an option to edit information about any of your items.
             </div>
-            <div id="collapse3" class="panel-collapse collapse">
-                <div class="panel-body">Navigate to the “My Items” page. As long as your item is not currently involved
-                    in a transaction, there will be an option to edit information about any of your items.
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Why is there no option to
-                        purchase some of the items on the gallery page?</a>
-                </h4>
-            </div>
-            <div id="collapse4" class="panel-collapse collapse">
-                <div class="panel-body">A frozen item on the gallery page is currently in the process of being purchased
-                    by another buyer. If this transaction doesn’t go through, the item will be reinstated on the image
-                    gallery as a purchasable item. Check back in a couple of days to see if the item is up for sale!
-                </div> 
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Q5</a>
-                </h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                Why is there no option to purchase some of the items on the gallery page?
+            </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                A frozen item on the gallery page is currently in the process of being purchased by another buyer. If this transaction doesn’t go through, the item will be reinstated on the image gallery as a purchasable item. Check back in a couple of days to see if the item is up for sale!
             </div>
-            <div id="collapse5" class="panel-collapse collapse">
-                <div class="panel-body">hello hello hello
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Q5</a>
-                </h4>
-            </div>
-            <div id="collapse6" class="panel-collapse collapse">
-                <div class="panel-body">A6
-                </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">Q7</a>
-                </h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                Q5
+            </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Q5 Answer
             </div>
-            <div id="collapse7" class="panel-collapse collapse">
-                <div class="panel-body">A7
-                </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse8">Q8</a>
-                </h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSix">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                Q6
+            </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Q6 Answer
             </div>
-            <div id="collapse8" class="panel-collapse collapse">
-                <div class="panel-body">A8
-                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSeven">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                Q7
+            </button>
+            </h2>
+            <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Q7 Answer
+            </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingEight">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                Q8
+            </button>
+            </h2>
+            <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionParent">
+            <div class="accordion-body">
+                Q8 Answer
+            </div>
             </div>
         </div>
     </div>
-</div>
-<!--https://www.w3schools.com/bootstrap/bootstrap_collapse.asp-->
+
 {% endblock content %}
