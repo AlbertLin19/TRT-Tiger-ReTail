@@ -16,7 +16,7 @@
                     <div class="nav flex-fill nav-pills me-3" id="contact_tabs" role="tablist" aria-orientation="vertical">
                         {% if contacts %}
                             {% for contact in contacts %}
-                                <button class="chat nav-link" id="{{ contact.pk }}" style="text-align: right !important; width: 100%;background:none; border:none" data-bs-toggle="pill" type="button" role="tab">{{contact.name}}</button>
+                                <button class="chat nav-link" id="{{ contact.pk }}" style="text-align: right !important; width: 100%; border:none" data-bs-toggle="pill" type="button" role="tab">{{contact.name}}</button>
                             {% endfor %}
                         {% else %}
                             No contacts yet. Contacts are made when you initiate a purchase, receive a purchase request, or respond to an item request.

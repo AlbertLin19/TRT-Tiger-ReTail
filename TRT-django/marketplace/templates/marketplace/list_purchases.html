@@ -42,15 +42,16 @@
                                     href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
     
                                 {% elif purchase.status == Transaction_INITIATED %}
-    
-                                <button type="button" class="btn btn-secondary disabled" data-toggle="popover" data-trigger="focus"
-                                    data-placement="top" data-content="Awaiting seller acknowledgement.">Confirm</button>
+
+                                <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Awaiting seller acknowledgement.">
+                                    <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                                </span>
     
                                 {% elif purchase.status == Transaction_S_PENDING %}
-    
-                                <button type="button" class="btn btn-secondary disabled" data-toggle="popover"
-                                    data-placement="top" data-trigger="focus"
-                                    data-content="Already confirmed, awaiting seller acknowledgement.">Confirm</button>
+
+                                <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Already confirmed, awaiting seller acknowledgement.">
+                                    <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                                </span>
 
                                 {% elif purchase.status == Transaction_COMPLETE %}
                                 <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
