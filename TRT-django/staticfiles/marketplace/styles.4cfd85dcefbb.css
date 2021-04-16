@@ -1,0 +1,344 @@
+html,
+
+/* big big picture on the gallery */
+#gallery_top_bar{
+   /*height: 100%;
+   width:100%;*/
+   left: 0px;
+   top: 0px;
+   background: url("Background.9fdb6b30066d.jpg") no-repeat;
+   background-size: 100%;
+}
+.sub-text {
+	font-weight: 400;
+	font-size: 20px;
+}
+.aboutteam {
+	text-align: center;
+	color: white;
+	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4), 0px 2px 6px rgba(0, 0, 0, 0.1), 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#Sara{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url("sara_schwartz.254f8a74f3a9.jpg") no-repeat;
+   background-size: 100%;
+}
+
+#Phoebe{
+   height: 250px;
+   width: 250px;
+   left: 0px;
+   top: 0px;
+   background: url("phoebe_lin.c4988a565c3c.jpg") no-repeat;
+   background-size: 100%;
+}
+
+#Albert{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url("albert_lin.76860e77c907.jpg") no-repeat;
+   background-size: 100%;
+}
+
+#Katie{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url("katie_mclaughlin.8b8cb8960501.jpg") no-repeat;
+   background-size: 100%;
+}
+
+#itemBox{
+   width: 1165px;
+   height: 722px;
+   left: 335px;
+   top: 300px;
+
+   background: #b8a3a31c;
+   border: 1px solid #000000;
+   box-sizing: border-box;
+}
+
+/* big big title on gallery */
+#tiger_retail_title{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   /*font-size: 120px;*/
+   font-size: 600%;
+   color: #F9F9F9;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: 6px 6px #000000;
+}
+
+a.titleLink{
+   color: white;
+   text-decoration: none;
+}
+
+/* TRT title under the big big title */
+#trt_title{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   /*font-size: 50px;*/
+   font-size: 300%;
+   color: #ff7301;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: 4px 4px #000000;
+}
+
+/*
+#Login{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-size: 30px;
+   font-weight: bold;
+   padding-left: 6px;
+   color: #F9F9F9;
+   color: #000000;
+   text-align: left;
+   text-decoration: none;
+}
+*/
+
+/* image gallery title */
+#gallery_title{
+   font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+#about-us{
+   font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+/* bar that holds both the buttons for post itmes and my items */
+#posting_bar{
+   text-align: right;
+}
+
+/* category header above filters */
+#category_label{
+   font-size: 20px;
+   text-decoration: underline;
+   font-weight: bold;
+   padding-bottom: 10px;
+}
+
+/* category sub header above labels */
+#category_sublabel{
+   font-size: 20px;
+   font-weight: bold;
+}
+
+/* individual category links */
+#category_link{
+   color: black;
+   font-size: 25px;
+}
+
+/* post items and my items buttons */
+/*
+#button_topnav {
+   text-decoration: none;
+   background-color: #789C55;
+   color: #FFFFFF;
+   padding: 8px 20px 8px 20px;
+   border-top: 6px solid #FFFFFF;
+   border-right: 3px solid #333333;
+   border-bottom: 5px solid #789C55;
+   border-left: 1px solid #CCCCCC;
+   border-radius: 3px;
+   /*box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-weight: bold;
+   font-size: 18px;
+   line-height: 30px;
+ }
+ */
+ .topbar{
+    padding: 20px 20px 20px 20px;
+    /*background: #d0eede;*/
+    background: url("tiger2.3d97bceecdea.jpg");
+    background-size: 100%;
+    z-index:1;
+ }
+
+ .gallery_back{
+   background: #f3dfc9;
+ }
+
+/* search bar */
+ #topnav {
+   background-color: #9cdef8;
+   width: 48%;
+   min-width: 150px;
+   border: 1px solid #000000;
+   box-sizing: border-box;
+   border-radius: 2px;
+   padding: 3px 20px 3px 20px;
+   font-family: 'Source Sans Pro', sans-serif;
+}
+
+.item-card{
+   /*border-radius: 4px;
+   background: #fff;
+   box-shadow: 6px 6px 6px 6px rgba(0,0,0,.2);
+   cursor: pointer;*/
+   margin-bottom: 20px;
+   margin-right: 10px;
+   margin-left: 10px;
+   border-radius: 4px;
+   background: rgb(190, 190, 190);
+   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
+   transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
+    0.3s box-shadow,
+    0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
+   /*padding: 14px 80px 18px 36px;*/
+   cursor: pointer;
+}
+
+
+.hover:hover{
+   /* background: #d2f0d1;
+   box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.50); */
+   
+   transform: scale(1.04);
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+
+   /* background: #e4fbff; */
+}
+
+.rounded {
+   border-top-left-radius: .5rem !important;
+   border-bottom-left-radius: .5rem !important;
+   border-top-right-radius: .5rem !important;
+   border-bottom-right-radius: .5rem !important;
+}
+
+.only-round-right {
+   border-top-left-radius: .0rem !important;
+   border-bottom-left-radius: .0rem !important;
+   border-top-right-radius: .2rem !important;
+   border-bottom-right-radius: .2rem !important;
+ }
+
+ .only-round-left {
+   border-top-right-radius: .0rem !important;
+   border-bottom-right-radius: .0rem !important;
+   border-top-left-radius: .2rem !important;
+   border-bottom-left-radius: .2rem !important;
+ }
+.message-pop{
+   position: fixed !important;
+   top: 7px !important; 
+   right: 7px !important;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-size: medium;
+}
+
+.account-alert{
+   position: fixed !important;
+   top: 7px !important; 
+   right: 380px !important;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-size: medium;
+}
+
+ div.dropdown-menu.show { 
+   background-color: #fd9652; 
+   opacity: 100%;
+   text-align: center;
+   position: fixed;
+   z-index:1;
+}
+
+/*https://stackoverflow.com/questions/46249541/change-arrow-colors-in-bootstraps-carousel*/
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}
+
+#comic-image {
+   width: 75%;
+   height: auto;
+   box-shadow: none !important;
+}
+
+#chat:hover {
+   transform: scale(1.04);
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.hover-grey:hover {
+   background-color: rgb(231, 231, 231) !important;
+}
+
+.bg-shadow {
+   background-color: #a3a3a388;
+}
+
+.active-grey.active {
+   background-color: rgb(167, 167, 167) !important;
+}
+
+.hover-light:hover {
+   background-color: #dfdfdf !important;
+   color: #000000 !important;
+}
+
+/*
+.multi-item-carousel {
+   overflow: hidden;
+ }
+ 
+ .multi-item-carousel .carousel-control-prev,
+ .multi-item-carousel .carousel-control-next {
+   background: rgba(255, 255, 255, 0.5);
+   width: 5%;
+ }
+ 
+ .multi-item-carousel .carousel-inner {
+   width: 100%;
+   /*left: -30%;*/
+    /*
+ }
+ /*
+ 
+ .carousel-inner .carousel-item-right.active,
+ .carousel-inner .carousel-item-next {
+   transform: translateX(100%);
+ }
+ 
+ .carousel-inner .carousel-item-left.active,
+ .carousel-inner .carousel-item-prev {
+   transform: translateX(-100%)
+ }
+ 
+ .carousel-inner .carousel-item-right,
+ .carousel-inner .carousel-item-left {
+   transform: translateX(100%);
+ }
+ 
+ .item__third {
+   float: left;
+   width: 25%;
+   background-size: cover;
+   height: 400px;
+ }*/
+ 

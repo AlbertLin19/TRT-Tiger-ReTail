@@ -9,6 +9,51 @@ html,
    background: url(Background.jpg) no-repeat;
    background-size: 100%;
 }
+.sub-text {
+	font-weight: 400;
+	font-size: 15px;
+}
+.aboutteam {
+	text-align: center;
+	color: white;
+	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4), 0px 2px 6px rgba(0, 0, 0, 0.1), 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#Sara{
+   height: 150px;
+   width: 150px;
+   border-radius: 20px;
+   background: url(sara_schwartz.png) no-repeat;
+   background-size: 100%;
+   margin: 0 auto;
+}
+
+#Phoebe{
+   height: 150px;
+   width: 150px;
+   border-radius: 20px;
+   background: url(phoebe_lin.png) no-repeat;
+   background-size: 100%;
+   margin: 0 auto;
+}
+
+#Albert{
+   height: 150px;
+   width: 150px;
+   border-radius: 20px;
+   background: url(albert_lin.png) no-repeat;
+   background-size: 100%;
+   margin: 0 auto;
+}
+
+#Katie{
+   height: 150px;
+   width: 150px;
+   border-radius: 20px;
+   background: url(katie_mclaughlin.png) no-repeat;
+   background-size: 100%;
+   margin: 0 auto;
+}
 
 #itemBox{
    width: 1165px;
@@ -66,6 +111,14 @@ a.titleLink{
 
 /* image gallery title */
 #gallery_title{
+   font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+#about-us{
    font-size: 50px;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;

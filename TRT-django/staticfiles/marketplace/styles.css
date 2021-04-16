@@ -9,6 +9,51 @@ html,
    background: url(Background.jpg) no-repeat;
    background-size: 100%;
 }
+.sub-text {
+	font-weight: 400;
+	font-size: 20px;
+}
+.aboutteam {
+	text-align: center;
+	color: white;
+	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4), 0px 2px 6px rgba(0, 0, 0, 0.1), 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#Sara{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url(sara_schwartz.jpg) no-repeat;
+   background-size: 100%;
+}
+
+#Phoebe{
+   height: 250px;
+   width: 250px;
+   left: 0px;
+   top: 0px;
+   background: url(phoebe_lin.jpg) no-repeat;
+   background-size: 100%;
+}
+
+#Albert{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url(albert_lin.jpg) no-repeat;
+   background-size: 100%;
+}
+
+#Katie{
+   height: 250px;
+   width:250px;
+   left: 0px;
+   top: 0px;
+   background: url(katie_mclaughlin.jpg) no-repeat;
+   background-size: 100%;
+}
 
 #itemBox{
    width: 1165px;
@@ -66,6 +111,14 @@ a.titleLink{
 
 /* image gallery title */
 #gallery_title{
+   font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+#about-us{
    font-size: 50px;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;
@@ -156,7 +209,7 @@ a.titleLink{
    transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
     0.3s box-shadow,
     0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
-   padding: 14px 80px 18px 36px;
+   /*padding: 14px 80px 18px 36px;*/
    cursor: pointer;
 }
 
@@ -243,6 +296,12 @@ a.titleLink{
 .active-grey.active {
    background-color: rgb(167, 167, 167) !important;
 }
+
+.hover-light:hover {
+   background-color: #dfdfdf !important;
+   color: #000000 !important;
+}
+
 /*
 .multi-item-carousel {
    overflow: hidden;
