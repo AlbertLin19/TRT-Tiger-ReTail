@@ -10,6 +10,7 @@
     <br>
     <div class="container">
         <div id="gallery_title">My Purchases</div>
+        <p>Manage your purchases here and wait for seller confirmation! To message seller after confirmation, visit your inbox.</p>
         <hr>
         {% if not purchases %}
         <h3>You have not started any purchases yet.</h3>
@@ -154,22 +155,21 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row">
                             {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
 
-                            <a class="btn btn-success"
+                            <a class="btn btn-outline-success"
                                 href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
 
                             {% elif purchase.status == Transaction_INITIATED %}
 
                             <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Awaiting seller acknowledgement.">
-                                <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                                <button class="btn btn-outline-secondary" type="button" disabled>Confirm</button>
                             </span>
 
                             {% elif purchase.status == Transaction_S_PENDING %}
 
                             <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Already confirmed, awaiting seller acknowledgement.">
-                                <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                                <button class="btn btn-outline-secondary" type="button" disabled>Confirm</button>
                             </span>
 
                             {% elif purchase.status == Transaction_COMPLETE %}
@@ -181,11 +181,11 @@
                                 <a class="btn btn-danger"
                                     href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
                             {% endif %}
-                        <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-outline-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
                             data-bs-target="#modal{{purchase.item.pk}}">
                             Details
                         </button>
-                    </div>
+
                     </div>
                   </div>               
             </div>
