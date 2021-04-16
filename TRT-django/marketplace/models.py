@@ -239,7 +239,7 @@ class Notification(models.Model):
         Account, on_delete=models.CASCADE, related_name="notifications"
     )
     datetime = models.DateTimeField()
-    text = models.CharField(max_length=100)
+    text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
 
 
