@@ -57,8 +57,8 @@
         {% endif %}
         {% for item in items %}
         {% if item.status != Item_FROZEN and item.status != Item_COMPLETE%}
-        <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
-          <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
+        <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
+          <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
             <br>
             <div style="text-align:center;" class="card-img-top rounded-corners">
@@ -110,12 +110,12 @@
                 {% csrf_token %}
                 <input type="hidden" name="pk" value={{item.pk}}>
                 <input type="submit" class="btn btn-success" value="Purchase"
-                  style="padding-left: 20px; padding-right: 20px;">
+                  style="padding-left: 21px; padding-right: 21px;">
                 <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
               </form>
               <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
-                data-bs-target="#modal{{item.pk}}">
-                View Details
+                data-bs-target="#modal{{item.pk}}" style="padding-left: 30px; padding-right: 30px;">
+                Details
               </button>
 
               <!-- Modal -->
