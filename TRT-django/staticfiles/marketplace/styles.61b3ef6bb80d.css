@@ -6,7 +6,7 @@ html,
    width:100%;*/
    left: 0px;
    top: 0px;
-   background: url(Background.jpg) no-repeat;
+   background: url("Background.9fdb6b30066d.jpg") no-repeat;
    background-size: 100%;
 }
 .sub-text {
@@ -23,7 +23,7 @@ html,
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(sara_schwartz.png) no-repeat;
+   background: url("sara_schwartz.021528c17c33.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -32,7 +32,7 @@ html,
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(phoebe_lin.png) no-repeat;
+   background: url("phoebe_lin.c4988a565c3c.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -41,7 +41,7 @@ html,
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(albert_lin.png) no-repeat;
+   background: url("albert_lin.3dd82ad3b351.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -50,7 +50,7 @@ html,
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(katie_mclaughlin.png) no-repeat;
+   background: url("katie_mclaughlin.8b8cb8960501.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -174,7 +174,7 @@ a.titleLink{
  .topbar{
     padding: 20px 20px 20px 20px;
     /*background: #d0eede;*/
-    background: url(tiger2.jpg);
+    background: url("tiger2.3d97bceecdea.jpg");
     background-size: 100%;
     z-index:1;
  }

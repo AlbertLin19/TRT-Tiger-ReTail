@@ -16,7 +16,7 @@
         {% endif %}
         <div class="row">
             {% for purchase in purchases %}
-            <div class="card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%;">
+            <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
                 <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">
                     {{purchase.item.name}}
                 </h5>
@@ -26,49 +26,168 @@
                         {% cloudinary purchase.item.image format="jpg" width=120 height=80 crop="fill"%}
                     </div>
                     <div style="display:none;" class="item_categories">
-                        {% for category in item.categories.all %}
+                        {% for category in purchase.item.categories.all %}
                         <div class="item_category">{{category}}</div>
                         {% endfor %}
                     </div>
                     <hr>
                     <div class="card-body">
-                        <h5 class="card-title">{{purchase.item}}</h5>
-                        <p class="card-text">{{purchase.item.seller}}</p>
-                        <div class="row">
-                            <div class="col-6 text-left">
-                                {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
-    
-                                <a class="btn btn-success"
-                                    href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
-    
-                                {% elif purchase.status == Transaction_INITIATED %}
-
-                                <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Awaiting seller acknowledgement.">
-                                    <button class="btn btn-secondary" type="button" disabled>Confirm</button>
-                                </span>
-    
-                                {% elif purchase.status == Transaction_S_PENDING %}
-
-                                <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Already confirmed, awaiting seller acknowledgement.">
-                                    <button class="btn btn-secondary" type="button" disabled>Confirm</button>
-                                </span>
-
-                                {% elif purchase.status == Transaction_COMPLETE %}
-                                <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
-                                {% elif purchase.status == Transaction_CANCELLED %}
-                                <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
-                                {% endif %}
+                      {%if purchase.item.negotiable == True%}
+                      <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD (negotiable)</p>
+                      {%else%}
+                      <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD</p>
+                      {%endif%}
+                      <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
+                      <i class="fa fa-check" aria-hidden="true"></i> Quality
+                      {% if purchase.item.condition == Condition_NEW%}
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      {% elif purchase.item.condition == Condition_LIKENEW %}
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      {% elif purchase.item.condition == Condition_GENTLYLOVED %}
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="100"
+                          aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      {% elif purchase.item.condition == Condition_WELLLOVED %}
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 55%"
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      {% elif purchase.item.condition == Condition_POOR %}
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      {% endif %}
+                      <br>      
+                      <!-- Modal -->
+                      <div class="modal fade" id="modal{{purchase.item.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item.pk}}"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header" style="background-color: rgb(54, 188, 250);">
+                              <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{purchase.item.name}}</h5>
+                              <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <span style="font-size:30px" aria-hidden="true">&times;</span>
+                              </button>
                             </div>
-                            <div class="col-6 text-right">
-                                {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
-                                    <a class="btn btn-danger"
-                                        href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
-                                {% endif %}
+                            <div class="modal-body">
+                              <h2 style="text-align:center;">ITEM DETAILS</h2>
+                              <div id="myCarousel{{purchase.item.pk}}" class="carousel slide text-center multi-item-carousel"
+                                data-bs-ride="carousel">
+                                <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
+                                <br>
+                                <div class="carousel-inner" role="listbox">
+                                  <!--carousel-item active-->
+                                  <div class="carousel-item active">
+                                    {% cloudinary purchase.item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                                  </div>
+                                  {%for image in purchase.item.album.all%}
+                                  <div class="carousel-item">
+                                    {% cloudinary purchase.image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                                  </div>
+                                  {%endfor%}
+                                </div>
+                                <br>
+                                <a class="carousel-control-prev" href="#myCarousel{{purchase.item.pk}}" role="button" data-bs-slide="prev">
+                                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                  <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#myCarousel{{purchase.item.pk}}" role="button" data-bs-slide="next">
+                                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                  <span class="sr-only">Next</span>
+                                </a>
+                                <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
+                              </div>
+                              <hr style="border-top: 2px solid black;">
+                              <div style="background:#bdecf7; border-radius:10px;" id="description">
+                                <div class="item_details" style="padding:5%">
+                                  {%if purchase.item.negotiable == True%}
+                                  <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD (negotiable)</p>
+                                  {%else%}
+                                  <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD</p>
+                                  {%endif%}
+                                  <i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}<br><br>
+                                  <i class="fa fa-check" aria-hidden="true"></i> Quality
+                                  {% if purchase.item.condition == Condition_NEW%}
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                                      style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                  {% elif purchase.item.condition == Condition_LIKENEW %}
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
+                                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                  {% elif purchase.item.condition == Condition_GENTLYLOVED %}
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%"
+                                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                  {% elif purchase.item.condition == Condition_WELLLOVED %}
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
+                                      style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                  {% elif purchase.item.condition == Condition_POOR %}
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
+                                      style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                  {% endif %}
+                                  <br>
+                                  <i class="fas fa-comment"></i> {{purchase.item.description}}
+                                </div>
+                              </div>
                             </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" onclick="enableHover()"
+                                data-bs-dismiss="modal">Close</button>
+                            </div>
+                          </div>
                         </div>
+                      </div>
+                      <div class="row">
+                            {% if purchase.status == Transaction_ACKNOWLEDGED or purchase.status == Transaction_B_PENDING %}
+
+                            <a class="btn btn-success"
+                                href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
+
+                            {% elif purchase.status == Transaction_INITIATED %}
+
+                            <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Awaiting seller acknowledgement.">
+                                <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                            </span>
+
+                            {% elif purchase.status == Transaction_S_PENDING %}
+
+                            <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Already confirmed, awaiting seller acknowledgement.">
+                                <button class="btn btn-secondary" type="button" disabled>Confirm</button>
+                            </span>
+
+                            {% elif purchase.status == Transaction_COMPLETE %}
+                            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+                            {% elif purchase.status == Transaction_CANCELLED %}
+                            <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
+                            {% endif %}
+                            {% if purchase.status != Transaction_COMPLETE and purchase.status != Transaction_CANCELLED %}
+                                <a class="btn btn-danger"
+                                    href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                            {% endif %}
+                        <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
+                            data-bs-target="#modal{{purchase.item.pk}}">
+                            Details
+                        </button>
                     </div>
-                </div>
-                
+                    </div>
+                  </div>               
             </div>
             {% endfor %}
         </div>
