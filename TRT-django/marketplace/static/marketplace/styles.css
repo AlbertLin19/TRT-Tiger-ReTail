@@ -78,6 +78,16 @@ html,
    text-shadow: 6px 6px #000000;
 }
 
+#tiger_retail_title_small{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-size: 400%;
+   color: #F9F9F9;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: 6px 6px #000000;
+}
+
 a.titleLink{
    color: white;
    text-decoration: none;
@@ -112,6 +122,15 @@ a.titleLink{
 /* image gallery title */
 #gallery_title{
    font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+/* image gallery title on smaller displays */
+#gallery_title_small{
+   font-size: 2rem;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
