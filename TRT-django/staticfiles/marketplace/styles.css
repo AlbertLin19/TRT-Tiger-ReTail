@@ -9,15 +9,31 @@ html,
    background: url(Background.jpg) no-repeat;
    background-size: 100%;
 }
-.sub-text {
-	font-weight: 400;
-	font-size: 15px;
-}
 .aboutteam {
-	text-align: center;
+	font-weight: 400;
+   font-size: 15px;
+   text-align: center;
 	color: white;
 	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4), 0px 2px 6px rgba(0, 0, 0, 0.1), 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+.team-description {
+	text-align: center;
+   color: rgb(70, 69, 69);
+	text-shadow: 0px 1px 2px rgb(209, 209, 209), 0px 2px 6px rgb(209, 209, 209), 0px 4px 10px rgb(209, 209, 209);
+}
+
+.hide {
+   display: none;
+ }
+ 
+ .teamprofile:hover + .hide {
+   display: inline-flex;
+   text-align: center;
+   font-size: 15px;
+   color: rgb(70, 69, 69);
+	text-shadow: 0px 1px 2px rgb(209, 209, 209), 0px 2px 6px rgb(209, 209, 209), 0px 4px 10px rgb(209, 209, 209);
+ }
 
 #Sara{
    height: 150px;
@@ -78,6 +94,16 @@ html,
    text-shadow: 6px 6px #000000;
 }
 
+#tiger_retail_title_small{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   font-size: 400%;
+   color: #F9F9F9;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: 6px 6px #000000;
+}
+
 a.titleLink{
    color: white;
    text-decoration: none;
@@ -112,6 +138,15 @@ a.titleLink{
 /* image gallery title */
 #gallery_title{
    font-size: 50px;
+   font-weight: bold;
+   font-family: 'Source Sans Pro', sans-serif;
+   font-style: normal;
+   padding-top: 10px;
+}
+
+/* image gallery title on smaller displays */
+#gallery_title_small{
+   font-size: 2rem;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;
    font-style: normal;
@@ -204,7 +239,7 @@ a.titleLink{
    margin-right: 10px;
    margin-left: 10px;
    border-radius: 4px;
-   background: rgb(190, 190, 190);
+   background: rgb(255, 255, 255);
    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
    transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
     0.3s box-shadow,
