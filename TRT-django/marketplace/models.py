@@ -82,7 +82,7 @@ class Item(models.Model):
     image = CloudinaryField(
         "image",
         format="jpeg",
-        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+        transformation=[{"width": 600, "height": 600, "crop": "limit"}],
     )
     status = models.DecimalField(
         max_digits=1,
@@ -103,7 +103,7 @@ class AlbumImage(models.Model):
     image = CloudinaryField(
         "image",
         format="jpeg",
-        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+        transformation=[{"width": 600, "height": 600, "crop": "limit"}],
     )
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="album")
 
@@ -202,7 +202,7 @@ class ItemRequest(models.Model):
     image = CloudinaryField(
         "image",
         format="jpeg",
-        transformation=[{"width": 250, "height": 250, "crop": "limit"}],
+        transformation=[{"width": 600, "height": 600, "crop": "limit"}],
     )
 
     def __str__(self):
