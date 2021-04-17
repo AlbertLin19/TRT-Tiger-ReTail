@@ -12,8 +12,8 @@
       </div>
     </div>
     
-    <div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
-      <a class="btn btn-light" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span class="d-none d-sm-inline">Want to Sell? Browse </span>Requests</a>
+    <div class="col-5 col-sm-6 col-md-4 col-lg-4 col-xxl-3">
+      <a class="btn btn-light" href="{% url 'gallery' %}" style="width: 100%;"><span class="d-none d-sm-inline">Want to Buy? Browse </span>Items</a>
     </div>
 
     <div class="col-2">
@@ -23,8 +23,8 @@
           <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
           <a class="dropdown-item" href="{% url 'new_item_request' %}">POST REQUEST</a>
+          <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
         </div>
       </div>
     </div>
@@ -35,9 +35,9 @@
 <div class="gallery_back container-fluid mb-3">
   <br>
   <div class="container">
-    <div class="d-none d-lg-block" id="gallery_title"> Items for Sale </div>
-    <div class="d-lg-none d-md-block" id="gallery_title_small"> Items for Sale</div>
-    <p>Purchase items here. Check out our FAQ for more.</p>
+    <div class="d-none d-lg-block" id="gallery_title"> Item Requests </div>
+    <div class="d-lg-none d-md-block" id="gallery_title_small"> Item Requests</div>
+    <p>Respond to item requests here. Check out our FAQ for more.</p>
     <hr>
     <br>
     <div class="row">
@@ -60,150 +60,144 @@
         <button onclick="filter('other')" style="background:none" class="btn btn-sm">Other</button>
       </div>
       <div class="col-md-10 row">
-        {% if not items %}
-          <h4>No items posted yet.</h4>
+        {% if not item_requests %}
+          <h4>No item requests posted yet.</h4>
         {% endif %}
-        {% for item in items %}
-        {% if item.status != Item_FROZEN and item.status != Item_COMPLETE%}
+        {% for item_request in item_requests %}
+        
         <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
-          <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
+          <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item_request.name}}</h5>
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
             <br>
             <div style="text-align:center;" class="card-img-top rounded-corners">
-              {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
+              {% cloudinary item_request.image format="jpg" width=120 height=80 crop="fill"%}
             </div>
             <div style="display:none;" class="item_categories">
-              {% for category in item.categories.all %}
+              {% for category in item_request.categories.all %}
               <div class="item_category">{{category}}</div>
               {% endfor %}
             </div>
             <hr>
             <div class="card-body">
-              {%if item.negotiable == True%}
-              <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
+              {%if item_request.negotiable == True%}
+              <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
               {%else%}
-              <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
+              <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
               {%endif%}
-              <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
+              <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
               <i class="fa fa-check" aria-hidden="true"></i> Quality
-              {% if item.condition == Condition_NEW%}
+              {% if item_request.condition == Condition_NEW%}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_LIKENEW %}
+              {% elif item_request.condition == Condition_LIKENEW %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_GENTLYLOVED %}
+              {% elif item_request.condition == Condition_GENTLYLOVED %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="100"
                   aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_WELLLOVED %}
+              {% elif item_request.condition == Condition_WELLLOVED %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 55%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_POOR %}
+              {% elif item_request.condition == Condition_POOR %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% endif %}
               <br>
-              {% if item.status == Item_AVAILABLE %}
-              <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
-                {% csrf_token %}
-                <input type="hidden" name="pk" value={{item.pk}}>
-                <input type="submit" class="btn btn-success" value="Purchase"
-                  style="padding-left: 21px; padding-right: 21px;">
-                <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
-              </form>
+              
+              <a class="btn btn-success" href="{% url 'contact_item_request' item_request.pk %}">Contact</a>
               <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
-                data-bs-target="#modal{{item.pk}}" style="padding-left: 30px; padding-right: 30px;">
+                data-bs-target="#modal{{item_request.pk}}" style="padding-left: 30px; padding-right: 30px;">
                 Details
               </button>
 
               <!-- Modal -->
-              <div class="modal fade" id="modal{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item.pk}}"
+              <div class="modal fade" id="modal{{item_request.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item_request.pk}}"
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
                     <div class="modal-header" style="background-color: rgb(54, 188, 250);">
-                      <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
+                      <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item_request.name}}</h5>
                       <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
                         aria-label="Close">
                         <span style="font-size:30px" aria-hidden="true">&times;</span>
                       </button>
                     </div>
                     <div class="modal-body">
-                      <h2 style="text-align:center;">ITEM DETAILS</h2>
-                      <div id="myCarousel{{item.pk}}" class="carousel slide text-center multi-item-carousel"
+                      <h2 style="text-align:center;">ITEM REQUEST DETAILS</h2>
+                      <div id="myCarousel{{item_request.pk}}" class="carousel slide text-center multi-item-carousel"
                         data-bs-ride="carousel">
-                        <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
+                        <!--<a class="carousel-control left" href="#myCarousel{{item_request.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item_request.pk}}').carousel('prev')">&lsaquo;</a>-->
                         <br>
                         <div class="carousel-inner" role="listbox">
                           <!--carousel-item active-->
                           <div class="carousel-item active">
-                            {% cloudinary item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                            {% cloudinary item_request.image format="jpg" width=320 height=240 crop="fill" radius=40%}
                           </div>
-                          {%for image in item.album.all%}
+                          {%for image in item_request.album.all%}
                           <div class="carousel-item">
                             {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
                           </div>
                           {%endfor%}
                         </div>
                         <br>
-                        <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button" data-bs-slide="prev">
+                        <a class="carousel-control-prev" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="sr-only">Previous</span>
                         </a>
-                        <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button" data-bs-slide="next">
+                        <a class="carousel-control-next" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="sr-only">Next</span>
                         </a>
-                        <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
+                        <!--<a class="carousel-control right" href="#myCarousel{{item_request.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item_request.pk}}').carousel('next')">&rsaquo;</a>-->
                       </div>
                       <hr style="border-top: 2px solid black;">
                       <div style="background:#bdecf7; border-radius:10px;" id="description">
                         <div class="item_details" style="padding:5%">
-                          {%if item.negotiable == True%}
-                          <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
+                          {%if item_request.negotiable == True%}
+                          <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
                           {%else%}
-                          <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
+                          <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
                           {%endif%}
-                          <i class="fas fa-hourglass-half"></i> till {{item.deadline}}<br><br>
+                          <i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}<br><br>
                           <i class="fa fa-check" aria-hidden="true"></i> Quality
-                          {% if item.condition == Condition_NEW%}
+                          {% if item_request.condition == Condition_NEW%}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
                               style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_LIKENEW %}
+                          {% elif item_request.condition == Condition_LIKENEW %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_GENTLYLOVED %}
+                          {% elif item_request.condition == Condition_GENTLYLOVED %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_WELLLOVED %}
+                          {% elif item_request.condition == Condition_WELLLOVED %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
                               style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_POOR %}
+                          {% elif item_request.condition == Condition_POOR %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
                               style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% endif %}
                           <br>
-                          <i class="fas fa-comment"></i> {{item.description}}
+                          <i class="fas fa-comment"></i> {{item_request.description}}
                         </div>
                       </div>
                     </div>
@@ -214,15 +208,10 @@
                   </div>
                 </div>
               </div>
-              {% elif item.status == Item_FROZEN %}
-              <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">FROZEN</p>
-              {% elif item.status == Item_COMPLETE %}
-              <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">SOLD</p>
-              {% endif %}
             </div>
           </div>
         </div>
-        {% endif %}
+       
         {% endfor %}
       </div>
     </div>

@@ -26,6 +26,14 @@ urlpatterns = [
         views.deleteItemRequest,
         name="delete_item_request",
     ),
+    path(
+        "item_requests/<int:pk>/contact/",
+        views.contactItemRequest,
+        name="contact_item_request",
+    ),
+    path(
+        "item_requests/browse/", views.browseItemRequests, name="browse_item_requests"
+    ),
     path("inbox/", views.inbox, name="inbox"),
     path("inbox/<int:pk>/get/", views.getMessages, name="get_messages"),
     path("inbox/send/", views.sendMessage, name="send_message"),

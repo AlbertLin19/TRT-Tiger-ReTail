@@ -996,6 +996,75 @@ def deleteItemRequest(request, pk):
 
 # ----------------------------------------------------------------------
 
+# contact the requester of an item_request
+
+
+@authentication_required
+def contactItemRequest(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    item_request = ItemRequest.objects.get(pk=pk)
+
+    # cannot contact your own item_request
+    if item_request.requester == account:
+        # rejected
+        messages.warning(
+            request, "Cannot respond to an item request you posted yourself."
+        )
+        return redirect("browse_item_requests")
+
+    # create a contact and set log
+    account.contacts.add(item_request.requester)  # (m2m goes both ways)
+    # notify the requester
+    notify(
+        request,
+        item_request.requester,
+        account.name
+        + " has connected with you regarding your item request. You can now send direct messages through the inbox regarding your request for "
+        + item_request.name,
+    )
+    # notify the contacter
+    notify(
+        request,
+        account,
+        item_request.requester.name
+        + " has been added as a contact. You can now send direct messages through the inbox regarding the request for "
+        + item_request.name,
+    )
+    send_mail(
+        "Received Response to Your Item Request",
+        "Your item request has been responded to by a potential seller.\n"
+        + request.build_absolute_uri(reverse("list_item_requests")),
+        settings.EMAIL_HOST_USER,
+        [item_request.requester.email],
+        fail_silently=False,
+    )
+    # create an item request log, which will be used to list the item request history for the requester
+    logItemRequestAction(item_request, account, "contact")
+    messages.success(
+        request,
+        "You can directly message "
+        + item_request.requester.name
+        + " about the request for "
+        + item_request.name
+        + " through the inbox!",
+    )
+
+    return redirect("browse_item_requests")
+
+
+# ----------------------------------------------------------------------
+
+# item request gallery
+
+
+def browseItemRequests(request):
+    item_requests = ItemRequest.objects.all()
+    context = {"item_requests": item_requests}
+    return render(request, "marketplace/browse_item_requests.html", context)
+
+
+# ----------------------------------------------------------------------
+
 # notifications page
 
 
