@@ -228,6 +228,19 @@ a.titleLink{
    font-family: 'Source Sans Pro', sans-serif;
 }
 
+.card-body{
+   padding: 3px 20px 3px 20px;
+}
+
+.card-text{
+   font-size: 14px;
+   margin:0
+}
+
+.text-muted{
+   font-size:7px;
+}
+
 .item-card{
    /*border-radius: 4px;
    background: #fff;

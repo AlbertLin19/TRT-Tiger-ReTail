@@ -18,6 +18,7 @@
         {% endif %}
         <div class="row">
             {% for purchase in purchases %}
+            {% if purchase.status != Transaction_CANCELLED%}
             <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
                 <h5 style="padding: 6%;background-color: #faebaa; border-radius:10px" class="card-title">
                     {{purchase.item.name}}
@@ -190,6 +191,7 @@
                     </div>
                   </div>               
             </div>
+            {%endif%}
             {% endfor %}
         </div>
 
