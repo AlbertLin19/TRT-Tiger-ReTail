@@ -19,7 +19,7 @@ html,
 
 .team-description {
 	text-align: center;
-   color: rgb(70, 69, 69);
+   color: rgb(114, 111, 111);
 	text-shadow: 0px 1px 2px rgb(209, 209, 209), 0px 2px 6px rgb(209, 209, 209), 0px 4px 10px rgb(209, 209, 209);
 }
 
@@ -28,11 +28,9 @@ html,
  }
  
  .teamprofile:hover + .hide {
-   display: inline-flex;
+   display: flex;
    text-align: center;
    font-size: 15px;
-   color: rgb(70, 69, 69);
-	text-shadow: 0px 1px 2px rgb(209, 209, 209), 0px 2px 6px rgb(209, 209, 209), 0px 4px 10px rgb(209, 209, 209);
  }
 
 #Sara{
