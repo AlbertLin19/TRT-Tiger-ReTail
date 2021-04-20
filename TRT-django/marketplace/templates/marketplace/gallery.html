@@ -114,17 +114,23 @@
               {% endif %}
               <br>
               {% if item.status == Item.AVAILABLE %}
-              <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
-                {% csrf_token %}
-                <input type="hidden" name="pk" value={{item.pk}}>
-                <input type="submit" class="btn btn-success" value="Purchase"
-                  style="padding-left: 21px; padding-right: 21px;">
-                <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
-              </form>
-              <button type="button" class="modal{{item.pk}} btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
-                data-bs-target="#modal{{item.pk}}" style="padding-left: 30px; padding-right: 30px;">
-                Details
-              </button>
+              <div class='row'>
+                <div class="col-sm-12">
+                  <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    <input type="hidden" name="pk" value={{item.pk}}>
+                    <input type="submit" class="btn btn-success pull-left" value="Purchase"
+                      style="padding-left: 19px; padding-right: 19px;">
+                    <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
+                  </form>
+                  <button type="button" class="modal{{item.pk}} btn btn-secondary noHover pull-right" onclick="disableHover()" data-bs-toggle="modal"
+                    data-bs-target="#modal{{item.pk}}" style="padding-left: 28px; padding-right: 28px;">
+                    Details
+                  </button>
+                </div> 
+              </div>
+              <br> 
+            
 
               <!-- Modal -->
               <div class="modal fade" id="modal{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item.pk}}"
