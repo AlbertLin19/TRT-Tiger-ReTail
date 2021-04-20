@@ -1302,24 +1302,26 @@ def verifyEmail(request, token):
 def cycleAccount(request):
     username = request.session.get("username")
 
+    netids = settings.ADMIN_NETIDS
+    suffixes = settings.ALT_ACCOUNT_SUFFIXES
+
     # must be an admin netid + suffix
-    if username not in [
-        netid + suffix
-        for netid in settings.ADMIN_NETIDS
-        for suffix in settings.ALT_ACCOUNT_SUFFIXES
-    ]:
+    if username not in [netid + suffix for netid in netids for suffix in suffixes]:
         messages.warning(request, "Forbidden, need permission.")
         return redirect("edit_account")
 
     # set the session username to the next netid+suffix
-    suffixes = settings.ALT_ACCOUNT_SUFFIXES
-    for i in range(len(suffixes)):
-        suffix = suffixes[i]
-        if username[-len(suffix) :] == suffix:
-            request.session["username"] = (
-                username[: -len(suffix)] + suffixes[(i + 1) % len(suffixes)]
-            )
+    done = False
+    for i in range(len(netids)):
+        if done:
             break
+        for j in range(len(suffixes)):
+            if username == netids[i] + suffixes[j]:
+                request.session["username"] = (
+                    netids[i] + suffixes[(j + 1) % len(suffixes)]
+                )
+                done = True
+                break
 
     messages.success(request, "Cycled to alternate account.")
     return redirect("edit_account")
