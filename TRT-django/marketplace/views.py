@@ -98,7 +98,7 @@ def notifyEmailSparsely(pk, email, url):
             "You have new notification(s) waiting to be read.\n" + url,
             settings.EMAIL_HOST_USER,
             [email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
 
@@ -284,7 +284,7 @@ def newItem(request):
                     + request.build_absolute_uri(reverse("list_items")),
                     settings.EMAIL_HOST_USER,
                     [account.email],
-                    fail_silently=False,
+                    fail_silently=True,
                 )
                 return redirect("list_items")
             except Exception as e:
@@ -394,7 +394,7 @@ def deleteItem(request, pk):
         + request.build_absolute_uri((reverse("list_items"))),
         settings.EMAIL_HOST_USER,
         [account.email],
-        fail_silently=False,
+        fail_silently=True,
     )
     return redirect("list_items")
 
@@ -463,7 +463,7 @@ def newPurchase(request):
         + request.build_absolute_uri(reverse("list_purchases")),
         settings.EMAIL_HOST_USER,
         [account.email],
-        fail_silently=False,
+        fail_silently=True,
     )
     # send notification email to seller
     send_mail(
@@ -472,7 +472,7 @@ def newPurchase(request):
         + request.build_absolute_uri(reverse("list_items")),
         settings.EMAIL_HOST_USER,
         [item.seller.email],
-        fail_silently=False,
+        fail_silently=True,
     )
     # notify the seller
     notify(
@@ -525,7 +525,7 @@ def confirmPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Sale Awaiting Confirmation",
@@ -533,7 +533,7 @@ def confirmPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [purchase.item.seller.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the seller
         notify(
@@ -562,7 +562,7 @@ def confirmPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Sale Completed",
@@ -570,7 +570,7 @@ def confirmPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [item.seller.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the seller
         notify(
@@ -623,7 +623,7 @@ def cancelPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Sale Cancelled by Buyer",
@@ -631,7 +631,7 @@ def cancelPurchase(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [item.seller.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the seller
         notify(
@@ -690,7 +690,7 @@ def acceptSale(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Purchase Request Accepted by Seller",
@@ -698,7 +698,7 @@ def acceptSale(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the buyer
         notify(
@@ -753,7 +753,7 @@ def confirmSale(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Purchase Awaiting Confirmation",
@@ -761,7 +761,7 @@ def confirmSale(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the buyer
         notify(
@@ -790,7 +790,7 @@ def confirmSale(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Purchase Completed",
@@ -798,7 +798,7 @@ def confirmSale(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the buyer
         notify(
@@ -852,7 +852,7 @@ def cancelSale(request, pk):
             + request.build_absolute_uri(reverse("list_items")),
             settings.EMAIL_HOST_USER,
             [account.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         send_mail(
             "Purchase Cancelled by Seller",
@@ -860,7 +860,7 @@ def cancelSale(request, pk):
             + request.build_absolute_uri(reverse("list_purchases")),
             settings.EMAIL_HOST_USER,
             [sale.buyer.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         # notify the buyer
         notify(
@@ -919,7 +919,7 @@ def newItemRequest(request):
                     + request.build_absolute_uri(reverse("list_item_requests")),
                     settings.EMAIL_HOST_USER,
                     [account.email],
-                    fail_silently=False,
+                    fail_silently=True,
                 )
                 return redirect("list_item_requests")
             except Exception as e:
@@ -1006,7 +1006,7 @@ def deleteItemRequest(request, pk):
         + request.build_absolute_uri((reverse("list_item_requests"))),
         settings.EMAIL_HOST_USER,
         [account.email],
-        fail_silently=False,
+        fail_silently=True,
     )
     return redirect("list_item_requests")
 
@@ -1053,7 +1053,7 @@ def contactItemRequest(request, pk):
         + request.build_absolute_uri(reverse("list_item_requests")),
         settings.EMAIL_HOST_USER,
         [item_request.requester.email],
-        fail_silently=False,
+        fail_silently=True,
     )
     # create an item request log, which will be used to list the item request history for the requester
     logItemRequestAction(item_request, account, "contact")
@@ -1259,7 +1259,7 @@ def editAccount(request):
                     + request.build_absolute_uri(reverse("verify_email", args=[token])),
                     settings.EMAIL_HOST_USER,
                     [new_email],
-                    fail_silently=False,
+                    fail_silently=True,
                 )
                 messages.info(request, "Verification email sent.")
 
