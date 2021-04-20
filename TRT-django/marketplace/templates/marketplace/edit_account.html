@@ -7,7 +7,7 @@
 </div>
 <div class="container">
     <br>
-    <h2>Edit Account Information</h2>
+    <h2>Edit Account Information &nbsp; [{{account.username}}]</h2>
     <hr>
     <form action="{% url 'edit_account' %}" method="post">
         {% csrf_token %}

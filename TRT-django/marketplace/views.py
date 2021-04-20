@@ -183,6 +183,23 @@ def authentication_required(view_function):
                         name=username,
                         email=username + "@princeton.edu",
                     ).save()
+                # SPECIAL CASE: if the netid is an ADMIN_NETID
+                if username in settings.ADMIN_NETIDS:
+                    # create all the alternate accounts
+                    # and assign the first one as active
+                    for suffix in settings.ALT_ACCOUNT_SUFFIXES:
+                        if not Account.objects.filter(
+                            username=username + suffix
+                        ).exists():
+                            Account(
+                                username=username + suffix,
+                                name=username + suffix,
+                                email=username + "@princeton.edu",
+                            ).save()
+                    request.session["username"] = (
+                        username + settings.ALT_ACCOUNT_SUFFIXES[0]
+                    )
+
                 return view_function(request, *args, **kwargs)
 
         # user could NOT be authenticated, so redirect to CAS login
@@ -1275,6 +1292,36 @@ def verifyEmail(request, token):
             messages.success(request, "Email verified.")
     else:
         messages.warning(request, "Verification link has expired.")
+    return redirect("edit_account")
+
+
+# ----------------------------------------------------------------------
+
+
+@authentication_required
+def cycleAccount(request):
+    username = request.session.get("username")
+
+    # must be an admin netid + suffix
+    if username not in [
+        netid + suffix
+        for netid in settings.ADMIN_NETIDS
+        for suffix in settings.ALT_ACCOUNT_SUFFIXES
+    ]:
+        messages.warning(request, "Forbidden, need permission.")
+        return redirect("edit_account")
+
+    # set the session username to the next netid+suffix
+    suffixes = settings.ALT_ACCOUNT_SUFFIXES
+    for i in range(len(suffixes)):
+        suffix = suffixes[i]
+        if username[-len(suffix) :] == suffix:
+            request.session["username"] = (
+                username[: -len(suffix)] + suffixes[(i + 1) % len(suffixes)]
+            )
+            break
+
+    messages.success(request, "Cycled to alternate account.")
     return redirect("edit_account")
 
 
