@@ -157,21 +157,23 @@
                           </div>
                         </div>
                       </div>
+                      <div class="row">
+                        <div class="col-sm-12">
                             {% if purchase.status == Transaction.ACKNOWLEDGED or purchase.status == Transaction.B_PENDING %}
 
-                            <a class="btn btn-outline-success"
+                            <a class="btn btn-outline-success pull-left" style="padding-right:7px; padding-left:7px;"
                                 href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
 
                             {% elif purchase.status == Transaction.INITIATED %}
 
                             <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Awaiting seller acknowledgement.">
-                                <button class="btn btn-outline-secondary" type="button" disabled>Confirm</button>
+                                <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;" type="button" disabled>Confirm</button>
                             </span>
 
                             {% elif purchase.status == Transaction.S_PENDING %}
 
                             <span data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Already confirmed, awaiting seller acknowledgement.">
-                                <button class="btn btn-outline-secondary" type="button" disabled>Confirm</button>
+                                <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;" type="button" disabled>Confirm</button>
                             </span>
 
                             {% elif purchase.status == Transaction.COMPLETE %}
@@ -180,16 +182,15 @@
                             <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                             {% endif %}
                             {% if purchase.status != Transaction.COMPLETE and purchase.status != Transaction.CANCELLED %}
-                                <a class="btn btn-danger"
+                                <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
                                     href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
                             {% endif %}
-                        <button type="button" class="btn btn-outline-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
+                            <button type="button" class="modal{{purchase.item.pk}} btn btn-outline-primary noHover pull-right" style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
                             data-bs-target="#modal{{purchase.item.pk}}">
                             Details
-                        </button>
-
-                    </div>
-                  </div>               
+                            </button>
+                        </div>
+                      </div>        
             </div>
             {%endif%}
             {% endfor %}

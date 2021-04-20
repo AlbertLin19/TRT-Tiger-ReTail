@@ -178,16 +178,20 @@
                 {% elif item.status == Item.COMPLETE %}
                     <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                 {% endif %}
-                {% if item.status == Item.AVAILABLE %}
-                    <a class="btn btn-outline-danger" href="{% url 'delete_item' item.pk %}">Delete</a>
-                {% endif %}
-                {% if item.status == Item.AVAILABLE %}
-                    <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;" href="{% url 'edit_item' item.pk %}">Edit</a>
-                {% endif %}
-                <button type="button" class="btn btn-outline-primary noHover" onclick="disableHover()" data-bs-toggle="modal"
-                    data-bs-target="#modal{{item.pk}}">
-                    Details
-                </button>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {% if item.status == Item.AVAILABLE %}
+                        <a class="btn btn-outline-danger pull-left" style="padding-right:11px; padding-left:11px;" href="{% url 'delete_item' item.pk %}">Delete</a>
+                    {% endif %}
+                    {% if item.status == Item.AVAILABLE %}
+                        <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;" href="{% url 'edit_item' item.pk %}">Edit</a>
+                    {% endif %}
+                    <button type="button" class="btn btn-outline-primary noHover pull-right" style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
+                        data-bs-target="#modal{{item.pk}}">
+                        Details
+                    </button>
+                  </div>
+              </div>
 
             </div>
             </div>
