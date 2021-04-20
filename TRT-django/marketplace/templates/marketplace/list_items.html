@@ -38,27 +38,27 @@
                   {%endif%}
                   <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
                   <i class="fa fa-check" aria-hidden="true"></i> Quality
-                  {% if item.condition == Condition_NEW%}
+                  {% if item.condition == Item.NEW%}
                   <div class="progress">
                     <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
                       aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
-                  {% elif item.condition == Condition_LIKENEW %}
+                  {% elif item.condition == Item.LIKE_NEW %}
                   <div class="progress">
                     <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                       aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
-                  {% elif item.condition == Condition_GENTLYLOVED %}
+                  {% elif item.condition == Item.GENTLY_LOVED %}
                   <div class="progress">
                     <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="100"
                       aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
-                  {% elif item.condition == Condition_WELLLOVED %}
+                  {% elif item.condition == Item.WELL_LOVED %}
                   <div class="progress">
                     <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 55%"
                       aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
-                  {% elif item.condition == Condition_POOR %}
+                  {% elif item.condition == Item.POOR %}
                   <div class="progress">
                     <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
                       aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -116,27 +116,27 @@
                               {%endif%}
                               <i class="fas fa-hourglass-half"></i> till {{item.deadline}}<br><br>
                               <i class="fa fa-check" aria-hidden="true"></i> Quality
-                              {% if item.condition == Condition_NEW%}
+                              {% if item.condition == Item.NEW%}
                               <div class="progress">
                                 <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
                                   style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                               </div>
-                              {% elif item.condition == Condition_LIKENEW %}
+                              {% elif item.condition == Item.LIKE_NEW %}
                               <div class="progress">
                                 <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                               </div>
-                              {% elif item.condition == Condition_GENTLYLOVED %}
+                              {% elif item.condition == Item.GENTLY_LOVED %}
                               <div class="progress">
                                 <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%"
                                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                               </div>
-                              {% elif item.condition == Condition_WELLLOVED %}
+                              {% elif item.condition == Item.WELL_LOVED %}
                               <div class="progress">
                                 <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
                                   style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                               </div>
-                              {% elif item.condition == Condition_POOR %}
+                              {% elif item.condition == Item.POOR %}
                               <div class="progress">
                                 <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
                                   style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -155,33 +155,33 @@
                     </div>
                   </div>
                   <!--End Modal-->
-                {% if item.status == Item_AVAILABLE %}
+                {% if item.status == Item.AVAILABLE %}
                     <p style="color:rgb(31, 182, 12); font-weight: bold;">AVAILABLE</p>
-                {% elif item.status == Item_FROZEN %}
+                {% elif item.status == Item.FROZEN %}
                     {% for sale in item.transaction_set.all %}
-                        {% if sale.status == Transaction_INITIATED %}
+                        {% if sale.status == Transaction.INITIATED %}
                             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}" style="padding-left: 20px; padding-right: 20px;">Accept</a>
-                        {% elif sale.status == Transaction_ACKNOWLEDGED or sale.status == Transaction_S_PENDING %}
+                        {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
                             <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
-                        {% elif sale.status == Transaction_B_PENDING %}
+                        {% elif sale.status == Transaction.B_PENDING %}
                             <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
-                        {% elif sale.status == Transaction_COMPLETE %}
+                        {% elif sale.status == Transaction.COMPLETE %}
                             <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
-                        {% elif sale.status == Transaction_CANCELLED %}
+                        {% elif sale.status == Transaction.CANCELLED %}
                             <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                         {% endif %}
-                        {% if sale.status != Transaction_COMPLETE and sale.status != Transaction_CANCELLED %}
+                        {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED %}
                             <a class="btn btn-outline-danger" style="padding-left: 20px; padding-right: 20px;" href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
                         {% endif %}
                     {% endfor %}
                         
-                {% elif item.status == Item_COMPLETE %}
+                {% elif item.status == Item.COMPLETE %}
                     <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                 {% endif %}
-                {% if item.status == Item_AVAILABLE %}
+                {% if item.status == Item.AVAILABLE %}
                     <a class="btn btn-outline-danger" href="{% url 'delete_item' item.pk %}">Delete</a>
                 {% endif %}
-                {% if item.status == Item_AVAILABLE %}
+                {% if item.status == Item.AVAILABLE %}
                     <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;" href="{% url 'edit_item' item.pk %}">Edit</a>
                 {% endif %}
                 <button type="button" class="btn btn-outline-primary noHover" onclick="disableHover()" data-bs-toggle="modal"

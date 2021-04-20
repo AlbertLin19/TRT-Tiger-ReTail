@@ -64,7 +64,7 @@
           <h4>No items posted yet.</h4>
         {% endif %}
         {% for item in items %}
-        {% if item.status != Item_FROZEN and item.status != Item_COMPLETE%}
+        {% if item.status != Item.FROZEN and item.status != Item.COMPLETE%}
         <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
           <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
@@ -86,34 +86,34 @@
               {%endif%}
               <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
               <i class="fa fa-check" aria-hidden="true"></i> Quality
-              {% if item.condition == Condition_NEW%}
+              {% if item.condition == Item.NEW%}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_LIKENEW %}
+              {% elif item.condition == Item.LIKE_NEW %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_GENTLYLOVED %}
+              {% elif item.condition == Item.GENTLY_LOVED %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="100"
                   aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_WELLLOVED %}
+              {% elif item.condition == Item.WELL_LOVED %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 55%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              {% elif item.condition == Condition_POOR %}
+              {% elif item.condition == Item.POOR %}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% endif %}
               <br>
-              {% if item.status == Item_AVAILABLE %}
+              {% if item.status == Item.AVAILABLE %}
               <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
                 {% csrf_token %}
                 <input type="hidden" name="pk" value={{item.pk}}>
@@ -176,27 +176,27 @@
                           {%endif%}
                           <i class="fas fa-hourglass-half"></i> till {{item.deadline}}<br><br>
                           <i class="fa fa-check" aria-hidden="true"></i> Quality
-                          {% if item.condition == Condition_NEW%}
+                          {% if item.condition == Item.NEW%}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
                               style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_LIKENEW %}
+                          {% elif item.condition == Item.LIKE_NEW %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_GENTLYLOVED %}
+                          {% elif item.condition == Item.GENTLY_LOVED %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_WELLLOVED %}
+                          {% elif item.condition == Item.WELL_LOVED %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
                               style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
-                          {% elif item.condition == Condition_POOR %}
+                          {% elif item.condition == Item.POOR %}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
                               style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -214,9 +214,9 @@
                   </div>
                 </div>
               </div>
-              {% elif item.status == Item_FROZEN %}
+              {% elif item.status == Item.FROZEN %}
               <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">FROZEN</p>
-              {% elif item.status == Item_COMPLETE %}
+              {% elif item.status == Item.COMPLETE %}
               <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">SOLD</p>
               {% endif %}
             </div>

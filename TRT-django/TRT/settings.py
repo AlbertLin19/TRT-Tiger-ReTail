@@ -77,6 +77,8 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # custom context processors
                 "marketplace.context_processors.account",
+                "marketplace.context_processors.item",
+                "marketplace.context_processors.transaction",
             ],
         },
     },
