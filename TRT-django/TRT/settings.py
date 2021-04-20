@@ -79,6 +79,7 @@ TEMPLATES = [
                 "marketplace.context_processors.account",
                 "marketplace.context_processors.item",
                 "marketplace.context_processors.transaction",
+                "marketplace.context_processors.admin",
             ],
         },
     },
@@ -163,6 +164,11 @@ CACHES = {
         "LOCATION": "tokens",
     }
 }
+
+# list of netids for which we allow multi-accounts
+ADMIN_NETIDS = ["aklin", "satadals", "singl", "kjm3", "sarats"]
+# list of alt account suffixes for admins
+ALT_ACCOUNT_SUFFIXES = ["_alt_a", "_alt_b"]
 
 # Keep at the bottom of the settings.py file. Activate Django-Heroku.
 django_heroku.settings(locals())

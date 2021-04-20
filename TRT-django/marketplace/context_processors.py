@@ -1,5 +1,6 @@
 # custom context processors to include common template context data
 from .models import Account, Item, Transaction
+from django.conf import settings
 
 
 def account(request):
@@ -15,3 +16,15 @@ def item(request):
 
 def transaction(request):
     return {"Transaction": Transaction}
+
+
+def admin(request):
+    return {
+        "admin": "username" in request.session
+        and request.session.get("username")
+        in [
+            netid + suffix
+            for netid in settings.ADMIN_NETIDS
+            for suffix in settings.ALT_ACCOUNT_SUFFIXES
+        ]
+    }
