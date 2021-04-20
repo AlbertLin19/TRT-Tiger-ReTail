@@ -8,15 +8,14 @@
     <div class="gallery_back">
         <div class="container">
             <div id="gallery_title">Message Inbox</div>
-            <p>Message seller after they accept your purchase request!</p>
-            <br>
+            <p class="pb-2">Directly message users once you've connected with them!</p>
         </div>
     </div>
     <div class="container-fluid" style="height: 80vh;">
 
         <div class="row" style="height: 100%;">
 
-            <div class="col-4 col-sm-3 col-lg-2" style="height: 100%; overflow-y: scroll;background-color:rgb(207, 207, 207)">
+            <div class="col-4 col-sm-3 col-lg-2 pt-2" style="height: 100%; overflow-y: scroll;background-color:rgb(207, 207, 207)">
                 
                 <div class="d-flex align-items-start">
                     <div class="nav flex-fill nav-pills me-3" id="contact_tabs" role="tablist" aria-orientation="vertical">
@@ -32,7 +31,7 @@
                 
             </div>
             
-            <div class="col-8 col-sm-9 col-lg-10 overflow-auto" style="height: 100%; background-color:#fdebeb">
+            <div class="col-8 col-sm-9 col-lg-10 overflow-auto pt-2" style="height: 100%; background-color:#fdebeb">
                 <div class="row" style="height: 85%;">
 
                     <div class="col" style="height: 100%; overflow-y: scroll;" id="chat_scroll">
@@ -40,6 +39,8 @@
                     </div>
 
                 </div>
+
+                <hr class="my-0 mx-4 py-0"/>
 
                 <div class="row align-items-end pt-2" style="height: 15%;">
                     <div class="col" style="height: 100%;">
@@ -143,7 +144,7 @@
                     .then((resp) => {return resp;})
                     .then((data) => {
                         let messages = this.state.messages;
-                        messages.push({type: 'sent', datetime: Date.now(), text: text})
+                        messages.push({type: 'sent', datetime: new Date(Date.now()), text: text})
                         this.setState({sending: false, messages: messages});
                         })
                     .catch((error) => {
