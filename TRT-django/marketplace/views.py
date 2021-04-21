@@ -107,13 +107,14 @@ def notifyEmailSparsely(pk, email, url):
 # helper method to send notification
 
 
-def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
+def notify(account, text, url, sparse=False, timeout=timedelta(minutes=5)):
     if not sparse:
         Notification(
             account=account,
             datetime=timezone.now(),
             text=text,
             seen=False,
+            url=url,
         ).save()
         return
     else:
@@ -135,6 +136,7 @@ def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
             datetime=timezone.now(),
             text=text,
             seen=False,
+            url=url,
         )
         notification.save()
 
@@ -144,7 +146,7 @@ def notify(request, account, text, sparse=False, timeout=timedelta(minutes=5)):
             notifyEmailSparsely(
                 pk=notification.pk,
                 email=account.email,
-                url=request.build_absolute_uri(reverse("gallery")),
+                url=url,
             )
 
 
@@ -476,7 +478,9 @@ def newPurchase(request):
     )
     # notify the seller
     notify(
-        request, item.seller, account.name + " has requested to purchase " + item.name
+        item.seller,
+        account.name + " has requested to purchase " + item.name,
+        request.build_absolute_uri(reverse("list_items")),
     )
 
     return redirect("list_purchases")
@@ -537,12 +541,12 @@ def confirmPurchase(request, pk):
         )
         # notify the seller
         notify(
-            request,
             purchase.item.seller,
             account.name
             + " has confirmed the purchase of "
             + purchase.item.name
             + " and awaits your confirmation",
+            request.build_absolute_uri(reverse("list_items")),
         )
 
     # elif B_PENDING, move to COMPLETE and move item to COMPLETE as well
@@ -574,9 +578,9 @@ def confirmPurchase(request, pk):
         )
         # notify the seller
         notify(
-            request,
             item.seller,
             account.name + " has confirmed and completed the purchase of " + item.name,
+            request.build_absolute_uri(reverse("list_items")),
         )
 
     return redirect("list_purchases")
@@ -635,9 +639,9 @@ def cancelPurchase(request, pk):
         )
         # notify the seller
         notify(
-            request,
             item.seller,
             account.name + " has cancelled the purchase of " + item.name,
+            request.build_absolute_uri(reverse("list_items")),
         )
 
     return redirect("list_purchases")
@@ -669,19 +673,19 @@ def acceptSale(request, pk):
         account.contacts.add(sale.buyer)  # (m2m goes both ways)
         # notify the buyer
         notify(
-            request,
             sale.buyer,
             account.name
             + " has connected with you. You can now send direct messages to the seller through the inbox regarding "
             + sale.item.name,
+            request.build_absolute_uri(reverse("inbox")),
         )
         # notify the seller
         notify(
-            request,
             account,
             sale.buyer.name
             + " has been added as a contact. You can now send direct messages to the buyer through the inbox regarding "
             + sale.item.name,
+            request.build_absolute_uri(reverse("inbox")),
         )
         # send confirmation email
         send_mail(
@@ -702,9 +706,9 @@ def acceptSale(request, pk):
         )
         # notify the buyer
         notify(
-            request,
             sale.buyer,
             account.name + " has accepted your purchase request for " + sale.item.name,
+            request.build_absolute_uri(reverse("list_purchases")),
         )
 
     else:
@@ -765,12 +769,12 @@ def confirmSale(request, pk):
         )
         # notify the buyer
         notify(
-            request,
             sale.buyer,
             account.name
             + " has confirmed your purchase of "
             + sale.item.name
             + " and awaits your confirmation",
+            request.build_absolute_uri(reverse("list_purchases")),
         )
 
     # elif S_PENDING, move to COMPLETE and move item to COMPLETE as well
@@ -802,11 +806,11 @@ def confirmSale(request, pk):
         )
         # notify the buyer
         notify(
-            request,
             sale.buyer,
             account.name
             + " has confirmed and completed your purchase of "
             + sale.item.name,
+            request.build_absolute_uri(reverse("list_purchases")),
         )
 
     return redirect("list_items")
@@ -864,9 +868,9 @@ def cancelSale(request, pk):
         )
         # notify the buyer
         notify(
-            request,
             sale.buyer,
             account.name + " has cancelled your purchase of " + sale.item.name,
+            request.build_absolute_uri(reverse("list_purchases")),
         )
 
     return redirect("list_items")
@@ -1033,19 +1037,19 @@ def contactItemRequest(request, pk):
     account.contacts.add(item_request.requester)  # (m2m goes both ways)
     # notify the requester
     notify(
-        request,
         item_request.requester,
         account.name
         + " has connected with you regarding your item request. You can now send direct messages through the inbox regarding your request for "
         + item_request.name,
+        request.build_absolute_uri(reverse("inbox")),
     )
     # notify the contacter
     notify(
-        request,
         account,
         item_request.requester.name
         + " has been added as a contact. You can now send direct messages through the inbox regarding the request for "
         + item_request.name,
+        request.build_absolute_uri(reverse("inbox")),
     )
     send_mail(
         "Received Response to Your Item Request",
@@ -1129,7 +1133,11 @@ def getNotifications(request):
     account = Account.objects.get(username=request.session.get("username"))
     notifications = account.notifications.all().order_by("-datetime")
     return JsonResponse(
-        {"notifications": list(notifications.values_list("datetime", "text", "seen"))}
+        {
+            "notifications": list(
+                notifications.values_list("datetime", "text", "seen", "url")
+            )
+        }
     )
 
 
@@ -1188,7 +1196,12 @@ def sendMessage(request):
     Message(sender=account, receiver=contact, datetime=timezone.now(), text=text).save()
     # sparse notify the receiver
     text = account.name + " has sent a message to your inbox"
-    notify(request, account=contact, text=text, sparse=True)
+    notify(
+        account=contact,
+        text=text,
+        url=request.build_absolute_uri(reverse("inbox")),
+        sparse=True,
+    )
     return HttpResponse(status=200)
 
 

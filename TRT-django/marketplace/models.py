@@ -241,6 +241,7 @@ class Notification(models.Model):
     datetime = models.DateTimeField()
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
+    url = models.URLField()
 
 
 ############## DELETE CLOUDINARY IMAGES POST_DELETE ###################

@@ -144,6 +144,7 @@
             for (const notification of notifications) {
                 const date = new Date(notification[0]);
                 html += '<hr class="m-0">';
+                html += '<a href="' + notification[3] + '">';
                 html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
                 if (!notification[2])
                     html += ' background-color: #FCDCBB;';
@@ -154,6 +155,7 @@
                 html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
                 html += '</small>';
                 html += '</div>';
+                html += '</a>';
             }
 
             $('#notifications_area').html(html);
