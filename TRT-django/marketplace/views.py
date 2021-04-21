@@ -1362,3 +1362,57 @@ def contact(request):
 def logout(request):
     request.session.pop("username", default=None)
     return redirect(CASClient.getLogoutUrl())
+
+
+# ----------------------------------------------------------------------
+# repeated server maintenance
+# delete expired items/item_requests past timedelta specified in settings
+# (and no ongoing transaction)
+@background()
+def deleteExpired():
+    expired_items = Item.objects.filter(
+        deadline__gt=timezone.now() + settings.EXPIRATION_BUFFER
+    )
+    for item in expired_items:
+        if item.status == Item.AVAILABLE:
+            # send email notice
+            send_mail(
+                "Expired Item Removed",
+                "Your expired item "
+                + item.name
+                + " has been removed.\nIf you would still like to sell your item, please feel free to relist it.",
+                settings.EMAIL_HOST_USER,
+                [item.seller.email],
+                fail_silently=True,
+            )
+            # notify the seller
+            notify(
+                item.seller,
+                "Your expired item " + item.name + " has been removed",
+                reverse("list_items"),
+            )
+            # delete the item
+            item.delete()
+
+    expired_item_requests = ItemRequest.objects.filter(
+        deadline__gt=timezone.now() + settings.EXPIRATION_BUFFER
+    )
+    for item_request in expired_item_requests:
+        # send email notice
+        send_mail(
+            "Expired Item Request Removed",
+            "Your expired item request "
+            + item_request.name
+            + " has been removed.\nIf you would still like to request the item, please feel free to make another request.",
+            settings.EMAIL_HOST_USER,
+            [item_request.requester.email],
+            fail_silently=True,
+        )
+        # notify the requester
+        notify(
+            item_request.requester,
+            "Your expired item request" + item_request.name + " has been removed",
+            reverse("list_item_requests"),
+        )
+        # delete the item request
+        item_request.delete()

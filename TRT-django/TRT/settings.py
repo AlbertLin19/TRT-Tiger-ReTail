@@ -21,6 +21,8 @@ import cloudinary.api
 
 import django_heroku
 
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -169,6 +171,8 @@ CACHES = {
 ADMIN_NETIDS = ["aklin", "satadals", "singl", "kjm3", "sarats"]
 # list of alt account suffixes for admins
 ALT_ACCOUNT_SUFFIXES = ["", "_alt_a", "_alt_b"]
+# time buffer after which expired items are deleted
+EXPIRATION_BUFFER = timedelta(days=7)
 
 # Keep at the bottom of the settings.py file. Activate Django-Heroku.
 django_heroku.settings(locals())
