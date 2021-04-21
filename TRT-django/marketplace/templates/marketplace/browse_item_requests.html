@@ -70,7 +70,7 @@
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
             <br>
             <div style="text-align:center;" class="card-img-top rounded-corners">
-              {% cloudinary item_request.image format="jpg" width=120 height=80 crop="fill"%}
+              {% cloudinary item_request.image format="jpg" width=120 height=80 background="#f0e3e3" crop="lpad"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item_request.categories.all %}
@@ -141,11 +141,11 @@
                         <div class="carousel-inner" role="listbox">
                           <!--carousel-item active-->
                           <div class="carousel-item active">
-                            {% cloudinary item_request.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                            {% cloudinary item_request.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
                           </div>
                           {%for image in item_request.album.all%}
                           <div class="carousel-item">
-                            {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                            {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
                           </div>
                           {%endfor%}
                         </div>

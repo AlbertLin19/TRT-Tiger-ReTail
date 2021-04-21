@@ -69,7 +69,7 @@
           <h5 style="padding: 4%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
             <div style="text-align:center; padding-top:4%" class="card-img-top rounded-corners">
-              {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
+              {% cloudinary item.image format="jpg" width=120 height=80 background="#f0e3e3" crop="lpad"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item.categories.all %}
@@ -151,11 +151,11 @@
                         <div class="carousel-inner" role="listbox">
                           <!--carousel-item active-->
                           <div class="carousel-item active">
-                            {% cloudinary item.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                            {% cloudinary item.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
                           </div>
                           {%for image in item.album.all%}
                           <div class="carousel-item">
-                            {% cloudinary image.image format="jpg" width=320 height=240 crop="fill" radius=40%}
+                            {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
                           </div>
                           {%endfor%}
                         </div>

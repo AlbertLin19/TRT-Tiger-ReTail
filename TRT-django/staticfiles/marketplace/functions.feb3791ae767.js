@@ -1,40 +1,40 @@
-function search(){
+function search() {
    query = document.getElementById("searchbar").value.toLowerCase();
    cards = document.getElementsByClassName("card");
    if (query != '') {
       for (i = 0; i < cards.length; i++) {
          if (cards[i].querySelector(".item_categories").innerHTML.toLowerCase().includes(query))
-            cards[i].style.display='';
+            cards[i].style.display = '';
          else if (cards[i].querySelector("h5").innerHTML.toLowerCase().includes(query))
-            cards[i].style.display='';
+            cards[i].style.display = '';
          else
-            cards[i].style.display='none';
+            cards[i].style.display = 'none';
       }
    }
    else {
       for (i = 0; i < cards.length; i++) {
-         cards[i].style.display='';
+         cards[i].style.display = '';
       }
    }
 }
 
-function filter(input){
+function filter(input) {
    //query = document.getElementById("filter").value.toLowerCase();
    console.log(input)
    cards = document.getElementsByClassName("card");
    if (input != '') {
       for (i = 0; i < cards.length; i++) {
          if (cards[i].querySelector(".item_categories").innerHTML.toLowerCase().includes(input))
-            cards[i].style.display='';
+            cards[i].style.display = '';
          else if (cards[i].querySelector("h5").innerHTML.toLowerCase().includes(input))
-            cards[i].style.display='';
+            cards[i].style.display = '';
          else
-            cards[i].style.display='none';
+            cards[i].style.display = 'none';
       }
    }
    else {
       for (i = 0; i < cards.length; i++) {
-         cards[i].style.display='';
+         cards[i].style.display = '';
       }
    }
 }
@@ -53,16 +53,16 @@ function enableHover() {
    }
 }
 
-$('.multi-item-carousel .carousel-item').each(function() {
+$('.multi-item-carousel .carousel-item').each(function () {
    var next = $(this).next();
    if (!next.length) next = $(this).siblings(':first');
    next.children(':first-child').clone().appendTo($(this));
- });
- $('.multi-item-carousel .carousel-item').each(function() {
+});
+$('.multi-item-carousel .carousel-item').each(function () {
    var prev = $(this).prev();
    if (!prev.length) prev = $(this).siblings(':last');
    prev.children(':nth-last-child(2)').clone().prependTo($(this));
- });
+});
 
 /*
 function imageScroll(counter){
@@ -91,11 +91,11 @@ function imageScroll(counter){
 }
 
 <div style="display:center;" class="headImage">
-                                        {% cloudinary item.image format="jpg" width=240 height=160 crop="fill"%}
+                                        {% cloudinary item.image format="jpg" width=240 height=160 crop="lpad"%}
                                     </div>
                                     {%for image in item.album.all%}
                                         <div style="display:none;" class="imageAlbum">
-                                            {% cloudinary image.image format="jpg" width=240 height=160 crop="fill"%}
+                                            {% cloudinary image.image format="jpg" width=240 height=160 crop="lpad"%}
                                         </div>
                                     {%endfor%}
                                     <button onclick="counter=imageScroll(counter);">YO</button> */
