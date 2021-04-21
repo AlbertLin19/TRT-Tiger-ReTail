@@ -99,4 +99,86 @@
         </form>
     </div>
 
+    <script>
+        function pricePopover(text)
+        {
+            document.getElementById("id_price").setAttribute("data-bs-toggle", "popover");
+            document.getElementById("id_price").setAttribute("data-bs-trigger", "manual");
+            document.getElementById("id_price").setAttribute("data-bs-placement", "top");
+            document.getElementById("id_price").setAttribute("data-bs-html", true);
+            document.getElementById("id_price").setAttribute("data-bs-content", "<span class='text-danger'><i class='fas fa-exclamation mx-2'></i>" + text + "</span>");
+            $("#id_price").popover("show");
+        }
+
+        function deadlinePopover(text)
+        {
+            document.getElementById("id_deadline").setAttribute("data-bs-toggle", "popover");
+            document.getElementById("id_deadline").setAttribute("data-bs-trigger", "manual");
+            document.getElementById("id_deadline").setAttribute("data-bs-placement", "top");
+            document.getElementById("id_deadline").setAttribute("data-bs-html", true);
+            document.getElementById("id_deadline").setAttribute("data-bs-content", "<span class='text-danger'><i class='fas fa-exclamation mx-2'></i>" + text + "</span>");
+            $("#id_deadline").popover("show");
+        }
+
+        function validatePrice()
+        {
+            const price_string = document.getElementById("id_price").value;
+            if (price_string.indexOf('.') > -1 && price_string.indexOf('.') < price_string.length - 3)
+            {
+                pricePopover("price cannot have more than 2 decimal places");
+                return;
+            }
+            const price = +price_string;
+            if (Number.isNaN(price))
+            {
+                pricePopover("price must be a valid number");
+                return;
+            }
+            if (price < 0)
+            {
+                pricePopover("price cannot be negative");
+                return;
+            }
+            if (price > 999999.99)
+            {
+                pricePopover("price cannot be greater than $999,999.99");
+                return;
+            }
+            $("#id_price").popover("hide");
+        }
+
+        function validateDeadline()
+        {
+            const date = document.getElementById("id_deadline").value.split('-');
+            if (date.length != 3)
+            {
+                deadlinePopover("fix deadline formatting");
+                return;
+            }
+            const deadline = new Date(date[0], date[1] - 1, date[2]);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (deadline < today)
+            {
+                deadlinePopover("deadline cannot be set prior to today");
+                return;
+            }
+            let latestDateText = document.getElementById("hint_id_deadline").innerHTML;
+            latestDateText = latestDateText.substring(latestDateText.length - 10);
+            const latestDate = latestDateText.split('-');
+            const latestDeadline = new Date(latestDate[0], latestDate[1] - 1, latestDate[2]);
+            if (deadline > latestDeadline)
+            {
+                deadlinePopover("deadline cannot be later than " + latestDeadline.toDateString());
+                return;
+            }
+            $("#id_deadline").popover("hide");
+        }
+        function setup()
+        {
+            document.getElementById("id_price").addEventListener("input", validatePrice);
+            document.getElementById("id_deadline").addEventListener("input", validateDeadline);
+        }
+        document.addEventListener("DOMContentLoaded", setup);
+    </script>
 {% endblock content %}

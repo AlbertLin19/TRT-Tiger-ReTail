@@ -172,7 +172,7 @@ ADMIN_NETIDS = ["aklin", "satadals", "singl", "kjm3", "sarats"]
 # list of alt account suffixes for admins
 ALT_ACCOUNT_SUFFIXES = ["", "_alt_a", "_alt_b"]
 # time buffer after which expired items are deleted
-EXPIRATION_BUFFER = timedelta(days=7)
+EXPIRATION_BUFFER = timedelta(days=1)
 
 # Keep at the bottom of the settings.py file. Activate Django-Heroku.
 django_heroku.settings(locals())

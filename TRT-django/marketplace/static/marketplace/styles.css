@@ -366,6 +366,10 @@ a.orange-link:active {
    color: rgb(252, 169, 45);
 }
 
+#hint_id_deadline {
+   font-size: 12px;
+}
+
 /*
 .multi-item-carousel {
    overflow: hidden;
