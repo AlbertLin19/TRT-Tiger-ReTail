@@ -81,7 +81,7 @@
                                 <a class="nav-item hover-light nav-link active" href="{% url 'contact' %}">CONTACT US</a>
                             </li>
                             {% if account %}
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown" id="notifications_dropdown">
 
                                 <a class="nav-link dropdown-toggle active hover-light" href="#" role="button"
                                     id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -204,7 +204,7 @@
         }
 
         function setup() {
-            $('#notifications_button').on('click', getResults);
+            $('#notifications_dropdown').on('show.bs.dropdown', getResults);
             window.setInterval(getCount, 1000);
         }
 
