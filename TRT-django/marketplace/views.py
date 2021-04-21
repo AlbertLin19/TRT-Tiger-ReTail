@@ -27,7 +27,7 @@ import cloudinary.api
 
 from django.core.exceptions import PermissionDenied
 import secrets
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 import json
 
 from sys import stderr
@@ -1321,7 +1321,7 @@ def cycleAccount(request):
     # must be an admin netid + suffix
     if username not in [netid + suffix for netid in netids for suffix in suffixes]:
         messages.warning(request, "Forbidden, need permission.")
-        return redirect("edit_account")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
 
     # set the session username to the next netid+suffix
     done = False
@@ -1337,7 +1337,7 @@ def cycleAccount(request):
                 break
 
     messages.success(request, "Cycled to alternate account.")
-    return redirect("edit_account")
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
 
 
 # ----------------------------------------------------------------------
