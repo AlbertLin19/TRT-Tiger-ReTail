@@ -33,6 +33,7 @@ import json
 from sys import stderr
 
 from background_task import background
+from datetime import date, datetime
 
 # ----------------------------------------------------------------------
 
@@ -148,6 +149,74 @@ def notify(account, text, url, sparse=False, timeout=timedelta(minutes=5)):
                 email=account.email,
                 url=url,
             )
+
+
+# ----------------------------------------------------------------------
+# notify and email a notice about item expiration being passed
+@background
+def expiredItemNotice(pk):
+    # check if the item still exists
+    if not Item.objects.filter(pk=pk).exists():
+        return
+
+    # check if the item has expired
+    item = Item.objects.filter(pk=pk).first()
+    if item.deadline >= timezone.now().date():
+        return
+
+    # send notices
+    send_mail(
+        "Your Posted Item has Expired",
+        "Your posted item "
+        + item.name
+        + " has expired.\nPlease edit your item deadline if you would like to prevent your item from being removed.\nItems are removed "
+        + str(settings.EXPIRATION_BUFFER)
+        + " after their deadlines.",
+        settings.EMAIL_HOST_USER,
+        [item.seller.email],
+        fail_silently=True,
+    )
+    notify(
+        item.seller,
+        "Your item "
+        + item.name
+        + " has expired. Please edit its deadline if you do not want it removed.",
+        reverse("list_items"),
+    )
+
+
+# ----------------------------------------------------------------------
+# notify and email a notice about item request expiration being passed
+@background
+def expiredItemRequestNotice(pk):
+    # check if the item request still exists
+    if not ItemRequest.objects.filter(pk=pk).exists():
+        return
+
+    # check if the item request has expired
+    item_request = ItemRequest.objects.filter(pk=pk).first()
+    if item_request.deadline >= timezone.now().date():
+        return
+
+    # send notices
+    send_mail(
+        "Your Posted Item Request has Expired",
+        "Your posted item request for "
+        + item_request.name
+        + " has expired.\nPlease edit your item request deadline if you would like to prevent your item request from being removed.\nItem requests are removed "
+        + str(settings.EXPIRATION_BUFFER)
+        + " after their deadlines.",
+        settings.EMAIL_HOST_USER,
+        [item_request.requester.email],
+        fail_silently=True,
+    )
+    notify(
+        item_request.requester,
+        "Your item request "
+        + item_request.name
+        + " has expired. Please edit its deadline if you do not want it removed.",
+        reverse("list_item_requests"),
+    )
 
 
 # ----------------------------------------------------------------------
@@ -288,6 +357,17 @@ def newItem(request):
                     [account.email],
                     fail_silently=True,
                 )
+                # schedule expiration notice
+                expiredItemNotice(
+                    item.pk,
+                    schedule=timezone.make_aware(
+                        datetime(
+                            item.deadline.year, item.deadline.month, item.deadline.day
+                        )
+                    )
+                    + timedelta(days=1),
+                )
+
                 return redirect("list_items")
             except Exception as e:
                 messages.error(
@@ -328,6 +408,7 @@ def editItem(request, pk):
     # populate the Django model form and validate data
     if request.method == "POST":
         old_image = item.image
+        old_deadline = item.deadline
         item_form = ItemForm(request.POST, request.FILES, instance=item)
         if item_form.is_valid():
             try:
@@ -354,6 +435,21 @@ def editItem(request, pk):
                         logError(account, e)
 
                 messages.success(request, "Item updated.")
+
+                if item.deadline != old_deadline:
+                    # schedule expiration notice
+                    expiredItemNotice(
+                        item.pk,
+                        schedule=timezone.make_aware(
+                            datetime(
+                                item.deadline.year,
+                                item.deadline.month,
+                                item.deadline.day,
+                            )
+                        )
+                        + timedelta(days=1),
+                    )
+
             except Exception as e:
                 messages.error(
                     request,
@@ -925,6 +1021,18 @@ def newItemRequest(request):
                     [account.email],
                     fail_silently=True,
                 )
+                # schedule expiration notice
+                expiredItemRequestNotice(
+                    item_request.pk,
+                    schedule=timezone.make_aware(
+                        datetime(
+                            item_request.deadline.year,
+                            item_request.deadline.month,
+                            item_request.deadline.day,
+                        )
+                    )
+                    + timedelta(days=1),
+                )
                 return redirect("list_item_requests")
             except Exception as e:
                 messages.error(
@@ -960,6 +1068,7 @@ def editItemRequest(request, pk):
     # populate the Django model form and validate data
     if request.method == "POST":
         old_image = item_request.image
+        old_deadline = item_request.deadline
         item_request_form = ItemRequestForm(
             request.POST, request.FILES, instance=item_request
         )
@@ -973,6 +1082,19 @@ def editItemRequest(request, pk):
 
                 logItemRequestAction(item_request, account, "edited")
                 messages.success(request, "Item request updated.")
+                if item_request.deadline != old_deadline:
+                    # schedule expiration notice
+                    expiredItemRequestNotice(
+                        item_request.pk,
+                        schedule=timezone.make_aware(
+                            datetime(
+                                item_request.deadline.year,
+                                item_request.deadline.month,
+                                item_request.deadline.day,
+                            )
+                        )
+                        + timedelta(days=1),
+                    )
             except Exception as e:
                 messages.error(
                     request,
@@ -1371,7 +1493,7 @@ def logout(request):
 @background()
 def deleteExpired():
     expired_items = Item.objects.filter(
-        deadline__gt=timezone.now() + settings.EXPIRATION_BUFFER
+        deadline__lt=timezone.now() - settings.EXPIRATION_BUFFER
     )
     for item in expired_items:
         if item.status == Item.AVAILABLE:
@@ -1395,7 +1517,7 @@ def deleteExpired():
             item.delete()
 
     expired_item_requests = ItemRequest.objects.filter(
-        deadline__gt=timezone.now() + settings.EXPIRATION_BUFFER
+        deadline__lt=timezone.now() - settings.EXPIRATION_BUFFER
     )
     for item_request in expired_item_requests:
         # send email notice
@@ -1411,7 +1533,7 @@ def deleteExpired():
         # notify the requester
         notify(
             item_request.requester,
-            "Your expired item request" + item_request.name + " has been removed",
+            "Your expired item request " + item_request.name + " has been removed",
             reverse("list_item_requests"),
         )
         # delete the item request
