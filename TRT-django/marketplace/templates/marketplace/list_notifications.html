@@ -19,7 +19,7 @@
                     {% for notification in notifications %}
                         <tr>
                             <th scope="row">{{notification.datetime}}</th>
-                            <td>{{notification.text}}</td>
+                            <td><a class="orange-link" href="{{notification.url}}">{{notification.text}}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

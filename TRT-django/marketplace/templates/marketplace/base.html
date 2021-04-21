@@ -144,10 +144,10 @@
             for (const notification of notifications) {
                 const date = new Date(notification[0]);
                 html += '<hr class="m-0">';
-                html += '<a href="' + notification[3] + '">';
+                html += '<a class="orange-link" href="' + notification[3] + '">';
                 html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
                 if (!notification[2])
-                    html += ' background-color: #FCDCBB;';
+                    html += ' background-color: #fff0db;';
                 html += '">';
                 html += '<small>';
                 html += notification[1];

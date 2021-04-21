@@ -348,6 +348,24 @@ a.titleLink{
    color: #000000 !important;
 }
 
+a.orange-link:link {
+   text-decoration: none;
+   color: rgb(255, 153, 0);
+}
+ 
+a.orange-link:visited {
+   text-decoration: none;
+   color: rgb(255, 153, 0);
+}
+ 
+a.orange-link:hover {
+   color: rgb(179, 107, 40);
+}
+ 
+a.orange-link:active {
+   color: rgb(252, 169, 45);
+}
+
 /*
 .multi-item-carousel {
    overflow: hidden;
