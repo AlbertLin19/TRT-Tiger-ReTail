@@ -114,7 +114,7 @@
                               {%else%}
                               <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
                               {%endif%}
-                              <i class="fas fa-hourglass-half"></i> till {{item.deadline}}<br><br>
+                              <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
                               <i class="fa fa-check" aria-hidden="true"></i> Quality
                               {% if item.condition == Item.NEW%}
                               <div class="progress">

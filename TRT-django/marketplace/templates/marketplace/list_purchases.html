@@ -41,6 +41,7 @@
                       <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD</p>
                       {%endif%}
                       <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
+                      <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
                       <i class="fa fa-check" aria-hidden="true"></i> Quality
                       {% if purchase.item.condition == Item.NEW%}
                       <div class="progress">
@@ -67,6 +68,7 @@
                         <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
                           aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
+                      <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br> {{purchase.item.seller.contact}}</p>
                       {% endif %}
                       <br>      
                       <!-- Modal -->

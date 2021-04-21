@@ -65,16 +65,15 @@
         {% endif %}
         {% for item in items %}
         {% if item.status != Item.FROZEN and item.status != Item.COMPLETE%}
-        <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
-          <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
+        <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
+          <h5 style="padding: 4%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
-            <br>
-            <div style="text-align:center;" class="card-img-top rounded-corners">
+            <div style="text-align:center; padding-top:4%" class="card-img-top rounded-corners">
               {% cloudinary item.image format="jpg" width=120 height=80 crop="fill"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item.categories.all %}
-              <div class="item_category">{{category}}</div>
+                {{category}}
               {% endfor %}
             </div>
             <hr>
@@ -112,9 +111,8 @@
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% endif %}
-              <br>
               {% if item.status == Item.AVAILABLE %}
-              <div class='row'>
+              <div class='row' style="padding-top:3%;padding-bottom:2%">
                 <div class="col-sm-12">
                   <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
                     {% csrf_token %}
@@ -180,8 +178,8 @@
                           {%else%}
                           <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
                           {%endif%}
-                          <i class="fas fa-hourglass-half"></i> till {{item.deadline}}<br><br>
-                          <i class="fa fa-check" aria-hidden="true"></i> Quality
+                          <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
+                          <i class="fa fa-check" aria-hidden="true" style="padding-top:3%"></i> Quality
                           {% if item.condition == Item.NEW%}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
@@ -208,12 +206,18 @@
                               style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% endif %}
-                          <br>
-                          <i class="fas fa-comment"></i> {{item.description}}
+                          <p class="card-text"><i class="fas fa-comment" style="padding-top:3%"></i> {{item.description}}</p>
                         </div>
                       </div>
                     </div>
                     <div class="modal-footer">
+                      <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
+                        {% csrf_token %}
+                        <input type="hidden" name="pk" value={{item.pk}}>
+                        <input type="submit" class="btn btn-success pull-left" value="Purchase"
+                          style="padding-left: 19px; padding-right: 19px;">
+                        <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
+                      </form>
                       <button type="button" class="btn btn-secondary" onclick="enableHover()"
                         data-bs-dismiss="modal">Close</button>
                     </div>
