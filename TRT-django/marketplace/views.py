@@ -419,20 +419,21 @@ def editItem(request, pk):
                 item_form.save()
                 logItemAction(item, account, "edited")
 
-                # overwrite the album images
-                item.album.all().delete()
-                album = request.FILES.getlist("album")
-                for i in range(len(album)):
-                    if i >= settings.ALBUM_LIMIT:
-                        break
-                    try:
-                        AlbumImage(image=album[i], item=item).save()
-                    except Exception as e:
-                        messages.error(
-                            request,
-                            "Could not save album image. Check that your album images are each < 10MB and proper image files.",
-                        )
-                        logError(account, e)
+                if request.FILES.getlist("album"):
+                    # overwrite the album images
+                    item.album.all().delete()
+                    album = request.FILES.getlist("album")
+                    for i in range(len(album)):
+                        if i >= settings.ALBUM_LIMIT:
+                            break
+                        try:
+                            AlbumImage(image=album[i], item=item).save()
+                        except Exception as e:
+                            messages.error(
+                                request,
+                                "Could not save album image. Check that your album images are each < 10MB and proper image files.",
+                            )
+                            logError(account, e)
 
                 messages.success(request, "Item updated.")
 
