@@ -376,6 +376,10 @@ a.orange-link:active {
    font-size: 12px;
 }
 
+label {
+   font-weight: 600;
+}
+
 /*
 .multi-item-carousel {
    overflow: hidden;

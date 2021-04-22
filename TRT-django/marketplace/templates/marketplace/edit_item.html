@@ -112,7 +112,17 @@
                         <label>Album (up to 5 supplementary images)</label>
                     </div>
                     <div class="row my-2">
-                        <label>Currently: {{item.album.all|length}} images</label>
+                        <div class="col-12">
+                            <label style="font-weight:400;">Currently: {{item.album.all|length}} {% if item.album.all|length == 1 %}image{% else %}images{% endif %}</label>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="id_replace" name="replace">
+                                <label class="form-check-label" style="font-weight:400;" for="id_replace">
+                                    replace old images
+                                </label>
+                            </div>
+                        </div>
                         <input id="id_album" type="file" name="album" accept="image/*" multiple/>
                     </div>
 
