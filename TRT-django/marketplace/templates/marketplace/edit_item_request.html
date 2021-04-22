@@ -76,10 +76,37 @@
             <div class="row my-2">
                 <div class="col-lg-6 col-sm-6">
                     <div class="row my-2">
-                        <label>Lead Image*</label>
+                        <label>Reference Image*</label>
                     </div>
                     <div class="row my-2">
                         {{ item_request_form.image|as_crispy_field }}
+                    </div>
+
+                    <div class="row my-2">
+
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#lead_modal">
+                            Preview Reference Image
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="lead_modal" tabindex="-1" aria-labelledby="lead_modal_label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="lead_modal_label">Preview of Reference Image</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="lead_previewer"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -173,5 +200,52 @@
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
         }
         document.addEventListener("DOMContentLoaded", setup);
+    </script>
+
+    <script>
+        function populateOldLeadImage()
+        {
+            const old_image_src = document.getElementById("div_id_image").getElementsByTagName("a")[0].href;
+            const old_image = document.createElement("img");
+            old_image.src = old_image_src;
+            old_image.style.width = '320px';
+            old_image.style.height = 'auto';
+            const text = document.createElement("p");
+            text.innerHTML = "CURRENTLY";
+            document.getElementById("lead_previewer").appendChild(text);
+            document.getElementById("lead_previewer").appendChild(old_image);
+        }
+        function updateLeadPreviewer()
+        {
+            const lead_previewer = document.getElementById("lead_previewer");
+            while (lead_previewer.firstChild)
+            {
+                lead_previewer.removeChild(lead_previewer.firstChild);
+            }
+            populateOldLeadImage();
+            const files = document.getElementById("id_image").files;
+            if (files.length === 0)
+            {
+                return;
+            }
+            const text = document.createElement('p');
+            text.setAttribute("class", "mt-4")
+            text.innerHTML = "REPLACE WITH";
+            lead_previewer.appendChild(text);
+            for (const file of files)
+            {
+                const image = document.createElement("img");
+                image.src = URL.createObjectURL(file);
+                image.style.width = '320px';
+                image.style.height = 'auto';
+                lead_previewer.appendChild(image);
+            }
+        }
+        function setupImagePreviewers()
+        {
+            populateOldLeadImage();
+            document.getElementById("id_image").addEventListener("input", updateLeadPreviewer);
+        }
+        document.addEventListener("DOMContentLoaded", setupImagePreviewers);
     </script>
 {% endblock content %}

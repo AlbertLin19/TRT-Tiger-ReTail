@@ -241,31 +241,41 @@
     <script>
         function updateLeadPreviewer()
         {
+            const lead_previewer = document.getElementById("lead_previewer");
+            while (lead_previewer.firstChild)
+            {
+                lead_previewer.removeChild(lead_previewer.firstChild);
+            }
             const files = document.getElementById("id_image").files;
             if (files.length === 0)
             {
-                document.getElementById("lead_previewer").innerHTML = "No image selected yet.";
+                lead_previewer.innerHTML = "No image selected yet.";
                 return;
             }
-            document.getElementById("lead_previewer").innerHTML = "";
+            lead_previewer.innerHTML = "";
             for (const file of files)
             {
                 const image = document.createElement("img");
                 image.src = URL.createObjectURL(file);
                 image.style.width = '320px';
                 image.style.height = 'auto';
-                document.getElementById("lead_previewer").appendChild(image);
+                lead_previewer.appendChild(image);
             }
         }
         function updateAlbumPreviewer()
         {
+            const album_previewer = document.getElementById("album_previewer");
+            while (album_previewer.firstChild)
+            {
+                album_previewer.removeChild(album_previewer.firstChild);
+            }
             const files = document.getElementById("id_album").files;
             if (files.length === 0)
             {
-                document.getElementById("album_previewer").innerHTML = "No image selected yet.";
+                album_previewer.innerHTML = "No image selected yet.";
                 return;
             }
-            document.getElementById("album_previewer").innerHTML = "";
+            album_previewer.innerHTML = "";
             for (const file of files)
             {
                 const image = document.createElement("img");
@@ -273,7 +283,7 @@
                 image.style.width = '320px';
                 image.style.height = 'auto';
                 image.setAttribute("class", "my-2");
-                document.getElementById("album_previewer").appendChild(image);
+                album_previewer.appendChild(image);
             }
         }
         function setupImagePreviewers()

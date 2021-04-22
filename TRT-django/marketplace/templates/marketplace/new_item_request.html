@@ -75,7 +75,7 @@
             <div class="row my-2">
                 <div class="col-lg-6 col-sm-6">
                     <div class="row my-2">
-                        <label>Image for Reference*</label>
+                        <label>Reference Image*</label>
                     </div>
                     <div class="row my-2">
                         {{ item_request_form.image|as_crispy_field }}
@@ -206,20 +206,25 @@
     <script>
         function updateLeadPreviewer()
         {
+            const lead_previewer = document.getElementById("lead_previewer");
+            while (lead_previewer.firstChild)
+            {
+                lead_previewer.removeChild(lead_previewer.firstChild);
+            }
             const files = document.getElementById("id_image").files;
             if (files.length === 0)
             {
-                document.getElementById("lead_previewer").innerHTML = "No image selected yet.";
+                lead_previewer.innerHTML = "No image selected yet.";
                 return;
             }
-            document.getElementById("lead_previewer").innerHTML = "";
+            lead_previewer.innerHTML = "";
             for (const file of files)
             {
                 const image = document.createElement("img");
                 image.src = URL.createObjectURL(file);
                 image.style.width = '320px';
                 image.style.height = 'auto';
-                document.getElementById("lead_previewer").appendChild(image);
+                lead_previewer.appendChild(image);
             }
         }
         function setupImagePreviewers()
