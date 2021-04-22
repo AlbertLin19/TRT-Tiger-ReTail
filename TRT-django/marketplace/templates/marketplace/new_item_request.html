@@ -80,6 +80,33 @@
                     <div class="row my-2">
                         {{ item_request_form.image|as_crispy_field }}
                     </div>
+
+                    <div class="row my-2">
+
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#lead_modal">
+                            Preview Reference Image
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="lead_modal" tabindex="-1" aria-labelledby="lead_modal_label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="lead_modal_label">Preview of Reference Image</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="lead_previewer">No image selected yet.</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -174,5 +201,31 @@
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
         }
         document.addEventListener("DOMContentLoaded", setup);
+    </script>
+
+    <script>
+        function updateLeadPreviewer()
+        {
+            const files = document.getElementById("id_image").files;
+            if (files.length === 0)
+            {
+                document.getElementById("lead_previewer").innerHTML = "No image selected yet.";
+                return;
+            }
+            document.getElementById("lead_previewer").innerHTML = "";
+            for (const file of files)
+            {
+                const image = document.createElement("img");
+                image.src = URL.createObjectURL(file);
+                image.style.width = '320px';
+                image.style.height = 'auto';
+                document.getElementById("lead_previewer").appendChild(image);
+            }
+        }
+        function setupImagePreviewers()
+        {
+            document.getElementById("id_image").addEventListener("input", updateLeadPreviewer);
+        }
+        document.addEventListener("DOMContentLoaded", setupImagePreviewers);
     </script>
 {% endblock content %}

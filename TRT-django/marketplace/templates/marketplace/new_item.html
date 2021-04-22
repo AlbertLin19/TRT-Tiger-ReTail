@@ -81,13 +81,66 @@
                     <div class="row my-2">
                         {{ item_form.image|as_crispy_field }}
                     </div>
+                    <div class="row my-2">
+
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#lead_modal">
+                            Preview Lead Image
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="lead_modal" tabindex="-1" aria-labelledby="lead_modal_label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="lead_modal_label">Preview of Lead Image</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="lead_previewer">No image selected yet.</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
                     <div class="row my-2">
                         <label>Album (up to 5 supplementary images)</label>
                     </div>
                     <div class="row my-2">
-                        <input type="file" name="album" accept="image/*" multiple/>
+                        <input id="id_album" type="file" name="album" accept="image/*" multiple/>
+                    </div>
+
+                    <div class="row my-2">
+
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#album_modal">
+                            Preview Album Images
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="album_modal" tabindex="-1" aria-labelledby="album_modal_label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="album_modal_label">Preview of Album Images</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="album_previewer">No image selected yet.</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -183,6 +236,52 @@
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
         }
         document.addEventListener("DOMContentLoaded", setup);
+    </script>
+
+    <script>
+        function updateLeadPreviewer()
+        {
+            const files = document.getElementById("id_image").files;
+            if (files.length === 0)
+            {
+                document.getElementById("lead_previewer").innerHTML = "No image selected yet.";
+                return;
+            }
+            document.getElementById("lead_previewer").innerHTML = "";
+            for (const file of files)
+            {
+                const image = document.createElement("img");
+                image.src = URL.createObjectURL(file);
+                image.style.width = '320px';
+                image.style.height = 'auto';
+                document.getElementById("lead_previewer").appendChild(image);
+            }
+        }
+        function updateAlbumPreviewer()
+        {
+            const files = document.getElementById("id_album").files;
+            if (files.length === 0)
+            {
+                document.getElementById("album_previewer").innerHTML = "No image selected yet.";
+                return;
+            }
+            document.getElementById("album_previewer").innerHTML = "";
+            for (const file of files)
+            {
+                const image = document.createElement("img");
+                image.src = URL.createObjectURL(file);
+                image.style.width = '320px';
+                image.style.height = 'auto';
+                image.setAttribute("class", "my-2");
+                document.getElementById("album_previewer").appendChild(image);
+            }
+        }
+        function setupImagePreviewers()
+        {
+            document.getElementById("id_image").addEventListener("input", updateLeadPreviewer);
+            document.getElementById("id_album").addEventListener("input", updateAlbumPreviewer);
+        }
+        document.addEventListener("DOMContentLoaded", setupImagePreviewers);
     </script>
 
 {% endblock content %}
