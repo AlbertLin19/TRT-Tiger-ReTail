@@ -66,17 +66,17 @@
         {% for item in items %}
         {% if item.status != Item.FROZEN and item.status != Item.COMPLETE%}
         <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-          <h5 style="padding: 4%; background-color: #faebaa; border-radius:10px" class="card-title">{{item.name}}</h5>
-          <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
-            <div style="text-align:center; padding-top:4%" class="card-img-top rounded-corners">
-              {% cloudinary item.image format="jpg" width=120 height=80 background="#f0e3e3" crop="lpad"%}
+          <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">{{item.name}}</h5>
+          <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
+            <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
+              {% cloudinary item.image format="jpg" width=120 height=80 background="#f7e6e6" crop="lpad"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item.categories.all %}
                 {{category}}
               {% endfor %}
             </div>
-            <hr>
+            <!-- <hr> -->
             <div class="card-body">
               {%if item.negotiable == True%}
               <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
@@ -84,7 +84,7 @@
               <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
               {%endif%}
               <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
-              <i class="fa fa-check" aria-hidden="true"></i> Quality
+              <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>
               {% if item.condition == Item.NEW%}
               <div class="progress">
                 <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
@@ -92,27 +92,27 @@
               </div>
               {% elif item.condition == Item.LIKE_NEW %}
               <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% elif item.condition == Item.GENTLY_LOVED %}
               <div class="progress">
-                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="100"
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%" aria-valuenow="100"
                   aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% elif item.condition == Item.WELL_LOVED %}
               <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 55%"
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% elif item.condition == Item.POOR %}
               <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 40%"
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% endif %}
               {% if item.status == Item.AVAILABLE %}
-              <div class='row' style="padding-top:3%;padding-bottom:2%">
+              <div class='row' style="padding-top:3%;padding-bottom:4%">
                 <div class="col-sm-12">
                   <form action="{% url 'new_purchase' %}" method="post" style="display: inline-block;">
                     {% csrf_token %}
@@ -135,7 +135,7 @@
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
-                    <div class="modal-header" style="background-color: rgb(54, 188, 250);">
+                    <div class="modal-header" style="background-color: #cee2db;"> 
                       <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
                       <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
                         aria-label="Close">
@@ -143,7 +143,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <h2 style="text-align:center;">ITEM DETAILS</h2>
+                      <h2 style="text-align:center;">Item Details</h2>
                       <div id="myCarousel{{item.pk}}" class="carousel slide text-center multi-item-carousel"
                         data-bs-ride="carousel">
                         <!--<a class="carousel-control left" href="#myCarousel{{item.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item.pk}}').carousel('prev')">&lsaquo;</a>-->
@@ -170,16 +170,16 @@
                         </a>
                         <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
                       </div>
-                      <hr style="border-top: 2px solid black;">
-                      <div style="background:#bdecf7; border-radius:10px;" id="description">
-                        <div class="item_details" style="padding:5%">
+                      <div style="background:#d8e2dc; border-radius:10px;" id="description"> <!--bdecf7-->
+                        <div class="item-details">
                           {%if item.negotiable == True%}
                           <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
                           {%else%}
                           <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD</p>
                           {%endif%}
                           <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item.deadline}}</p>
-                          <i class="fa fa-check" aria-hidden="true" style="padding-top:3%"></i> Quality
+                          <p class="card-text"><i class="fas fa-comment"></i> {{item.description}}</p>
+                          <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i> Quality</p>
                           {% if item.condition == Item.NEW%}
                           <div class="progress">
                             <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
@@ -187,26 +187,25 @@
                           </div>
                           {% elif item.condition == Item.LIKE_NEW %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 85%"
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% elif item.condition == Item.GENTLY_LOVED %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%"
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
                               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% elif item.condition == Item.WELL_LOVED %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
                               style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% elif item.condition == Item.POOR %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
                               style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% endif %}
-                          <p class="card-text"><i class="fas fa-comment" style="padding-top:3%"></i> {{item.description}}</p>
                         </div>
                       </div>
                     </div>
