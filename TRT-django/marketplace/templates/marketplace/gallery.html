@@ -11,15 +11,16 @@
         <button class="btn btn-secondary" type="submit" onkeyup="search()"><i class=" fa fa-search"></i></button>
       </div>
     </div>
-    
+
     <div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
-      <a class="btn btn-light hover-grey" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span class="d-none d-sm-inline">Want to Sell? Browse </span>Requests</a>
+      <a class="btn btn-light hover-grey" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span
+          class="d-none d-sm-inline">Want to Sell? Browse </span>Requests</a>
     </div>
 
     <div class="col-2">
       <div class="dropdown show" style="text-align: right;">
-        <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;"
-          type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;" type="button"
+          id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
@@ -28,7 +29,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 
@@ -42,9 +43,8 @@
     <br>
     <div class="row">
 
-      <div class="col-md-2 d-none d-lg-block">
+      <div class="col-xs-12 col-md-2" style="padding-bottom:20px;">
         <div id="category_label">FILTERS</div>
-
         <button onclick="filter('')" style="background:none" class="btn btn-sm">Show All</button> <br>
         <div id="category_sublabel">Dorm</div>
         <button onclick="filter('appliances')" style="background:none" class="btn btn-sm">Appliances</button> <br>
@@ -61,22 +61,23 @@
       </div>
       <div class="col-md-10 row">
         {% if not items %}
-          <h4>No items posted yet.</h4>
+        <h4>No items posted yet.</h4>
         {% endif %}
         {% for item in items %}
         {% if item.status != Item.FROZEN and item.status != Item.COMPLETE%}
-        <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
+        <div class="card item-card hover col-12 col-md-4"
+          onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()"
+          style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
           <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
             <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
-              {% cloudinary item.image format="jpg" width=120 height=80 background="#f7e6e6" crop="lpad"%}
+              {% cloudinary item.image format="jpg" width=220 height=150 background="#f7e6e6" crop="lpad"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item.categories.all %}
-                {{category}}
+              {{category}}
               {% endfor %}
             </div>
-            <!-- <hr> -->
             <div class="card-body">
               {%if item.negotiable == True%}
               <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
@@ -97,8 +98,8 @@
               </div>
               {% elif item.condition == Item.GENTLY_LOVED %}
               <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%" aria-valuenow="100"
-                  aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
+                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               {% elif item.condition == Item.WELL_LOVED %}
               <div class="progress">
@@ -121,21 +122,21 @@
                       style="padding-left: 19px; padding-right: 19px;">
                     <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
                   </form>
-                  <button type="button" class="modal{{item.pk}} btn btn-secondary noHover pull-right" onclick="disableHover()" data-bs-toggle="modal"
-                    data-bs-target="#modal{{item.pk}}" style="padding-left: 28px; padding-right: 28px;">
+                  <button type="button" class="modal{{item.pk}} btn btn-secondary noHover pull-right"
+                    onclick="disableHover()" data-bs-toggle="modal" data-bs-target="#modal{{item.pk}}"
+                    style="padding-left: 28px; padding-right: 28px;">
                     Details
                   </button>
-                </div> 
+                </div>
               </div>
-              
-            
+
 
               <!-- Modal -->
-              <div class="modal fade" id="modal{{item.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item.pk}}"
-                aria-hidden="true">
+              <div class="modal fade" id="modal{{item.pk}}" tabindex="-1" role="dialog"
+                aria-labelledby="modal{{item.pk}}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
-                    <div class="modal-header" style="background-color: #cee2db;"> 
+                    <div class="modal-header" style="background-color: #cee2db;">
                       <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item.name}}</h5>
                       <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
                         aria-label="Close">
@@ -151,26 +152,28 @@
                         <div class="carousel-inner" role="listbox">
                           <!--carousel-item active-->
                           <div class="carousel-item active">
-                            {% cloudinary item.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
+                            {% cloudinary item.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
                           </div>
                           {%for image in item.album.all%}
                           <div class="carousel-item">
-                            {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
+                            {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
                           </div>
                           {%endfor%}
                         </div>
                         <br>
-                        <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button" data-bs-slide="prev">
+                        <a class="carousel-control-prev" href="#myCarousel{{item.pk}}" role="button"
+                          data-bs-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="sr-only">Previous</span>
                         </a>
-                        <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button" data-bs-slide="next">
+                        <a class="carousel-control-next" href="#myCarousel{{item.pk}}" role="button"
+                          data-bs-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="sr-only">Next</span>
                         </a>
                         <!--<a class="carousel-control right" href="#myCarousel{{item.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item.pk}}').carousel('next')">&rsaquo;</a>-->
                       </div>
-                      <div style="background:#d8e2dc; border-radius:10px;" id="description"> <!--bdecf7-->
+                      <div style="background:#d8e2dc; border-radius:10px;" id="description">
                         <div class="item-details">
                           {%if item.negotiable == True%}
                           <p class="card-text"><i class="fas fa-tag"></i> ${{item.price}} USD (negotiable)</p>
@@ -187,13 +190,13 @@
                           </div>
                           {% elif item.condition == Item.LIKE_NEW %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
-                              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                              style="width: 85%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% elif item.condition == Item.GENTLY_LOVED %}
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
-                              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                              style="width: 70%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                           {% elif item.condition == Item.WELL_LOVED %}
                           <div class="progress">
