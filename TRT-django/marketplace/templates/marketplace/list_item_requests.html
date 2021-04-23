@@ -6,50 +6,54 @@
     <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
 </div>
 <div class="gallery_back container-fluid mb-3">
-    <br>  
+    <br>
     <div class="container">
         <div id="gallery_title">My Requests</div>
         <p>Request items here. Check out our FAQ for more.</p>
         <hr>
         <br>
         {% if not item_requests %}
-            <h3>You have not made any requests yet.</h3>
-            <br/>
+        <h3>You have not made any requests yet.</h3>
+        <br />
         {% endif %}
-        <div class="col-md-10 row">
-        {% for item_request in item_requests %}
-        <div class="card item-card hover col-12 col-md-4" onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()" style="width: 18rem; padding-top: 2%; padding-bottom: 2%;">
-            <h5 style="padding: 6%; background-color: #faebaa; border-radius:10px" class="card-title">{{item_request.name}}</h5>
-            <div class="pic-description" style="background-color: #f0e3e3; border-radius:10px">
-                <br>
-                <div style="text-align:center;" class="card-img-top rounded-corners">
-                    {% cloudinary item_request.image format="jpg" width=120 height=80 background="#f0e3e3" crop="lpad"%}
-                </div>
-                <hr>
-            
-            <div class="card-body">
-                <p class="card-text">{{item_request.description}}</p>
-                <br>
-                {%if item_request.negotiable == True%}
-                  <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
-                  {%else%}
-                  <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
-                  {%endif%}
-                  <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
-                  <br>
-                <div class="row">
-                    <div class="col">
-                        <a class="btn btn-outline-danger pull-left" style="padding-right:20px; padding-left:20px;" href="{% url 'delete_item_request' item_request.pk %}">Delete</a>
+        <div class="col-md-12 row">
+            {% for item_request in item_requests %}
+            <div class="card item-card hover col-12 col-md-4"
+                onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()"
+                style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
+                <h5 style="padding: 6%; background-color: #faebd5; border-radius:10px" class="card-title">
+                    {{item_request.name}}</h5>
+                <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
+                    <br>
+                    <div style="text-align:center;" class="card-img-top rounded-corners">
+                        {% cloudinary item_request.image format="jpg" width=220 height=150 background="#f7e6e6" crop="lpad"%}
                     </div>
-                    <div class="col">
-                        <a class="btn btn-outline-secondary pull-right" style="padding-right:32px; padding-left:32px;" href="{% url 'edit_item_request' item_request.pk %}">Edit</a>
+
+                    <div class="card-body">
+                        <p class="card-text"><i class="fas fa-comment"></i> {{item_request.description}}</p>
+                        {%if item_request.negotiable == True%}
+                        <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
+                        {%else%}
+                        <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
+                        {%endif%}
+                        <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
+                        <div class="row" style="padding-top:5%;padding-bottom:4%">
+                            <div class="col">
+                                <a class="btn btn-outline-danger pull-left"
+                                    style="padding-right:20px; padding-left:20px;"
+                                    href="{% url 'delete_item_request' item_request.pk %}">Delete</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-outline-secondary pull-right"
+                                    style="padding-right:32px; padding-left:32px;"
+                                    href="{% url 'edit_item_request' item_request.pk %}">Edit</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                {% endfor %}
             </div>
         </div>
-        
-        {% endfor %}
-        </div>
     </div>
-</div>
-{% endblock content %}
+    {% endblock content %}
