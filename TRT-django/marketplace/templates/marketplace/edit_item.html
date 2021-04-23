@@ -291,6 +291,12 @@
             text.innerHTML = "CURRENTLY";
             document.getElementById("album_previewer").appendChild(text);
 
+            {% if item.album.all|length == 0 %}
+            const moretext = document.createElement("p");
+            moretext.innerHTML = "NONE";
+            document.getElementById("album_previewer").appendChild(moretext);
+            {% endif %}
+
             for (const old_image_src of [{% for image in item.album.all %}"{{image.image.url}}", {% endfor %}])
             {
                 const old_image = document.createElement("img");
@@ -309,15 +315,22 @@
                 album_previewer.removeChild(album_previewer.firstChild);
             }
             populateOldAlbumImages();
+            const text = document.createElement('p');
+            text.setAttribute("class", "mt-4");
+            text.innerHTML = "ADD";
+            if (document.getElementById("id_replace").checked)
+            {
+                text.innerHTML = "REPLACE WITH";
+            }
+            album_previewer.appendChild(text);
             const files = document.getElementById("id_album").files;
             if (files.length === 0)
             {
+                const moretext = document.createElement("p");
+                moretext.innerHTML = "NONE";
+                album_previewer.appendChild(moretext);
                 return;
             }
-            const text = document.createElement('p');
-            text.setAttribute("class", "mt-4");
-            text.innerHTML = "REPLACE WITH";
-            album_previewer.appendChild(text);
             for (const file of files)
             {
                 const image = document.createElement("img");
@@ -334,6 +347,7 @@
             populateOldAlbumImages();
             document.getElementById("id_image").addEventListener("input", updateLeadPreviewer);
             document.getElementById("id_album").addEventListener("input", updateAlbumPreviewer);
+            document.getElementById("id_replace").addEventListener("input", updateAlbumPreviewer);
         }
         document.addEventListener("DOMContentLoaded", setupImagePreviewers);
     </script>

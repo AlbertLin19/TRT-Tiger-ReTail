@@ -419,12 +419,16 @@ def editItem(request, pk):
                 item_form.save()
                 logItemAction(item, account, "edited")
 
-                if request.FILES.getlist("album"):
-                    # overwrite the album images
+                if "replace" in request.POST:
+                    # delete old album images
                     item.album.all().delete()
+
+                if request.FILES.getlist("album"):
+                    # insert album images (up to the count limit)
+                    num_already = len(item.album.all())
                     album = request.FILES.getlist("album")
                     for i in range(len(album)):
-                        if i >= settings.ALBUM_LIMIT:
+                        if i + num_already >= settings.ALBUM_LIMIT:
                             break
                         try:
                             AlbumImage(image=album[i], item=item).save()
