@@ -11,10 +11,6 @@
         <button class="btn btn-secondary" type="submit" onkeyup="search()"><i class=" fa fa-search"></i></button>
       </div>
     </div>
-    
-    <div class="col-5 col-sm-6 col-md-4 col-lg-4 col-xxl-3">
-      <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 100%;"><span class="d-none d-sm-inline">Want to Buy? Browse </span>Items</a>
-    </div>
 
     <div class="col-2">
       <div class="dropdown show" style="text-align: right;">
@@ -23,11 +19,37 @@
           <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="{% url 'new_item_request' %}">POST REQUEST</a>
+          <button class="post-dropdown-item noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST REQUEST</button>
           <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="post-dropdown-item" tabindex="-1" role="dialog"
+aria-labelledby="post-dropdown-item" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header" style="background-color: #cee2db;">
+      <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">Post Request</h5>
+      <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
+        aria-label="Close">
+        <span style="font-size:30px" aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 100%;"><span
+        class="d-none d-sm-inline">Want to Buy? Browse </span>Items for Sale</a><br><br>
+      <a class="btn btn-light hover-grey" href="{% url 'new_item_request' %}"style="width: 100%;"><span
+        class="d-none d-sm-inline">Post Request </span></a>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="enableHover()"
+        data-bs-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
     
   </div>
 </div>
