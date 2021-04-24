@@ -71,19 +71,19 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
 
       <div class="col-xs-12 col-md-2" style="padding-bottom:20px;">
         <div id="category_label">FILTERS</div>
-        <button onclick="filter('')" style="background:none" class="btn btn-sm">Show All</button> <br>
+        <button onclick="filter('')" id="all" style="background:none" class="btn btn-sm">Show All</button> <br>
         <div id="category_sublabel">Dorm</div>
-        <button onclick="filter('appliances')" style="background:none" class="btn btn-sm">Appliances</button> <br>
-        <button onclick="filter('furniture')" style="background:none" class="btn btn-sm">Furniture</button><br>
+        <button onclick="filter('appliances')" id="appliances" style="background:none" class="btn btn-sm">Appliances</button> <br>
+        <button onclick="filter('furniture')" id="furniture" style="background:none" class="btn btn-sm">Furniture</button><br>
         <div id="category_sublabel">Clothing</div>
-        <button onclick="filter('clothes')" style="background:none" class="btn btn-sm">Clothes</button><br>
+        <button onclick="filter('clothes')" id="clothes" style="background:none" class="btn btn-sm">Clothes</button><br>
         <div id="category_sublabel">Academics</div>
-        <button onclick="filter('book')" style="background:none" class="btn btn-sm">Books</button> <br>
-        <button onclick="filter('tech')" style="background:none" class="btn btn-sm">Tech</button> <br>
+        <button onclick="filter('book')" id="book" style="background:none" class="btn btn-sm">Books</button> <br>
+        <button onclick="filter('tech')" id="tech" style="background:none" class="btn btn-sm">Tech</button> <br>
         <div id="category_sublabel">Campus Life</div>
-        <button onclick="filter('tickets')" style="background:none" class="btn btn-sm">Tickets</button> <br>
-        <button onclick="filter('gift cards')" style="background:none" class="btn btn-sm">Gift Cards</button> <br>
-        <button onclick="filter('other')" style="background:none" class="btn btn-sm">Other</button>
+        <button onclick="filter('tickets')" id="tickets" style="background:none" class="btn btn-sm">Tickets</button> <br>
+        <button onclick="filter('gift cards')" id="giftcards" style="background:none" class="btn btn-sm">Gift Cards</button> <br>
+        <button onclick="filter('other')" id="other" style="background:none;" class="btn btn-sm">Other</button>
       </div>
       <div class="col-md-10 row">
         {% if not items %}

@@ -21,8 +21,13 @@ function search() {
 function filter(input) {
    //query = document.getElementById("filter").value.toLowerCase();
    console.log(input)
+   let filterName = input;
+
    cards = document.getElementsByClassName("card");
    if (input != '') {
+      if (input == 'gift cards') {
+         filterName = 'giftcards';
+      }
       for (i = 0; i < cards.length; i++) {
          if (cards[i].querySelector(".item_categories").innerHTML.toLowerCase().includes(input))
             cards[i].style.display = '';
@@ -33,8 +38,19 @@ function filter(input) {
       }
    }
    else {
+      filterName = 'all';
       for (i = 0; i < cards.length; i++) {
          cards[i].style.display = '';
+      }
+   }
+   
+   let ids = ['all', 'appliances', 'furniture', 'clothes', 'book', 'tech', 'tickets', 'giftcards', 'other'];
+
+   for (j = 0; j < ids.length; j++) {
+      if(ids[j] == filterName) {
+         document.getElementById(filterName).setAttribute("style", "font-weight: bold; text-decoration: underline;");
+      } else {
+         document.getElementById(ids[j]).setAttribute("style", "font-weight: normal; text-decoration: none;");
       }
    }
 }
