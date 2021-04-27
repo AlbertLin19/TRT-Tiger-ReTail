@@ -121,13 +121,13 @@
                         </div>
                         {% elif item.condition == Item.LIKE_NEW %}
                         <div class="progress">
-                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
-                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                            style="width: 85%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         {% elif item.condition == Item.GENTLY_LOVED %}
                         <div class="progress">
-                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
-                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                            style="width: 70%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         {% elif item.condition == Item.WELL_LOVED %}
                         <div class="progress">
@@ -136,8 +136,8 @@
                         </div>
                         {% elif item.condition == Item.POOR %}
                         <div class="progress">
-                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"
-                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                            style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         {% endif %}
                       </div>
@@ -170,7 +170,8 @@
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
-            <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}">Confirm</a>
+            <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}"
+              style="padding-left: 6px; padding-right: 6px;">Confirm</a>
             {% elif sale.status == Transaction.B_PENDING %}
             <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
             {% endif %}
@@ -181,7 +182,7 @@
             {% endfor %}
             {% if item.status != Item.AVAILABLE %}
             <button type="button" class="btn btn-outline-primary noHover pull-right"
-              style="padding-right:12px; padding-left:12px;" onclick="disableHover()" data-bs-toggle="modal"
+              style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
               data-bs-target="#modal{{item.pk}}">
               Details
             </button>
