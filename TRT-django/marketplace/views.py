@@ -1488,7 +1488,9 @@ def contact(request):
 
 def logout(request):
     request.session.pop("username", default=None)
-    return redirect(CASClient.getLogoutUrl())
+    return redirect(
+        CASClient.getLogoutUrl(request.build_absolute_uri(reverse("gallery")))
+    )
 
 
 # ----------------------------------------------------------------------
