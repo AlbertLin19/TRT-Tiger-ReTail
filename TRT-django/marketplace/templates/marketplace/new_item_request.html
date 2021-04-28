@@ -112,7 +112,7 @@
 
             <div class ="row my-4">
                 <div class="text-center">
-                    <button type="submit" value="Submit" class="btn btn-success">Submit</button>
+                    <button id="id_submit" type="submit" value="Submit" class="btn btn-success">Submit</button>
                 </div>
             </div>
               
@@ -121,6 +121,29 @@
     </div>
 
     <script>
+        let priceValid = true;
+        let deadlineValid = true;
+        function updateSubmitButton()
+        {
+            if (!priceValid || !deadlineValid)
+            {
+                document.getElementById("id_submit").disabled = true;
+                submitPopover("please fix errors on form");
+                return;
+            }
+            document.getElementById("id_submit").disabled = false;
+            $("#id_submit").popover("hide");
+        }
+        function submitPopover(text)
+        {
+            document.getElementById("id_submit").setAttribute("data-bs-toggle", "popover");
+            document.getElementById("id_submit").setAttribute("data-bs-trigger", "manual");
+            document.getElementById("id_submit").setAttribute("data-bs-placement", "top");
+            document.getElementById("id_submit").setAttribute("data-bs-html", true);
+            document.getElementById("id_submit").setAttribute("data-bs-content", "<span class='text-danger'><i class='fas fa-exclamation mx-2'></i>" + text + "</span>");
+            $("#id_submit").popover("show");
+        }
+
         function pricePopover(text)
         {
             document.getElementById("id_price").setAttribute("data-bs-toggle", "popover");
@@ -143,6 +166,7 @@
 
         function validatePrice()
         {
+            priceValid = false;
             const price_string = document.getElementById("id_price").value;
             if (price_string.indexOf('.') > -1 && price_string.indexOf('.') < price_string.length - 3)
             {
@@ -165,11 +189,13 @@
                 pricePopover("price cannot be greater than $999,999.99");
                 return;
             }
+            priceValid = true;
             $("#id_price").popover("hide");
         }
 
         function validateDeadline()
         {
+            deadlineValid = false;
             const date = document.getElementById("id_deadline").value.split('-');
             if (date.length != 3)
             {
@@ -193,12 +219,14 @@
                 deadlinePopover("deadline cannot be later than " + latestDeadline.toDateString());
                 return;
             }
+            deadlineValid = true;
             $("#id_deadline").popover("hide");
         }
         function setup()
         {
             document.getElementById("id_price").addEventListener("input", validatePrice);
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
+            window.setInterval(updateSubmitButton, 100);
         }
         document.addEventListener("DOMContentLoaded", setup);
     </script>
