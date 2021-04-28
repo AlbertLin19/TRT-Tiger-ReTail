@@ -412,11 +412,13 @@ def editItem(request, pk):
         item_form = ItemForm(request.POST, request.FILES, instance=item)
         if item_form.is_valid():
             try:
+                # save changes to item
+                item_form.save()
+
                 # remove the old image from storage (if different)
                 if item_form.cleaned_data["image"] != old_image:
                     cloudinary.uploader.destroy(str(old_image))
-                # save changes to item
-                item_form.save()
+
                 logItemAction(item, account, "edited")
 
                 if "replace" in request.POST:
@@ -461,6 +463,7 @@ def editItem(request, pk):
                     "Could not edit item. Check that your lead image is < 10MB and a proper image file.",
                 )
                 logError(account, e)
+                return redirect("edit_item", pk)
 
     # did not receive form data via POST, so send stored item form
     else:
@@ -1079,11 +1082,12 @@ def editItemRequest(request, pk):
         )
         if item_request_form.is_valid():
             try:
+                # save changes to item_request
+                item_request_form.save()
+
                 # remove the old image from storage (if different)
                 if item_request_form.cleaned_data["image"] != old_image:
                     cloudinary.uploader.destroy(str(old_image))
-                # save changes to item_request
-                item_request_form.save()
 
                 logItemRequestAction(item_request, account, "edited")
                 messages.success(request, "Item request updated.")
@@ -1106,6 +1110,7 @@ def editItemRequest(request, pk):
                     "Could not edit item request. Check that your reference image is < 10MB and a proper image file.",
                 )
                 logError(account, e)
+                return redirect("edit_item_request", pk)
 
     # did not receive form data via POST, so send stored item_request form
     else:
