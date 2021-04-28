@@ -158,6 +158,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "trt.tiger.retail@gmail.com"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_NAME = "Tiger ReTail"
 
 # setup cache for email verification
 CACHES = {
