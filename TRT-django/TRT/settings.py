@@ -169,7 +169,7 @@ CACHES = {
 }
 
 # list of netids for which we allow multi-accounts
-ADMIN_NETIDS = ["aklin", "satadals", "singl", "kjm3", "sarats"]
+ADMIN_NETIDS = ["aklin", "satadals", "singl", "kjm3", "sarats", "rdondero"]
 # list of alt account suffixes for admins
 ALT_ACCOUNT_SUFFIXES = ["", "_alt_a", "_alt_b"]
 # time buffer after which expired items are deleted
