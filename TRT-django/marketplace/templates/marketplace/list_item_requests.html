@@ -9,7 +9,7 @@
     <br>
     <div class="container">
         <div id="gallery_title">My Requests</div>
-        <p>Request items here. Check out our FAQ for more.</p>
+        <p>Request items here. If a seller sees your request and thinks their item may match, they will reach out to you! Check out our FAQ for more.</p>
         <hr>
         <br>
         {% if not item_requests %}
@@ -37,6 +37,34 @@
                         <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
                         {%endif%}
                         <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
+                        <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>
+                        {% if item_request.condition == Item.NEW%}
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% elif item_request.condition == Item.LIKE_NEW %}
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% elif item_request.condition == Item.GENTLY_LOVED %}
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% elif item_request.condition == Item.WELL_LOVED %}
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% elif item_request.condition == Item.POOR %}
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% endif %}
+                        <br>
                         <div class="row" style="padding-top:5%;padding-bottom:4%">
                             <div class="col">
                                 <a class="btn btn-outline-danger pull-left"
@@ -51,9 +79,9 @@
                         </div>
                     </div>
                 </div>
-
-                {% endfor %}
             </div>
+                {% endfor %}
+            
         </div>
     </div>
     {% endblock content %}
