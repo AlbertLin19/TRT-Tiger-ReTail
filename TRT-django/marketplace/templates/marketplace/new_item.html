@@ -159,9 +159,11 @@
         document.getElementById("id_image").setAttribute("accept", "image/*");
         let priceValid = true;
         let deadlineValid = true;
+        let imageValid = true;
+        let albumValid = true;
         function updateSubmitButton()
         {
-            if (!priceValid || !deadlineValid)
+            if (!priceValid || !deadlineValid || !imageValid || !albumValid)
             {
                 document.getElementById("id_submit").disabled = true;
                 submitPopover("please fix errors on form");
@@ -169,6 +171,24 @@
             }
             document.getElementById("id_submit").disabled = false;
             $("#id_submit").popover("hide");
+        }
+        function imagePopover(text)
+        {
+            document.getElementById("id_image").setAttribute("data-bs-toggle", "popover");
+            document.getElementById("id_image").setAttribute("data-bs-trigger", "manual");
+            document.getElementById("id_image").setAttribute("data-bs-placement", "top");
+            document.getElementById("id_image").setAttribute("data-bs-html", true);
+            document.getElementById("id_image").setAttribute("data-bs-content", "<span class='text-danger'><i class='fas fa-exclamation mx-2'></i>" + text + "</span>");
+            $("#id_image").popover("show");
+        }
+        function albumPopover(text)
+        {
+            document.getElementById("id_album").setAttribute("data-bs-toggle", "popover");
+            document.getElementById("id_album").setAttribute("data-bs-trigger", "manual");
+            document.getElementById("id_album").setAttribute("data-bs-placement", "top");
+            document.getElementById("id_album").setAttribute("data-bs-html", true);
+            document.getElementById("id_album").setAttribute("data-bs-content", "<span class='text-danger'><i class='fas fa-exclamation mx-2'></i>" + text + "</span>");
+            $("#id_album").popover("show");
         }
         function submitPopover(text)
         {
@@ -200,6 +220,36 @@
             $("#id_deadline").popover("show");
         }
 
+        function validateImage()
+        {
+            imageValid = false;
+            const files = document.getElementById("id_image").files;
+            for (const file of files)
+            {
+                // cannot accept >10mb files
+                if (file.size > 10485760) {
+                    imagePopover("image files must have sizes < 10MB");
+                    return;
+                }
+            }
+            imageValid = true;
+            $("#id_image").popover("hide");
+        }
+        function validateAlbum()
+        {
+            albumValid = false;
+            const files = document.getElementById("id_album").files;
+            for (const file of files)
+            {
+                // cannot accept >10mb files
+                if (file.size > 10485760) {
+                    albumPopover("image files must have sizes < 10MB");
+                    return;
+                }
+            }
+            albumValid = true;
+            $("#id_album").popover("hide");
+        }
         function validatePrice()
         {
             priceValid = false;
@@ -262,6 +312,8 @@
         {
             document.getElementById("id_price").addEventListener("input", validatePrice);
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
+            document.getElementById("id_album").addEventListener("input", validateAlbum);
+            document.getElementById("id_image").addEventListener("input", validateImage);
             window.setInterval(updateSubmitButton, 100);
         }
         document.addEventListener("DOMContentLoaded", setup);
