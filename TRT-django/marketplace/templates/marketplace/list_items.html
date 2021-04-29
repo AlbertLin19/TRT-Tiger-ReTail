@@ -171,11 +171,17 @@
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
             <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
+            <p class="card-text"><i class="fas fa-users"></i> Buyer: {{sale.buyer.name}}</p>
+            <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
+              {{sale.buyer.contact}}</p>
             <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}"
               style="padding-left: 6px; padding-right: 6px;">Confirm</a>
               
             {% elif sale.status == Transaction.B_PENDING %}
             <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
+            <p class="card-text"><i class="fas fa-users"></i> Buyer: {{sale.buyer.name}}</p>
+            <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
+              {{sale.buyer.contact}}</p>
             <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Awaiting buyer acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:10px; padding-left:10px;"
@@ -197,7 +203,14 @@
             {% endif %}
 
             {% elif item.status == Item.COMPLETE %}
-            <p style="color:rgb(66, 66, 66); font-weight: bold;">COMPLETE</p>
+            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+              {% for sale in item.transaction_set.all %}
+                {% if sale.status == Transaction.COMPLETE %}
+                  <p class="card-text"><i class="fas fa-users"></i> Buyer: {{sale.buyer.name}}</p>
+                  <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
+                  {{sale.buyer.contact}}</p>
+                {% endif %}
+              {% endfor %}
             <div class="mx-auto" style="height:40px"></div>
             {% endif %}
             <div class="row" style="padding-top:3%;padding-bottom:4%">
