@@ -17,7 +17,7 @@
     {% endif %}
     <div class="row">
       {% for item in items %}
-      <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%;padding-bottom: 1%">
+      <div class="card item-card hover col-12" style="width: 18rem; padding-top: 1%;padding-bottom: 1%">
         <h5 style="padding: 6%; background-color: #faedb5; border-radius:10px" class="card-title">{{item.name}}</h5>
         <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
           <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
@@ -159,28 +159,35 @@
             <!-- get all cancelled errors out of way before displaying buttons -->
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.COMPLETE %}
-            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+            <p style="color:rgb(99, 99, 99); font-weight: bold;">COMPLETE</p>
             {% elif sale.status == Transaction.CANCELLED %}
             <p style="color: rgb(212, 67, 31); font-weight: bold; line-height: normal;">CANCELLED</p>
             {% endif %}
             {% endfor %}
-
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.INITIATED %}
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
+            <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
             <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}"
               style="padding-left: 6px; padding-right: 6px;">Confirm</a>
+              
             {% elif sale.status == Transaction.B_PENDING %}
-            <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
+            <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
+            <span data-bs-toggle="popover" data-bs-trigger="hover focus"
+                  data-bs-content="Awaiting buyer acknowledgement.">
+                  <button class="btn btn-outline-secondary pull-left" style="padding-right:10px; padding-left:10px;"
+                    type="button" disabled>Confirm</button>
+                </span>
+            
             {% endif %}
-            {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED %}
+            {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED and sale.status != Transaction.B_PENDING%}
             <a class="btn btn-outline-danger" style="padding-left: 8px; padding-right: 8px;"
               href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
             {% endif %}
             {% endfor %}
-            {% if item.status != Item.AVAILABLE %}
+            {% if item.status != Item.AVAILABLE and sale.status != Transaction.INITIATED %}
             <button type="button" class="btn btn-outline-primary noHover pull-right"
               style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
               data-bs-target="#modal{{item.pk}}">
@@ -189,11 +196,12 @@
             {% endif %}
 
             {% elif item.status == Item.COMPLETE %}
-            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+            <p style="color:rgb(66, 66, 66); font-weight: bold;">COMPLETE</p>
+            <div class="mx-auto" style="height:40px"></div>
             {% endif %}
             <div class="row" style="padding-top:3%;padding-bottom:4%">
               <div class="col-sm-12">
-                {% if item.status == Item.AVAILABLE %}
+                {% if item.status == Item.AVAILABLE or sale.status == Transaction.INITIATED %}
                 <a class="btn btn-outline-danger pull-left" style="padding-right:11px; padding-left:11px;"
                   href="{% url 'delete_item' item.pk %}">Delete</a>
                 <a class="btn btn-outline-secondary" style="padding-right:20px; padding-left:20px;"

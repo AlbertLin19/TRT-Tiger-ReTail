@@ -17,6 +17,7 @@
     <br />
     {% endif %}
     <div class="col-md-12 row">
+      <!-- get all cancelled errors out of way before displaying buttons -->
       {% for purchase in purchases %}
       {% if purchase.status != Transaction.CANCELLED%}
       <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
@@ -39,7 +40,6 @@
             <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD</p>
             {%endif%}
             <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
-            <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
             <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>
             {% if purchase.item.condition == Item.NEW%}
             <div class="progress">
@@ -67,17 +67,18 @@
                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
+            <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
             <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
               {{purchase.item.seller.contact}}</p>
             <div class="row" style="padding-top:3%;padding-bottom:4%">
               <div class="col-sm-12">
                 {% if purchase.status == Transaction.ACKNOWLEDGED or purchase.status == Transaction.B_PENDING %}
-
+                <div class="mx-auto" style="height:40px"></div>
                 <a class="btn btn-outline-success pull-left" style="padding-right:7px; padding-left:7px;"
                   href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
 
                 {% elif purchase.status == Transaction.INITIATED %}
-
+                <div class="mx-auto" style="height:40px"></div>
                 <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Awaiting seller acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
@@ -85,7 +86,7 @@
                 </span>
 
                 {% elif purchase.status == Transaction.S_PENDING %}
-
+                <div class="mx-auto" style="height:40px"></div>
                 <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Already confirmed, awaiting seller acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
