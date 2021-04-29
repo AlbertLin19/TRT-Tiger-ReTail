@@ -17,7 +17,7 @@
     {% endif %}
     <div class="row">
       {% for item in items %}
-      <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%;padding-bottom: 1%">
+      <div class="card item-card hover col-12" style="width: 18rem; padding-top: 1%;padding-bottom: 1%">
         <h5 style="padding: 6%; background-color: #faedb5; border-radius:10px" class="card-title">{{item.name}}</h5>
         <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
           <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
@@ -62,6 +62,8 @@
                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
+            <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
+              {{item.seller.contact}}</p>
             <br>
 
             <!-- Modal -->
@@ -164,25 +166,33 @@
             <p style="color: rgb(212, 67, 31); font-weight: bold; line-height: normal;">CANCELLED</p>
             {% endif %}
             {% endfor %}
-
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.INITIATED %}
+            <div class="mx-auto" style="height: 40px"></div>
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
+            <div class="mx-auto" style="height:40px"></div>
             <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}"
-              style="padding-left: 6px; padding-right: 6px;">Confirm</a>
+              style="padding-left: 23px; padding-right: 23px;">Confirm</a>
+              
             {% elif sale.status == Transaction.B_PENDING %}
-            <p>Already Confirmed (grey out and put popup that says awaiting buyer confirmation)</p>
+            <div class="mx-auto" style="height:40px"></div>
+            <span data-bs-toggle="popover" data-bs-trigger="hover focus"
+                  data-bs-content="Awaiting buyer acknowledgement.">
+                  <button class="btn btn-outline-secondary pull-left" style="padding-right:23px; padding-left:23px;"
+                    type="button" disabled>Confirm</button>
+                </span>
+            
             {% endif %}
-            {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED %}
+            {% if sale.status != Transaction.COMPLETE and sale.status != Transaction.CANCELLED and sale.status != sale.status == Transaction.B_PENDING%}
             <a class="btn btn-outline-danger" style="padding-left: 8px; padding-right: 8px;"
               href="{% url 'cancel_sale' sale.pk %}">Cancel</a>
             {% endif %}
             {% endfor %}
             {% if item.status != Item.AVAILABLE %}
             <button type="button" class="btn btn-outline-primary noHover pull-right"
-              style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
+              style="padding-right:27px; padding-left:27px;" onclick="disableHover()" data-bs-toggle="modal"
               data-bs-target="#modal{{item.pk}}">
               Details
             </button>
@@ -190,6 +200,7 @@
 
             {% elif item.status == Item.COMPLETE %}
             <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+            <div class="mx-auto" style="height:40px"></div>
             {% endif %}
             <div class="row" style="padding-top:3%;padding-bottom:4%">
               <div class="col-sm-12">
