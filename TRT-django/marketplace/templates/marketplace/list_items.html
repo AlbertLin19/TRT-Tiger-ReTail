@@ -8,7 +8,7 @@
 <div class="gallery_back container-fluid mb-3">
   <br>
   <div class="container">
-    <div id="gallery_title">My Items</div>
+    <div id="gallery_title">My Items for Sale</div>
     <p>Manage your items here! Confirm once a buyer purchases your item to move forward with the transaction.</p>
     <hr>
     {% if not items %}
@@ -166,6 +166,7 @@
             {% endfor %}
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.INITIATED %}
+            <p class="card-text"><i class="fas fa-users"></i> Buyer Request From: {{item.buyer}}</p>
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
