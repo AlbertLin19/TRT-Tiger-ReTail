@@ -62,8 +62,6 @@
                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
-            <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
-              {{item.seller.contact}}</p>
             <br>
 
             <!-- Modal -->
@@ -161,23 +159,22 @@
             <!-- get all cancelled errors out of way before displaying buttons -->
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.COMPLETE %}
-            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+            <p style="color:rgb(99, 99, 99); font-weight: bold;">COMPLETE</p>
             {% elif sale.status == Transaction.CANCELLED %}
             <p style="color: rgb(212, 67, 31); font-weight: bold; line-height: normal;">CANCELLED</p>
             {% endif %}
             {% endfor %}
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.INITIATED %}
-            <div class="mx-auto" style="height: 40px"></div>
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
-            <div class="mx-auto" style="height:40px"></div>
+            <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
             <a class="btn btn-outline-success" href="{% url 'confirm_sale' sale.pk %}"
               style="padding-left: 6px; padding-right: 6px;">Confirm</a>
               
             {% elif sale.status == Transaction.B_PENDING %}
-            <div class="mx-auto" style="height:40px"></div>
+            <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
             <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Awaiting buyer acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:10px; padding-left:10px;"
@@ -199,7 +196,7 @@
             {% endif %}
 
             {% elif item.status == Item.COMPLETE %}
-            <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+            <p style="color:rgb(66, 66, 66); font-weight: bold;">COMPLETE</p>
             <div class="mx-auto" style="height:40px"></div>
             {% endif %}
             <div class="row" style="padding-top:3%;padding-bottom:4%">
