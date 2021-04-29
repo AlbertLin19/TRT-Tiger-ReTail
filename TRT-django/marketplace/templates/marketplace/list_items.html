@@ -166,7 +166,7 @@
             {% endfor %}
             {% for sale in item.transaction_set.all %}
             {% if sale.status == Transaction.INITIATED %}
-            <p class="card-text"><i class="fas fa-users"></i> Buyer Request From: {{item.buyer}}</p>
+            <p class="card-text"><i class="fas fa-users"></i> Buyer Request From: <br> {{sale.buyer.contact}}</p><br>
             <a class="btn btn-outline-success" href="{% url 'accept_sale' sale.pk %}"
               style="padding-left: 8px; padding-right: 8px;">Accept</a>
             {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
