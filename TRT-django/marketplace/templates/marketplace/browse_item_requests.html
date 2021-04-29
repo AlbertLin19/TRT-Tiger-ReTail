@@ -12,6 +12,11 @@
       </div>
     </div>
 
+    <div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
+      <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 100%;"><span
+          class="d-none d-sm-inline">Want to Buy? Browse </span>Items</a>
+    </div>
+
     <div class="col-2">
       <div class="dropdown show" style="text-align: right;">
         <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;"
@@ -19,7 +24,11 @@
           <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <button class="post-dropdown-item noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST REQUEST</button>
+          <div class="container-fluid dropdown-item mx-0 px-0">
+            <div class="row"> 
+              <button class="post-dropdown-item px-0 mx-0 noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST REQUEST</button>
+            </div>
+          </div>
           <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
         </div>
       </div>

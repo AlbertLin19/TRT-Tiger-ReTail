@@ -12,10 +12,10 @@
       </div>
     </div>
 
-    <!--<div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
+    <div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
       <a class="btn btn-light hover-grey" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span
           class="d-none d-sm-inline">Want to Sell? Browse </span>Requests</a>
-    </div>-->
+    </div>
 
     <div class="col-2">
       <div class="dropdown show" style="text-align: right;">
@@ -24,7 +24,11 @@
           <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <button class="post-dropdown-item noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST ITEM</button>
+          <div class="container-fluid dropdown-item mx-0 px-0">
+            <div class="row"> 
+              <button class="post-dropdown-item px-0 mx-0 noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST ITEM</button>
+            </div>
+          </div>
           <a class="dropdown-item" href="{% url 'new_item_request' %}">POST REQUEST</a>
         </div>
       </div>
@@ -34,7 +38,7 @@
 <!-- Modal -->
 <div class="modal fade" id="post-dropdown-item" tabindex="-1" role="dialog"
 aria-labelledby="post-dropdown-item" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
   <div class="modal-content">
     <div class="modal-header" style="background-color: #cee2db;">
       <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">Post Item</h5>
@@ -92,8 +96,8 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
         {% for item in items %}
         {% if item.status != Item.FROZEN and item.status != Item.COMPLETE%}
         <div class="card item-card hover col-12 col-md-4"
-          onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()"
           style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
+          <!--<p class="overall_card" onclick="document.getElementById('button_modal{{item.pk}}').click()">-->
           <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">{{item.name}}</h5>
           <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
             <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
@@ -148,7 +152,7 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
                       style="padding-left: 19px; padding-right: 19px;">
                     <!--<a href="#"type="submit" class="btn btn-secondary" >View Details</a>-->
                   </form>
-                  <button type="button" class="modal{{item.pk}} btn btn-secondary noHover pull-right"
+                  <button type="button" id="button_modal{{item.pk}}" class="btn btn-secondary noHover pull-right"
                     onclick="disableHover()" data-bs-toggle="modal" data-bs-target="#modal{{item.pk}}"
                     style="padding-left: 28px; padding-right: 28px;">
                     Details
@@ -259,6 +263,7 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
               {% endif %}
             </div>
           </div>
+        <!--</p>-->
         </div>
         {% endif %}
         {% endfor %}
