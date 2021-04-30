@@ -158,15 +158,13 @@
                     {%endif%}
                     <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
                     <p class="card-text"><i class="fas fa-comment"></i> {{purchase.item.description}}</p>
-
-                    {% for purchase in purchases %}
+ 
                     {% if purchase.status != Transaction.CANCELLED%}
                     <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
                     <p class="card-text"><i class="fas fa-id-card"></i> Contact Details:
                       {{purchase.item.seller.contact}}</p>
 
                     {% endif %}
-                    {% endfor %}
 
                     <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i> Quality</p>
                     {% if purchase.item.condition == Item.NEW%}
