@@ -28,11 +28,6 @@
           <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
             {% cloudinary purchase.item.image format="jpg" width=220 height=150 background="#f7e6e6" crop="lpad"%}
           </div>
-          <!-- <div style="display:none;" class="item_categories">
-            {% for category in purchase.item.categories.all %}
-            <div class="item_category">{{category}}</div>
-            {% endfor %}
-          </div> -->
           <div class="card-body">
             {%if purchase.item.negotiable == True%}
             <p class="card-text"><i class="fas fa-tag"></i> ${{purchase.item.price}} USD (negotiable)</p>
@@ -67,26 +62,24 @@
                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
-            <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
-            <p class="card-text" style="padding-top:4%"><i class="fas fa-comments"></i> Contact Details: <br>
-              {{purchase.item.seller.contact}}</p>
             <div class="row" style="padding-top:3%;padding-bottom:4%">
               <div class="col-sm-12">
                 {% if purchase.status == Transaction.ACKNOWLEDGED or purchase.status == Transaction.B_PENDING %}
-                <div class="mx-auto" style="height:40px"></div>
+                <br> <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
                 <a class="btn btn-outline-success pull-left" style="padding-right:7px; padding-left:7px;"
                   href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
 
                 {% elif purchase.status == Transaction.INITIATED %}
-                <div class="mx-auto" style="height:40px"></div>
+                <br>
+                <p style="color:rgb(226, 200, 50); font-weight: bold;">AWAITING CONFIRMATION</p>
                 <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Awaiting seller acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
                     type="button" disabled>Confirm</button>
                 </span>
 
-                {% elif purchase.status == Transaction.S_PENDING %}
-                <div class="mx-auto" style="height:40px"></div>
+                {% elif purchase.status == Transaction.S_PENDING or purchase.status == Transaction.B_PENDING %}
+                <br> <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
                 <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Already confirmed, awaiting seller acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
@@ -94,9 +87,9 @@
                 </span>
 
                 {% elif purchase.status == Transaction.COMPLETE %}
-                <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
+                <br> <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
                 {% elif purchase.status == Transaction.CANCELLED %}
-                <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
+                <br> <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
                 {% endif %}
                 {% if purchase.status != Transaction.COMPLETE and purchase.status != Transaction.CANCELLED %}
                 <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
@@ -165,6 +158,16 @@
                     {%endif%}
                     <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
                     <p class="card-text"><i class="fas fa-comment"></i> {{purchase.item.description}}</p>
+
+                    {% for purchase in purchases %}
+                    {% if purchase.status != Transaction.CANCELLED%}
+                    <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
+                    <p class="card-text"><i class="fas fa-id-card"></i> Contact Details:
+                      {{purchase.item.seller.contact}}</p>
+
+                    {% endif %}
+                    {% endfor %}
+
                     <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i> Quality</p>
                     {% if purchase.item.condition == Item.NEW%}
                     <div class="progress">
