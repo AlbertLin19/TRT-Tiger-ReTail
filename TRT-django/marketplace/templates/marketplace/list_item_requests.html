@@ -21,7 +21,7 @@
             <div class="card item-card hover col-12 col-md-4"
                 onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()"
                 style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-                <h5 style="padding: 6%; background-color: #faebd5; border-radius:10px" class="card-title">
+                <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">
                     {{item_request.name}}</h5>
                 <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
                     <br>
@@ -64,18 +64,18 @@
                             aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         {% endif %}
-                        <div class="row" style="padding-top:5%;padding-bottom:4%">
-                            <div class="col">
+
+                        <div class='row' style="padding-top:6%;padding-bottom:4%">
+                            <div class="col-sm-12">
                                 <a class="btn btn-outline-danger pull-left"
-                                    style="padding-right:20px; padding-left:20px;"
+                                    style="padding-right:30px; padding-left:30px;"
                                     href="{% url 'delete_item_request' item_request.pk %}">Delete</a>
-                            </div>
-                            <div class="col">
                                 <a class="btn btn-outline-secondary pull-right"
-                                    style="padding-right:32px; padding-left:32px;"
+                                    style="padding-right:39px; padding-left:39px;"
                                     href="{% url 'edit_item_request' item_request.pk %}">Edit</a>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

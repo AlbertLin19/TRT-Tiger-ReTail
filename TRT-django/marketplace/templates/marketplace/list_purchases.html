@@ -17,11 +17,10 @@
     <br />
     {% endif %}
     <div class="col-md-12 row">
-      <!-- get all cancelled errors out of way before displaying buttons -->
       {% for purchase in purchases %}
       {% if purchase.status != Transaction.CANCELLED%}
       <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-        <h5 style="padding: 4%; background-color: #faebd5; border-radius:10px" class="card-title">
+        <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">
           {{purchase.item.name}}
         </h5>
         <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
@@ -62,39 +61,66 @@
                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
-            <div class="row" style="padding-top:3%;padding-bottom:4%">
-              <div class="col-sm-12">
-                {% if purchase.status == Transaction.ACKNOWLEDGED or purchase.status == Transaction.B_PENDING %}
-                <br> <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
-                <a class="btn btn-outline-success pull-left" style="padding-right:7px; padding-left:7px;"
-                  href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
 
-                {% elif purchase.status == Transaction.INITIATED %}
-                <br>
-                <p style="color:rgb(226, 200, 50); font-weight: bold;">AWAITING CONFIRMATION</p>
-                <span data-bs-toggle="popover" data-bs-trigger="hover focus"
+            <br>
+            {% if purchase.status == Transaction.INITIATED %}
+              <p style="color:rgb(226, 200, 50); font-weight: bold;">AWAITING CONFIRMATION</p>
+              <div class="row" style="padding-top:3%;padding-bottom:4%">
+                <div class="col-sm-12">
+                  <span data-bs-toggle="popover" data-bs-trigger="hover focus"
                   data-bs-content="Awaiting seller acknowledgement.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
                     type="button" disabled>Confirm</button>
-                </span>
+                  </span>
+                  <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
+                  href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                  <button type="button" class="modal{{purchase.item.pk}} btn btn-outline-primary noHover pull-right"
+                  style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
+                  data-bs-target="#modal{{purchase.item.pk}}">
+                  Details
+                </button>
+                </div>
+              </div>
 
-                {% elif purchase.status == Transaction.S_PENDING or purchase.status == Transaction.B_PENDING %}
-                <br> <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
-                <span data-bs-toggle="popover" data-bs-trigger="hover focus"
-                  data-bs-content="Already confirmed, awaiting seller acknowledgement.">
+            {% elif purchase.status == Transaction.ACKNOWLEDGED or purchase.status == Transaction.B_PENDING %}
+              <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
+              <div class="row" style="padding-top:3%;padding-bottom:4%">
+                <div class="col-sm-12">
+                  <a class="btn btn-outline-success pull-left" style="padding-right:7px; padding-left:7px;"
+                  href="{% url 'confirm_purchase' purchase.pk %}">Confirm</a>
+                  <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
+                  href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
+                  <button type="button" class="modal{{purchase.item.pk}} btn btn-outline-primary noHover pull-right"
+                  style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
+                  data-bs-target="#modal{{purchase.item.pk}}">
+                  Details
+                </button>
+                </div>
+              </div>
+            
+            {% elif purchase.status == Transaction.S_PENDING %}
+              <p style="color:rgb(39, 109, 214); font-weight: bold;">IN PROGRESS</p>
+              <div class="row" style="padding-top:3%;padding-bottom:4%">
+                <div class="col-sm-12">
+                  <span data-bs-toggle="popover" data-bs-trigger="hover focus"
+                  data-bs-content="Already confirmed, awaiting seller confirmation.">
                   <button class="btn btn-outline-secondary pull-left" style="padding-right:7px; padding-left:7px;"
                     type="button" disabled>Confirm</button>
                 </span>
-
-                {% elif purchase.status == Transaction.COMPLETE %}
-                <br> <p style="color:rgb(31, 182, 12); font-weight: bold;">COMPLETE</p>
-                {% elif purchase.status == Transaction.CANCELLED %}
-                <br> <p style="color: rgb(212, 67, 31); font-weight: bold; font-size: 20px;">CANCELLED</p>
-                {% endif %}
-                {% if purchase.status != Transaction.COMPLETE and purchase.status != Transaction.CANCELLED %}
-                <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
+                  <a class="btn btn-outline-danger" style="padding-right:7px; padding-left:7px;"
                   href="{% url 'cancel_purchase' purchase.pk %}">Cancel</a>
-                {% endif %}
+                  <button type="button" class="modal{{purchase.item.pk}} btn btn-outline-primary noHover pull-right"
+                  style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
+                  data-bs-target="#modal{{purchase.item.pk}}">
+                  Details
+                </button>
+                </div>
+              </div>
+
+            {% elif purchase.status == Transaction.COMPLETE %}
+             <p style="color:rgb(99, 99, 99); font-weight: bold;">COMPLETE</p>
+             <div class="row" style="padding-top:3%;padding-bottom:4%">
+              <div class="col-4"> 
                 <button type="button" class="modal{{purchase.item.pk}} btn btn-outline-primary noHover pull-right"
                   style="padding-right:10px; padding-left:10px;" onclick="disableHover()" data-bs-toggle="modal"
                   data-bs-target="#modal{{purchase.item.pk}}">
@@ -102,6 +128,8 @@
                 </button>
               </div>
             </div>
+            {% endif %}
+
           </div>
         </div>
 
