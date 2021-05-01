@@ -187,10 +187,13 @@
                     <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{purchase.item.deadline}}</p>
                     <p class="card-text"><i class="fas fa-comment"></i> {{purchase.item.description}}</p>
  
-                    {% if purchase.status != Transaction.CANCELLED%}
-                    <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
-                    <p class="card-text"><i class="fas fa-id-card"></i> Contact Details:
+                    {% if purchase.status != Transaction.CANCELLED and purchase.status != Transaction.INITIATED %}
+                    <strong>
+                      <p class="card-text"><i class="fas fa-users"></i> Merchant: {{purchase.item.seller}}</p>
+                      <p class="card-text"><i class="fas fa-id-card"></i> Contact Details:
                       {{purchase.item.seller.contact}}</p>
+                    </strong>
+                    
 
                     {% endif %}
 

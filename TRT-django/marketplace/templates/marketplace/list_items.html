@@ -111,17 +111,20 @@
                         <p class="card-text"><i class="fas fa-comment"></i> {{item.description}}</p>
                         {% for sale in item.transaction_set.all %}
                         {% if sale.status == Transaction.INITIATED %}
-                        <p class="card-text"><i class="fas fa-users"></i><strong> &nbsp; Buyer Request From: {{sale.buyer.name}}</strong></p>
-
-                        {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING %}
                         <strong>
-                          <p class="card-text"><i class="fas fa-users"></i> &nbsp; Buyer: {{sale.buyer.name}}</p>
-                        <p class="card-text"><i class="fas fa-id-card"></i> Contact Details: {{sale.buyer.contact}}</p>
+                          <p class="card-text"><i class="fas fa-users"></i>&nbsp; Buyer Request From: {{sale.buyer.name}}</p>
+                          <p class="card-text"><i class="fas fa-id-card"></i> &nbsp;Contact Details: {{sale.buyer.contact}}</p>
+                        </strong>
+                        {% elif sale.status == Transaction.ACKNOWLEDGED or sale.status == Transaction.S_PENDING or sale.status == Transaction.B_PENDING%}
+                        <strong>
+                          <p class="card-text"><i class="fas fa-users"></i> Buyer: {{sale.buyer.name}}</p>
+                          <p class="card-text"><i class="fas fa-id-card"></i> &nbsp;Contact Details: {{sale.buyer.contact}}</p>
                         </strong>
 
                         {% elif sale.status == Transaction.COMPLETE %}
                         <strong>
                           <p class="card-text"><i class="fas fa-users"></i> Bought by: {{sale.buyer.name}}</p>
+                          <p class="card-text"><i class="fas fa-id-card"></i> &nbsp;Contact Details: {{sale.buyer.contact}}</p>
                         </strong>
                         
                         {% endif %}
