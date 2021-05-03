@@ -190,7 +190,7 @@
 
             {% for sale in item.transaction_set.all %}
               {% if sale.status == Transaction.INITIATED %}
-                <p style="color:rgb(226, 200, 50); font-weight: bold;">AWAITING CONFIRMATION</p>
+                <p style="color:rgb(226, 200, 50); font-weight: bold;">AWAITING ACCEPTANCE</p>
                 <div class="row" style="padding-top:3%;padding-bottom:4%">
                   <div class="col-sm-12">
                     <a class="btn btn-outline-success pull-left" style="padding-right:8px; padding-left:8px;"
@@ -227,7 +227,7 @@
                 <div class="row" style="padding-top:3%;padding-bottom:4%">
                   <div class="col-sm-12">
                     <span data-bs-toggle="popover" data-bs-trigger="hover focus" 
-                      data-bs-content="Awaiting buyer acknowledgement.">
+                      data-bs-content="Awaiting buyer confirmation.">
                      <button class="btn btn-outline-secondary pull-left" 
                       style="padding-right:6px; padding-left:6px;" type="button" disabled>Confirm</button>
                      </span>
