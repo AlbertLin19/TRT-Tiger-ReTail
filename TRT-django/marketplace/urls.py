@@ -47,6 +47,6 @@ urlpatterns = [
     path("account/logout/", views.logout, name="logout"),
     path("account/email/verify/<str:token>/", views.verifyEmail, name="verify_email"),
     path("account/cycle/", views.cycleAccount, name="cycle_account"),
-    path("faq", views.faq, name="faq"),
-    path("contact", views.contact, name="contact"),
+    path("faq/", views.faq, name="faq"),
+    path("contact/", views.contact, name="contact"),
 ]

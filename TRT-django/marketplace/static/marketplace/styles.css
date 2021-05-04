@@ -27,10 +27,8 @@ html,
    display: none;
  }
  
- .teamprofile:hover + .hide {
-   display: flex;
-   text-align: center;
-   font-size: 15px;
+ .teamprofile:hover .d-lg-none {
+   display: flex !important;
  }
 
 #Sara{
