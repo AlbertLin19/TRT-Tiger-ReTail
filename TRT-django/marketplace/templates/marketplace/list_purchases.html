@@ -160,7 +160,7 @@
                     </div>
                     {%for image in purchase.item.album.all%}
                     <div class="carousel-item">
-                      {% cloudinary purchase.image.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
+                      {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=40%}
                     </div>
                     {%endfor%}
                   </div>
