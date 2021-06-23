@@ -29,7 +29,7 @@ class Account(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    description = models.TextField()
+    description = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -78,7 +78,7 @@ class Item(models.Model):
         ],
     )
     categories = models.ManyToManyField(Category)
-    description = models.TextField()
+    description = models.CharField(max_length=1000)
     image = CloudinaryField(
         "image",
         format="jpeg",
@@ -198,7 +198,7 @@ class ItemRequest(models.Model):
         ],
     )
     categories = models.ManyToManyField(Category)
-    description = models.TextField()
+    description = models.CharField(max_length=1000)
     image = CloudinaryField(
         "image",
         format="jpeg",
@@ -231,7 +231,7 @@ class Message(models.Model):
         Account, on_delete=models.CASCADE, related_name="received_messages"
     )
     datetime = models.DateTimeField()
-    text = models.TextField()
+    text = models.CharField(max_length=2000)
 
 
 class Notification(models.Model):
