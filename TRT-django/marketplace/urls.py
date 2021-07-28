@@ -36,6 +36,7 @@ urlpatterns = [
     ),
     path("inbox/", views.inbox, name="inbox"),
     path("inbox/<int:pk>/get/", views.getMessages, name="get_messages"),
+    path("inbox/<int:pk>/get_relative/", views.getMessagesRelative, name="get_messages_relative"),
     path("inbox/send/", views.sendMessage, name="send_message"),
     path("notifications/list/", views.listNotifications, name="list_notifications"),
     path("notifications/get/", views.getNotifications, name="get_notifications"),

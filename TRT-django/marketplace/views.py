@@ -1310,6 +1310,62 @@ def getMessages(request, pk):
 
 # ----------------------------------------------------------------------
 
+# get messages sent to and received from account pk with the following relative GET options:
+# count >= 1 (if n < count messages fit the criteria, then only those n messages returned)      
+# direction (forward/backward)
+# base_message_pk (if -1, then will collect messages from beginning/end based on direction)
+
+# if base_message_pk == -1 and no messages yet exist, then returns empty list
+
+# returns:
+# {
+#    "sent":     [["pk", "datetime", "text"], ["pk", "datetime", "text"], ]
+#    "received": [["pk", "datetime", "text"], ["pk", "datetime", "text"], ]
+# }
+
+
+@authentication_required
+def getMessagesRelative(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    try:
+        contact = Account.objects.get(pk=pk)
+        count = int(request.GET['count'])
+        direction = request.GET['direction']
+        base_message_pk = int(request.GET['base_message_pk'])
+    except:
+        return HttpResponse(status=400)
+
+    if count < 1 or base_message_pk < -1 or direction not in ['forward', 'backward']:
+        return HttpResponse(status=400)
+
+    # retrieve the messages to return
+    if base_message_pk == -1:
+        messages = account.sent_messages.filter(receiver=contact).union(account.received_messages.filter(sender=contact)).order_by('datetime' if direction == 'forward' else '-datetime')[:count]
+    else:
+        try:
+            base_message_datetime = account.sent_messages.filter(receiver=contact, pk=base_message_pk).union(account.received_messages.filter(sender=contact, pk=base_message_pk)).get().datetime
+        except:
+            return HttpResponse(status=400)
+
+        if direction == 'forward':
+            messages = account.sent_messages.filter(receiver=contact, datetime__gt=base_message_datetime).union(account.received_messages.filter(sender=contact, datetime__gt=base_message_datetime)).order_by('datetime')[:count]
+        else:
+            messages = account.sent_messages.filter(receiver=contact, datetime__lt=base_message_datetime).union(account.received_messages.filter(sender=contact, datetime__lt=base_message_datetime)).order_by('-datetime')[:count]
+    
+    # separate into sent and received lists
+    messages_details = messages.values_list("pk", "datetime", "text", "sender__pk", "receiver__pk")
+    sent = [message_details[:3] for message_details in messages_details if message_details[3] == account.pk]
+    received = [message_details[:3] for message_details in messages_details if message_details[4] == account.pk]
+    return JsonResponse(
+        {
+            "sent": sent,
+            "received": received,
+        }
+    )
+
+
+# ----------------------------------------------------------------------
+
 # send message to account pk
 
 
