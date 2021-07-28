@@ -5,19 +5,19 @@
 <div class="topbar header3 container-fluid">
   <div class="row justify-content-around">
 
-    <div class="col-4">
+    <div class="col-6" id="search_bar">
       <div class="input-group rounded">
         <input type="search" id="searchbar" onkeyup="search()" placeholder="Search" class="form-control" />
         <button class="btn btn-secondary" type="submit" onkeyup="search()"><i class=" fa fa-search"></i></button>
       </div>
     </div>
 
-    <div class="col-5 col-sm-6 col-md-5 col-lg-4 col-xxl-3">
+    <div class="col-5 text-center">
       <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 80%;"><span
           class="d-none d-sm-inline">Want to Buy? Browse </span>Gallery</a>
     </div>
 
-    <div class="col-2">
+    <div class="col-1">
       <div class="dropdown show" style="text-align: right;">
         <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;"
           type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -96,10 +96,9 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
         {% for item_request in item_requests %}
         
         <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-          <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">{{item_request.name}}</h5>
-          <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
+          <div class="pic-description" style="background-color: #fff5e6; border-radius:10px">
             <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
-              {% cloudinary item_request.image format="jpg" width=220 height=150 background="#f7e6e6" crop="lpad"%}
+              {% cloudinary item_request.image format="jpg" width=270 height=200 background="#fff5e6" crop="lpad"%}
             </div>
             <div style="display:none;" class="item_categories">
               {% for category in item_request.categories.all %}
@@ -107,6 +106,7 @@ aria-labelledby="post-dropdown-item" aria-hidden="true">
               {% endfor %}
             </div>
             <div class="card-body">
+              <div class="card-title">{{item_request.name}}</div>
               {%if item_request.negotiable == True%}
               <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
               {%else%}

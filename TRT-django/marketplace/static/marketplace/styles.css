@@ -2,13 +2,28 @@ html,
 
 /* big big picture on the gallery */
 #gallery_top_bar{
-   /*height: 100%;
-   width:100%;*/
    left: 0px;
    top: 0px;
-   background: url(Background.jpg) no-repeat;
    background-size: 100%;
 }
+
+.navbar-brand {
+   padding-top: 0.55rem !important;
+   padding-left: 0.75rem !important;
+}
+.nav-link {
+   padding-left: 1rem !important;
+   color: #000000 !important;
+}
+
+a.nav-link:hover {
+   color: white !important;
+}
+
+.navbar-img {
+   padding-left: 1rem;
+}
+
 .aboutteam {
 	font-weight: 400;
    font-size: 15px;
@@ -20,7 +35,6 @@ html,
 .team-description {
 	text-align: center;
    color: rgb(65, 63, 63);
-	text-shadow: 0px 1px 2px rgb(209, 209, 209), 0px 2px 6px rgb(209, 209, 209), 0px 4px 10px rgb(209, 209, 209);
 }
 
 .hide {
@@ -133,15 +147,6 @@ a.titleLink{
 
 /* image gallery title */
 #gallery_title{
-   font-size: 50px;
-   font-weight: bold;
-   font-family: 'Source Sans Pro', sans-serif;
-   font-style: normal;
-   padding-top: 10px;
-}
-
-/* image gallery title on smaller displays */
-#gallery_title_small{
    font-size: 2rem;
    font-weight: bold;
    font-family: 'Source Sans Pro', sans-serif;
@@ -160,6 +165,16 @@ a.titleLink{
 /* bar that holds both the buttons for post itmes and my items */
 #posting_bar{
    text-align: right;
+}
+
+/* search bar on gallery */
+#search_bar{
+   padding-left: 1rem;
+}
+
+/* button to switch from requests to gallery and vice versa */
+#switch_btn{
+   padding-left: 7rem;
 }
 
 /* category header above filters */
@@ -204,14 +219,15 @@ a.titleLink{
  */
  .topbar{
     padding: 20px 20px 20px 20px;
-    /*background: #d0eede;*/
-    background: url(tiger2.jpg);
+    background-color: rgb(255, 213, 159);
+    /* rgb(241, 195, 134) */
+    /* background: url(tiger2.jpg); */
     background-size: 100%;
     z-index:1;
  }
 
  .gallery_back{
-   background: #f3dfc9;
+   background: white;
  }
 
 /* search bar */
@@ -235,6 +251,12 @@ a.titleLink{
    padding: 3px 20px 3px 20px;
 }
 
+.card-title{
+   font-size: 18px;
+   font-weight: bold;
+   text-align: center;
+}
+
 .card-text{
    font-size: 14px;
    margin: 0;
@@ -250,12 +272,12 @@ a.titleLink{
    background: #fff;
    box-shadow: 6px 6px 6px 6px rgba(0,0,0,.2);
    cursor: pointer;*/
-   margin-bottom: 20px;
+   margin-bottom: 10px;
    margin-right: 10px;
    margin-left: 10px;
    border-radius: 4px;
-   background: rgb(255, 255, 255);
-   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
+   background: #fff5e6; 
+   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.14), 0 0 6px rgba(0, 0, 0, 0.08);
    transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
     0.3s box-shadow,
     0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
@@ -311,7 +333,7 @@ a.titleLink{
 }
 
  div.dropdown-menu.show { 
-   background-color: #fd9652; 
+   background-color: rgb(219, 159, 81); 
    opacity: 100%;
    text-align: center;
    position: fixed;

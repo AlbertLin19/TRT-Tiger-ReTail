@@ -29,107 +29,87 @@
 </head>
 
 <body>
-    <div style="position: relative;">
-        <div id="gallery_top_bar" class="container-fluid px-0">
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <div class="container-fluid px-0">
-                    <button class="navbar-toggler bg-dark mx-2 mb-2" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false"
-                        aria-label="toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse bg-shadow" id="navbarToggle" style="padding-left: 60px;">
-                        <a class="navbar-brand hover-light px-2 mx-0" href="{% url 'gallery' %}"><img
-                                src="{% static 'marketplace/logo.png' %}" width="40" alt="Home"></a><br>
-                        <a class="navbar-brand hover-light px-2 mx-0" href="{% url 'faq' %}">FAQ</a>
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(245, 174, 81);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'gallery' %}"> <img src="{% static 'marketplace/logo.png' %}" width="40"> <strong> Tiger ReTail</strong></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'gallery' %}">Home</a>
+                    </li>
+                    {% if account %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inbox' %}">Inbox<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_activity' %}">Activity Log<span
+                            class="sr-only">(current)</span></a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                    </li>
 
-                            {% if account %}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle active hover-light" href="#" role="button"
-                                    id="account_button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <strong>MY ACCOUNT</strong>
-                                </a>
-                                <ul class="dropdown-menu p-0 m-0 pt-1" style="background-color: #F8F8F8;"
-                                    aria-labelledby="account_button">
-                                    <a class="dropdown-item mb-1" href="{% url 'list_items' %}">My Items</a>
-                                    <a class="dropdown-item mb-1" href="{% url 'list_item_requests' %}">My Requests</a>
-                                    <a class="dropdown-item mb-1" href="{% url 'list_purchases' %}">My Purchases</a>
-                                    <a class="dropdown-item mb-1" href="{% url 'edit_account' %}">Settings</a>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-item hover-light nav-link active"
-                                    href="{% url 'account_activity' %}"><strong>ACTIVITY LOG</strong><span
-                                        class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-item hover-light nav-link active" href="{% url 'inbox' %}"><strong>INBOX</strong><span
-                                        class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-item hover-light nav-link active" href="{% url 'logout' %}">LOGOUT</a>
-                            </li>
-                            {% else %}
-                            <li class="nav-item">
-                                <a class="nav-item hover-light nav-link active"
-                                    href="{% url 'edit_account' %}">LOGIN<span class="sr-only">(current)</span></a>
-                            </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a class="nav-item hover-light nav-link active" href="{% url 'contact' %}">CONTACT US</a>
-                            </li>
-                            {% if account %}
-                            <li class="nav-item dropdown" id="notifications_dropdown">
-
-                                <a class="nav-link dropdown-toggle active hover-light" href="#" role="button"
-                                    id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="far fa-bell mx-1"></i>
-                                </a>
-                                <ul class="dropdown-menu p-0 m-0" style="background-color: #F8F8F8;"
-                                    aria-labelledby="notifications_button">
-                                    <div class="container-fluid overflow-auto" style="max-height: 30vh;"
-                                        id="notifications_area"></div>
-                                    <hr class="m-1 mt-2">
-                                    <a class="dropdown-item mb-1" href="{% url 'list_notifications' %}">All
-                                        Notifications</a>
-                                </ul>
-
-                            </li>
-                            {% endif %}
-
-                            {% if admin %}
-                                <li class="nav-item">
-                                    <a class="nav-item hover-light nav-link active" href="{% url 'cycle_account' %}">CYCLE ACCOUNT</a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-item hover-light nav-link active" href="#">CURRENTLY: {{account.username}}</a>
-                                </li>
-                            {% endif %}
-
+                    {% if account %}
+                    
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if account %}
+                    <li class="nav-item dropdown" id="notifications_dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            id="notifications_button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="far fa-bell mx-1"></i>
+                        </a>
+                        <ul class="dropdown-menu p-0 m-0" aria-labelledby="notifications_button">
+                            <div class="container-fluid overflow-auto" style="max-height: 30vh;"
+                                id="notifications_area"></div>
+                            <hr class="m-1 mt-2">
+                            <a class="dropdown-item mb-1" href="{% url 'list_notifications' %}">All
+                                Notifications</a>
                         </ul>
-                    </div>
-                </div>
-            </nav>
-            <a class="titleLink" href="{% url 'gallery' %}" style="text-decoration: none;">
-                <div class="d-none d-lg-block" id="tiger_retail_title">
-                    Tiger ReTail
-                </div>
-                <div class="d-lg-none d-md-block" id="tiger_retail_title_small">
-                    TRT
-                </div>
-            </a>
-            <br>
-            <div>
-                {% include 'marketplace/message.html' %}
-                <script>
-                    $(document).ready(function () {
-                        $('.toast').toast('show');
-                    });
-                </script>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            id="account_button" data-bs-toggle="dropdown" aria-expanded="false">
+                            My Account
+                        </a>
+                        <ul class="dropdown-menu p-0 m-0 pt-1" aria-labelledby="account_button">
+                            <a class="dropdown-item mb-1" href="{% url 'list_items' %}">My Items</a>
+                            <a class="dropdown-item mb-1" href="{% url 'list_item_requests' %}">My Requests</a>
+                            <a class="dropdown-item mb-1" href="{% url 'list_purchases' %}">My Purchases</a>
+                            <a class="dropdown-item mb-1" href="{% url 'edit_account' %}">Settings</a>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'edit_account' %}">Login<span
+                                class="sr-only">(current)</span></a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
+    </nav>
+
+    <div>
+        {% include 'marketplace/message.html' %}
+        <script>
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        </script>
     </div>
 
     {% if account %}

@@ -18,7 +18,8 @@
 
 
   {% if account and not account.contact %}
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="100000000">
+  <!--100000000-->
+  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
       <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
           <i class="fas fa-exclamation mr-2"></i> Please let other users know how to contact you in your account
           settings.
@@ -28,7 +29,7 @@
 
   {% if messages %}
   {% for message in messages %}
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
       <div class="toast-body" style="background-color:rgb(130, 175, 136);">
           {% if message.tags == 'error' %}
           <i class="fas fa-times mr-2"></i>

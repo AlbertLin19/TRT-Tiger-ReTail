@@ -2,8 +2,8 @@
 {% load cloudinary %}
 {% block content %}
 <div class="topbar" style="text-align: right;">
-    <a href="{% url 'new_item_request' %}" class="btn btn-outline-light" style="font-weight: bold;">MAKE REQUEST</a>
-    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;">IMAGE GALLERY</a>
+    <a href="{% url 'new_item_request' %}" class="btn btn-outline-dark" style="font-weight: bold;">MAKE REQUEST</a>
+    <a href="{% url 'browse_item_requests' %}" class="btn btn-outline-dark" style="font-weight: bold;">BROWSE REQUESTS</a>
 </div>
 <div class="gallery_back container-fluid mb-3">
     <br>
@@ -21,15 +21,15 @@
             <div class="card item-card hover col-12 col-md-4"
                 onclick="$('#button.modal{{item.pk}}.btn.btn-secondary.noHover').click()"
                 style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-                <h5 style="padding: 4%; background-color: #faedb5; border-radius:10px" class="card-title">
-                    {{item_request.name}}</h5>
-                <div class="pic-description" style="background-color: #f7e6e6; border-radius:10px">
+            
+                <div class="pic-description" style="background-color: #fff5e6; border-radius:10px">
                     <br>
-                    <div style="text-align:center;" class="card-img-top rounded-corners">
-                        {% cloudinary item_request.image format="jpg" width=220 height=150 background="#f7e6e6" crop="lpad"%}
+                    <div style="text-align:center; padding-bottom:4%" class="card-img-top rounded-corners">
+                        {% cloudinary item_request.image format="jpg" width=270 height=200 background="#fff5e6" crop="lpad"%}
                     </div>
 
                     <div class="card-body">
+                        <div class="card-title">{{item_request.name}}</div>
                         <p class="card-text"><i class="fas fa-comment"></i> {{item_request.description}}</p>
                         {%if item_request.negotiable == True%}
                         <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
