@@ -40,6 +40,7 @@ urlpatterns = [
     path("inbox/send/", views.sendMessage, name="send_message"),
     path("notifications/list/", views.listNotifications, name="list_notifications"),
     path("notifications/get/", views.getNotifications, name="get_notifications"),
+    path("notifications/get_relative/", views.getNotificationsRelative, name="get_notifications_relative"),
     path("notifications/count/", views.countNotifications, name="count_notifications"),
     path("notifications/see/", views.seeNotifications, name="see_notifications"),
     path("account/activity/", views.accountActivity, name="account_activity"),

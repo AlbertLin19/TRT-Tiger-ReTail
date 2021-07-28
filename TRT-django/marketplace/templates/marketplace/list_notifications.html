@@ -17,7 +17,7 @@
                 </thead>
                 <tbody>
                     {% for notification in notifications %}
-                        <tr>
+                        <tr {% if not notification.seen %}style="background-color: #fff0db;"{% endif %}>
                             <th scope="row">{{notification.datetime}}</th>
                             <td><a class="orange-link" href="{{notification.url}}">{{notification.text}}</a></td>
                         </tr>
@@ -27,4 +27,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    'use strict';
+    $.ajax({
+            type: "GET",
+            url: "{% url 'see_notifications' %}",
+        });
+</script>
+
 {% endblock content %}

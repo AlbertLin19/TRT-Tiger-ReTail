@@ -1225,7 +1225,6 @@ def browseItemRequests(request):
 def listNotifications(request):
     account = Account.objects.get(username=request.session.get("username"))
     notifications = account.notifications.all().order_by("-datetime")
-    notifications.update(seen=True)
     context = {"notifications": notifications}
     return render(request, "marketplace/list_notifications.html", context)
 
@@ -1269,6 +1268,55 @@ def getNotifications(request):
             "notifications": list(
                 notifications.values_list("datetime", "text", "seen", "url")
             )
+        }
+    )
+
+
+# ----------------------------------------------------------------------
+
+# get notifications with the following relative GET options:
+# count >= 1 (if n < count notifications fit the criteria, then only those n notifications returned)      
+# direction (forward/backward)
+# base_notification_pk (if -1, then will collect notifications from beginning/end based on direction)
+
+# if base_notification_pk == -1 and no notifications yet exist, then returns empty list
+
+# returns:
+# {
+#    "notifications": [["pk", "datetime", "text", "seen", "url"], ["pk", "datetime", "text", "seen", "url"], ]
+# }
+
+
+@authentication_required
+def getNotificationsRelative(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    try:
+        count = int(request.GET['count'])
+        direction = request.GET['direction']
+        base_notification_pk = int(request.GET['base_notification_pk'])
+    except:
+        return HttpResponse(status=400)
+
+    if count < 1 or base_notification_pk < -1 or direction not in ['forward', 'backward']:
+        return HttpResponse(status=400)
+
+    # retrieve the notifications to return
+    if base_notification_pk == -1:
+        notifications = account.notifications.order_by('datetime' if direction == 'forward' else '-datetime')[:count]
+    else:
+        try:
+            base_notification_datetime = account.notifications.get(pk=base_notification_pk).datetime
+        except:
+            return HttpResponse(status=400)
+
+        if direction == 'forward':
+            notifications = account.notifications.filter(datetime__gt=base_notification_datetime).order_by('datetime')[:count]
+        else:
+            notifications = account.notifications.filter(datetime__lt=base_notification_datetime).order_by('-datetime')[:count]
+
+    return JsonResponse(
+        {
+            "notifications": list(notifications.values_list("pk", "datetime", "text", "seen", "url"))
         }
     )
 
