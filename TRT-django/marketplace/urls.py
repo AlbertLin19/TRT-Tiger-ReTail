@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path("", views.gallery, name="gallery"),
+    path("items/get_relative/", views.getItemsRelative, name="get_items_relative"),
     path("items/list/", views.listItems, name="list_items"),
     path("items/new/", views.newItem, name="new_item"),
     path("items/<int:pk>/edit/", views.editItem, name="edit_item"),
@@ -34,6 +35,7 @@ urlpatterns = [
     path(
         "item_requests/browse/", views.browseItemRequests, name="browse_item_requests"
     ),
+    path("item_requests/get_relative/", views.getItemRequestsRelative, name="get_item_requests_relative"),
     path("inbox/", views.inbox, name="inbox"),
     path("inbox/<int:pk>/get/", views.getMessages, name="get_messages"),
     path("inbox/<int:pk>/get_relative/", views.getMessagesRelative, name="get_messages_relative"),

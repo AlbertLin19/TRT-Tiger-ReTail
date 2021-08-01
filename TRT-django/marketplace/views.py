@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Window, F
+from django.db.models.functions import RowNumber
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
@@ -291,6 +294,131 @@ def gallery(request):
     items = Item.objects.all()
     context = {"items": items}
     return render(request, "marketplace/gallery.html", context)
+
+
+# ----------------------------------------------------------------------
+
+# get AVAILABLE items for image gallery with the following relative GET options:
+# [REQUIRED] count >= 1 (if n < count items fit the criteria, then only those n items returned)      
+# [REQUIRED] direction (forward/backward)
+# [REQUIRED] base_item_pk (if -1, then will collect items from beginning/end based on direction)
+# [OPTIONAL] search_string (used to index the items by name and description prior to retrieval)
+# [OPTIONAL] conditions ("condition,condition,...")
+# [OPTIONAL] category_pks ("category_pk,category_pk,...")
+
+# if base_item_pk == -1 and no items yet exist, then returns empty list
+
+# returns:
+# {
+#    "items": [
+#        {
+#           "pk",
+#           "name",
+#           "deadline",
+#           "price",
+#           "negotiable",
+#           "condition",
+#           "description",
+#           "image", (url)
+#           "album", (list of urls)
+#        },
+#        {
+#           "pk",
+#           "name",
+#           "deadline",
+#           "price",
+#           "negotiable",
+#           "condition",
+#           "description",
+#           "image", (url)
+#           "album", (list of urls)
+#        },
+#        ...
+#    ]
+# }
+
+
+def getItemsRelative(request):
+    try:
+        count = int(request.GET['count'])
+        direction = request.GET['direction']
+        base_item_pk = int(request.GET['base_item_pk'])
+    except:
+        return HttpResponse(status=400)
+
+    if count < 1 or base_item_pk < -1 or direction not in ['forward', 'backward']:
+        return HttpResponse(status=400)
+
+    search_string = ""
+    conditions = []
+    categories = []
+
+    if "search_string" in request.GET:
+        search_string = request.GET["search_string"]
+
+    if "conditions" in request.GET:
+        try:
+            conditions = [int(pk) for pk in request.GET["conditions"].split(",") if pk]
+        except:
+            return HttpResponse(status=400)
+
+    if "category_pks" in request.GET:
+        try:
+            categories = list(Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk]))
+        except:
+            return HttpResponse(status=400)
+
+    # filter items that meet conditions and categories criteria
+    items = Item.objects.filter(status=Item.AVAILABLE)
+
+    if conditions:
+        items = items.filter(condition__in=conditions)
+
+    if categories:
+        items = items.filter(categories__in=categories)
+
+    # annotate items by search string rank
+    items = items.annotate(rank=SearchRank(SearchVector("name", "description"), SearchQuery(search_string), cover_density=True))
+
+    # annotate items by row number after sorting by search string rank (so no comparison issues with equal ranks)
+    items = items.annotate(
+        row=Window(
+            expression=RowNumber(),
+            order_by=[F("rank").asc(), F("pk").asc()], # also order by unique pk to make tie-breaks consistent
+        )
+    )
+
+    # get the correct slice of items
+    if base_item_pk == -1:
+        items = items.order_by('row' if direction == 'forward' else '-row')[:count]
+    else:
+        try:
+            base_item_row = items.get(pk=base_item_pk).row
+        except:
+            return HttpResponse(status=400)
+
+        if direction == 'forward':
+            items = items.filter(row__gt=base_item_row).order_by('row')[:count]
+        else:
+            items = items.filter(row__lt=base_item_row).order_by('-row')[:count]
+
+    return JsonResponse(
+        {
+            "items": [
+                {
+                    "pk": item.pk,
+                    "name": item.name,
+                    "deadline": item.deadline,
+                    "price": item.price,
+                    "negotiable": item.negotiable,
+                    "condition": item.condition,
+                    "description": item.description,
+                    "image": item.image.url,
+                    "album": [albumimage.image.url for albumimage in item.album.all()],
+                } for item in list(items.prefetch_related("album"))
+            ]
+        }
+    )
 
 
 # ----------------------------------------------------------------------
@@ -1218,6 +1346,128 @@ def browseItemRequests(request):
 
 # ----------------------------------------------------------------------
 
+# get item requests for image gallery with the following relative GET options:
+# [REQUIRED] count >= 1 (if n < count item requests fit the criteria, then only those n item requests returned)      
+# [REQUIRED] direction (forward/backward)
+# [REQUIRED] base_item_request_pk (if -1, then will collect item requests from beginning/end based on direction)
+# [OPTIONAL] search_string (used to index the item requests by name and description prior to retrieval)
+# [OPTIONAL] conditions ("condition,condition,...")
+# [OPTIONAL] category_pks ("category_pk,category_pk,...")
+
+# if base_item_request_pk == -1 and no item requests yet exist, then returns empty list
+
+# returns:
+# {
+#    "item_requests": [
+#        {
+#           "pk",
+#           "name",
+#           "deadline",
+#           "price",
+#           "negotiable",
+#           "condition",
+#           "description",
+#           "image", (url)
+#        },
+#        {
+#           "pk",
+#           "name",
+#           "deadline",
+#           "price",
+#           "negotiable",
+#           "condition",
+#           "description",
+#           "image", (url)
+#        },
+#        ...
+#    ]
+# }
+
+
+def getItemRequestsRelative(request):
+    try:
+        count = int(request.GET['count'])
+        direction = request.GET['direction']
+        base_item_request_pk = int(request.GET['base_item_request_pk'])
+    except:
+        return HttpResponse(status=400)
+
+    if count < 1 or base_item_request_pk < -1 or direction not in ['forward', 'backward']:
+        return HttpResponse(status=400)
+
+    search_string = ""
+    conditions = []
+    categories = []
+
+    if "search_string" in request.GET:
+        search_string = request.GET["search_string"]
+
+    if "conditions" in request.GET:
+        try:
+            conditions = [int(pk) for pk in request.GET["conditions"].split(",") if pk]
+        except:
+            return HttpResponse(status=400)
+
+    if "category_pks" in request.GET:
+        try:
+            categories = list(Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk]))
+        except:
+            return HttpResponse(status=400)
+
+    # filter item requests that meet conditions and categories criteria
+    item_requests = ItemRequest.objects.all()
+
+    if conditions:
+        item_requests = item_requests.filter(condition__in=conditions)
+
+    if categories:
+        item_requests = item_requests.filter(categories__in=categories)
+
+    # annotate item requests by search string rank
+    item_requests = item_requests.annotate(rank=SearchRank(SearchVector("name", "description"), SearchQuery(search_string), cover_density=True))
+
+    # annotate item requests by row number after sorting by search string rank (so no comparison issues with equal ranks)
+    item_requests = item_requests.annotate(
+        row=Window(
+            expression=RowNumber(),
+            order_by=[F("rank").asc(), F("pk").asc()], # also order by unique pk to make tie-breaks consistent
+        )
+    )
+
+    # get the correct slice of item requests
+    if base_item_requests_pk == -1:
+        item_requests = item_requests.order_by('row' if direction == 'forward' else '-row')[:count]
+    else:
+        try:
+            base_item_requests_row = item_requests.get(pk=base_item_requests_pk).row
+        except:
+            return HttpResponse(status=400)
+
+        if direction == 'forward':
+            item_requests = item_requests.filter(row__gt=base_item_requests_row).order_by('row')[:count]
+        else:
+            item_requests = item_requests.filter(row__lt=base_item_requests_row).order_by('-row')[:count]
+
+    return JsonResponse(
+        {
+            "item_requests": [
+                {
+                    "pk": item_request.pk,
+                    "name": item_request.name,
+                    "deadline": item_request.deadline,
+                    "price": item_request.price,
+                    "negotiable": item_request.negotiable,
+                    "condition": item_request.condition,
+                    "description": item_request.description,
+                    "image": item_request.image.url,
+                } for item_request in list(item_requests)
+            ]
+        }
+    )
+
+
+# ----------------------------------------------------------------------
+
 # notifications page
 
 
@@ -1300,19 +1550,26 @@ def getNotificationsRelative(request):
     if count < 1 or base_notification_pk < -1 or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
+    # annotate notifications by row number after sorting by datetime (so no comparison issues with equal datetimes)
+    notifications = account.notifications.annotate(
+        row=Window(
+            expression=RowNumber(),
+            order_by=[F("datetime").asc(), F("pk").asc()], # also order by unique pk to make tie-breaks consistent
+        )
+    )
     # retrieve the notifications to return
     if base_notification_pk == -1:
-        notifications = account.notifications.order_by('datetime' if direction == 'forward' else '-datetime')[:count]
+        notifications = notifications.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
         try:
-            base_notification_datetime = account.notifications.get(pk=base_notification_pk).datetime
+            base_notification_row = notifications.get(pk=base_notification_pk).row
         except:
             return HttpResponse(status=400)
 
         if direction == 'forward':
-            notifications = account.notifications.filter(datetime__gt=base_notification_datetime).order_by('datetime')[:count]
+            notifications = notifications.filter(row__gt=base_notification_row).order_by('row')[:count]
         else:
-            notifications = account.notifications.filter(datetime__lt=base_notification_datetime).order_by('-datetime')[:count]
+            notifications = notifications.filter(row__lt=base_notification_row).order_by('-row')[:count]
 
     return JsonResponse(
         {
@@ -1386,19 +1643,34 @@ def getMessagesRelative(request, pk):
     if count < 1 or base_message_pk < -1 or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
-    # retrieve the messages to return
+    # filter only messages between account and contact
+    sent_messages = account.sent_messages.filter(receiver=contact)
+    received_messages = account.received_messages.filter(sender=contact)
+    pk_list = list(sent_messages.values_list("pk", flat=True))
+    pk_list.extend(list(received_messages.values_list("pk", flat=True)))
+    messages = Message.objects.filter(pk__in=pk_list)
+
+    # annotate messages by row number after sorting by datetime (so no comparison issues with equal datetimes)
+    messages = messages.annotate(
+        row=Window(
+            expression=RowNumber(),
+            order_by=[F("datetime").asc(), F("pk").asc()], # also order by unique pk to make tie-breaks consistent
+        )
+    )
+
+    # get the correct slice of messages
     if base_message_pk == -1:
-        messages = account.sent_messages.filter(receiver=contact).union(account.received_messages.filter(sender=contact)).order_by('datetime' if direction == 'forward' else '-datetime')[:count]
+        messages = messages.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
         try:
-            base_message_datetime = account.sent_messages.filter(receiver=contact, pk=base_message_pk).union(account.received_messages.filter(sender=contact, pk=base_message_pk)).get().datetime
+            base_message_row = messages.get(pk=base_message_pk).row
         except:
             return HttpResponse(status=400)
 
         if direction == 'forward':
-            messages = account.sent_messages.filter(receiver=contact, datetime__gt=base_message_datetime).union(account.received_messages.filter(sender=contact, datetime__gt=base_message_datetime)).order_by('datetime')[:count]
+            messages = messages.filter(row__gt=base_message_row).order_by('row')[:count]
         else:
-            messages = account.sent_messages.filter(receiver=contact, datetime__lt=base_message_datetime).union(account.received_messages.filter(sender=contact, datetime__lt=base_message_datetime)).order_by('-datetime')[:count]
+            messages = messages.filter(row__lt=base_message_row).order_by('-row')[:count]
     
     # separate into sent and received lists
     messages_details = messages.values_list("pk", "datetime", "text", "sender__pk", "receiver__pk")
