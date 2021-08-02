@@ -308,6 +308,8 @@ def gallery(request):
 
 # if base_item_pk == -1 and no items yet exist, then returns empty list
 
+# items are returned sorted in order specified
+
 # returns:
 # {
 #    "items": [
@@ -346,7 +348,7 @@ def getItemsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_item_pk < -1 or not Item.objects.filter(pk=base_item_pk).exists() or direction not in ['forward', 'backward']:
+    if count < 1 or base_item_pk < -1 or (base_item_pk != -1 and not Item.objects.filter(pk=base_item_pk).exists()) or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     search_string = ""
@@ -1366,6 +1368,8 @@ def browseItemRequests(request):
 
 # if base_item_request_pk == -1 and no item requests yet exist, then returns empty list
 
+# item requests are returned sorted in order specified
+
 # returns:
 # {
 #    "item_requests": [
@@ -1402,7 +1406,7 @@ def getItemRequestsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_item_request_pk < -1 or not ItemRequest.objects.filter(pk=base_item_request_pk).exists() or direction not in ['forward', 'backward']:
+    if count < 1 or base_item_request_pk < -1 or (base_item_request_pk != -1 and not ItemRequest.objects.filter(pk=base_item_request_pk).exists()) or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     search_string = ""
@@ -1549,6 +1553,8 @@ def getNotifications(request):
 
 # if base_notification_pk == -1 and no notifications yet exist, then returns empty list
 
+# notifications are returned sorted in order specified
+
 # returns:
 # {
 #    "notifications": [["pk", "datetime", "text", "seen", "url"], ["pk", "datetime", "text", "seen", "url"], ]
@@ -1565,7 +1571,7 @@ def getNotificationsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_notification_pk < -1 or not account.notifications.filter(pk=base_notification_pk).exists() or direction not in ['forward', 'backward']:
+    if count < 1 or base_notification_pk < -1 or (base_notification_pk != -1 and not account.notifications.filter(pk=base_notification_pk).exists()) or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     # annotate notifications by row number after sorting by datetime (so no comparison issues with equal datetimes)
@@ -1652,6 +1658,7 @@ def getMessages(request, pk):
 # {
 #    "sent":     [["pk", "datetime", "text"], ["pk", "datetime", "text"], ]
 #    "received": [["pk", "datetime", "text"], ["pk", "datetime", "text"], ]
+#    "last_message_pk": pk or -1 if no messages returned
 # }
 
 
@@ -1666,7 +1673,7 @@ def getMessagesRelative(request, pk):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_message_pk < -1 or ((not account.sent_messages.filter(pk=base_message_pk, receiver=contact).exists()) and (not account.received_messages.filter(pk=base_message_pk, sender=contact).exists())) or direction not in ['forward', 'backward']:
+    if count < 1 or base_message_pk < -1 or (base_message_pk != -1 and (not account.sent_messages.filter(pk=base_message_pk, receiver=contact).exists()) and (not account.received_messages.filter(pk=base_message_pk, sender=contact).exists())) or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     # filter only messages between account and contact
@@ -1705,19 +1712,22 @@ def getMessagesRelative(request, pk):
             """.format(sql, sign, sql, order), # must order results here, since cannot order RawQuerySet
             [*params, *params, base_message_pk, count],
         )
-    
-    # prefetch senders and receivers to use only 2 queries
-    prefetch_related_objects(messages, "sender")
-    prefetch_related_objects(messages, "receiver")
 
     # separate into sent and received lists
-    messages_details = messages.values_list("pk", "datetime", "text", "sender__pk", "receiver__pk")
-    sent = [message_details[:3] for message_details in messages_details if message_details[3] == account.pk]
-    received = [message_details[:3] for message_details in messages_details if message_details[4] == account.pk]
+    sent = []
+    received = []
+    last_message_pk = -1
+    for message in messages:
+        if message.sender == account:
+            sent.append([message.pk, message.datetime, message.text])
+        if message.receiver == account:
+            received.append([message.pk, message.datetime, message.text])
+        last_message_pk = message.pk
     return JsonResponse(
         {
             "sent": sent,
             "received": received,
+            "last_message_pk": last_message_pk,
         }
     )
 

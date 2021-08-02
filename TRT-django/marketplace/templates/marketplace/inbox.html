@@ -66,47 +66,120 @@
         constructor(props)
         {
             super(props);
-            this.state = {active_contact_pk: null, contact_pks: [{% for contact in contacts %}{{contact.pk}}, {% endfor %}], messages: [], text: '', loading: false, sending: false, autoscroll: true};
+            this.state = {
+                clear_messages: false, // using boolean indicators here so that manageMessagesSynchronously()
+                get_more_messages: false,   // can clear and get messages synchronously to avoid setState concurrency issues
+                active_contact_pk: null, 
+                contact_pks: [{% for contact in contacts %}{{contact.pk}}, {% endfor %}], 
+                messages: [], 
+                beg_message_pk: -1, 
+                end_message_pk: -1, 
+                text: '', 
+                sending: false, 
+                autoscroll: true,
+            };
         }
 
-        getMessages()
+        // indefinitely clears and gets more messages forward and backward in batches of size 'count' (when indicated to do so by state booleans)
+        // in a synchronous fashion to avoid setState concurrency issues
+        manageMessagesSynchronously(count)
         {
-            if (this.state.active_contact_pk && !this.state.loading)
+            const period = 10;
+            if (this.state.clear_messages)
             {
-                this.setState({loading: true});
-                const url = "/inbox/" + this.state.active_contact_pk + "/get/";
-                fetch(url)
-                   .then((resp) => {return resp.json();})
-                   .then((data) => {
-                       let messages = [];
-                       for (const sent_message of data['sent'])
-                       {
-                           messages.push({type: 'sent', datetime: new Date(sent_message[0]), text: sent_message[1]});
-                       }
-                       for (const received_message of data['received'])
-                       {
-                           messages.push({type: 'received', datetime: new Date(received_message[0]), text: received_message[1]});
-                       }
-                       // sort by date
-                       messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
-                       this.setState({messages: messages, loading: false});
+                this.setState({clear_messages: false, messages: [], beg_message_pk: -1, end_message_pk: -1}, () => {
+                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                });
+                return;
+            }
+            else if (this.state.get_more_messages)
+            {
+                if (!this.state.active_contact_pk)
+                {
+                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                    return;
+                }
+                
+                // if no messages yet gotten, just get most recent one first
+                if ((this.state.beg_message_pk == -1) && (this.state.end_message_pk == -1))
+                {
+                    fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=1&direction=backward&base_message_pk=-1")
+                        .then((resp) => {return resp.json();})
+                        .then((data) => {
+                            let messages = this.state.messages;
+                            for (const sent_message of data['sent'])
+                            {
+                                messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
+                            }
+                            for (const received_message of data['received'])
+                            {
+                                messages.push({type: 'received', datetime: new Date(received_message[1]), text: received_message[2]});
+                            }
+                            // sort by date
+                            messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
+                            this.setState({get_more_messages: false, messages: messages, end_message_pk: data['last_message_pk'], beg_message_pk: data['last_message_pk']}, () => {
+                                window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                            });
+                        })
+                        .catch((error) => { 
+                            window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                            return console.log(error);
+                        });
+                    return;
+                }
+
+                // synchronously get 'count' messages forward, then backward
+                fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=" + count + "&direction=forward&base_message_pk=" + this.state.end_message_pk)
+                    .then((resp) => {return resp.json();})
+                    .then((data) => {
+                        let messages = this.state.messages;
+                        for (const sent_message of data['sent'])
+                        {
+                            messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
+                        }
+                        for (const received_message of data['received'])
+                        {
+                            messages.push({type: 'received', datetime: new Date(received_message[1]), text: received_message[2]});
+                        }
+                        // sort by date
+                        messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
+                        this.setState({messages: messages, end_message_pk: data['last_message_pk'] == -1 ? this.state.end_message_pk : data['last_message_pk']}, () => {
+                            // get 'count' messages backward
+                            fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=" + count + "&direction=backward&base_message_pk=" + this.state.beg_message_pk)
+                                .then((resp) => {return resp.json();})
+                                .then((data) => {
+                                    let messages = this.state.messages;
+                                    for (const sent_message of data['sent'])
+                                    {
+                                        messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
+                                    }
+                                    for (const received_message of data['received'])
+                                    {
+                                        messages.push({type: 'received', datetime: new Date(received_message[1]), text: received_message[2]});
+                                    }
+                                    // sort by date
+                                    messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
+                                    this.setState({get_more_messages: false, messages: messages, beg_message_pk: data['last_message_pk'] == -1 ? this.state.beg_message_pk : data['last_message_pk']}, () => {
+                                        window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                                    });
+                                })
+                                .catch((error) => { 
+                                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                                    return console.log(error);
+                                });
+                        });
                     })
-                   .catch((error) => {
-                       this.setState({loading: false}); 
-                       return console.log(error);
+                    .catch((error) => { 
+                        window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                        return console.log(error);
                     });
+                return;
             }
             else 
             {
+                window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
                 return;
             }
-        }
-
-        setActiveContactPk(contact_pk)
-        {
-            this.setState({active_contact_pk: contact_pk, autoscroll: true});
-            this.setInputText(this.state.text);
-            this.getMessages();
         }
 
         setInputText(text)
@@ -118,6 +191,16 @@
             {
                 document.getElementById("send_button").disabled = true;
             }
+        }
+
+        setActiveContactPk(contact_pk)
+        {
+            if (this.state.active_contact_pk == contact_pk)
+            {
+                return;
+            }
+            this.setState({active_contact_pk: contact_pk, autoscroll: true, clear_messages: true});
+            this.setInputText(this.state.text);
         }
 
         sendInputText()
@@ -140,9 +223,7 @@
                 })
                     .then((resp) => {return resp;})
                     .then((data) => {
-                        let messages = this.state.messages;
-                        messages.push({type: 'sent', datetime: new Date(Date.now()), text: text})
-                        this.setState({sending: false, messages: messages});
+                        this.setState({sending: false});
                         })
                     .catch((error) => {
                         this.setState({sending: false});
@@ -183,7 +264,10 @@
             this.setInputText('');
             text_input.value = '';
 
-            window.setInterval(() => {this.getMessages()}, 2500);
+            // start the synchronous messages manager
+            window.setTimeout(() => {this.manageMessagesSynchronously(5)}, 0);
+            // periodically set get_more_messages to true
+            window.setInterval(() => {this.setState({get_more_messages: true})}, 50);
 
             // set up scroll stick feature
             const chat_scroll = document.getElementById("chat_scroll");
@@ -204,7 +288,7 @@
                 {
                     $("#chat_scroll").scrollTop($("#chat_scroll")[0].scrollHeight);
                 }
-            }, 200);
+            }, 10);
 
         }
 
