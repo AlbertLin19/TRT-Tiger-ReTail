@@ -1565,7 +1565,7 @@ def getNotificationsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_notification_pk < -1 or direction not in ['forward', 'backward']:
+    if count < 1 or base_notification_pk < -1 or not account.notifications.filter(pk=base_notification_pk).exists() or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     # annotate notifications by row number after sorting by datetime (so no comparison issues with equal datetimes)
@@ -1579,15 +1579,23 @@ def getNotificationsRelative(request):
     if base_notification_pk == -1:
         notifications = notifications.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
-        try:
-            base_notification_row = notifications.get(pk=base_notification_pk).row
-        except:
-            return HttpResponse(status=400)
+        # filter out notifications based on base_notification
+        sign = ">" if direction == "forward" else "<"
+        order = "ASC" if direction == "forward" else "DESC"
 
-        if direction == 'forward':
-            notifications = notifications.filter(row__gt=base_notification_row).order_by('row')[:count]
-        else:
-            notifications = notifications.filter(row__lt=base_notification_row).order_by('-row')[:count]
+        # django does not allow filtering after window function, so will use raw SQL
+        sql, params = notifications.query.sql_with_params()
+        notifications = account.notifications.raw("""
+                SELECT * FROM ({}) AS notifications_with_rows
+                WHERE row {} (
+                    SELECT row FROM ({}) AS base_notification_row
+                    WHERE id = %s
+                )
+                ORDER BY row {}
+                LIMIT %s
+            """.format(sql, sign, sql, order), # must order results here, since cannot order RawQuerySet
+            [*params, *params, base_notification_pk, count],
+        )
 
     return JsonResponse(
         {
@@ -1658,7 +1666,7 @@ def getMessagesRelative(request, pk):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_message_pk < -1 or direction not in ['forward', 'backward']:
+    if count < 1 or base_message_pk < -1 or ((not account.sent_messages.filter(pk=base_message_pk, receiver=contact).exists()) and (not account.received_messages.filter(pk=base_message_pk, sender=contact).exists())) or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     # filter only messages between account and contact
@@ -1680,15 +1688,23 @@ def getMessagesRelative(request, pk):
     if base_message_pk == -1:
         messages = messages.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
-        try:
-            base_message_row = messages.get(pk=base_message_pk).row
-        except:
-            return HttpResponse(status=400)
+        # filter out messages based on base_message
+        sign = ">" if direction == "forward" else "<"
+        order = "ASC" if direction == "forward" else "DESC"
 
-        if direction == 'forward':
-            messages = messages.filter(row__gt=base_message_row).order_by('row')[:count]
-        else:
-            messages = messages.filter(row__lt=base_message_row).order_by('-row')[:count]
+        # django does not allow filtering after window function, so will use raw SQL
+        sql, params = messages.query.sql_with_params()
+        messages = Message.objects.raw("""
+                SELECT * FROM ({}) AS messages_with_rows
+                WHERE row {} (
+                    SELECT row FROM ({}) AS base_message_row
+                    WHERE id = %s
+                )
+                ORDER BY row {}
+                LIMIT %s
+            """.format(sql, sign, sql, order), # must order results here, since cannot order RawQuerySet
+            [*params, *params, base_message_pk, count],
+        )
     
     # separate into sent and received lists
     messages_details = messages.values_list("pk", "datetime", "text", "sender__pk", "receiver__pk")
