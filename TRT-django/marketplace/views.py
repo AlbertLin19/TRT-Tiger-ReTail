@@ -1706,6 +1706,10 @@ def getMessagesRelative(request, pk):
             [*params, *params, base_message_pk, count],
         )
     
+    # prefetch senders and receivers to use only 2 queries
+    prefetch_related_objects(messages, "sender")
+    prefetch_related_objects(messages, "receiver")
+
     # separate into sent and received lists
     messages_details = messages.values_list("pk", "datetime", "text", "sender__pk", "receiver__pk")
     sent = [message_details[:3] for message_details in messages_details if message_details[3] == account.pk]
