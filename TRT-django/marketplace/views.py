@@ -406,10 +406,10 @@ def getItemsRelative(request):
                 )
                 ORDER BY row {}
                 LIMIT %s
-            """.format(sql, sign, sql, order), # must order here, since cannot order RawQuerySet
+            """.format(sql, sign, sql, order), # must order results here, since cannot order RawQuerySet
             [*params, *params, base_item_pk, count],
         )
-        
+
     prefetch_related_objects(items, "album") # only 1 query to get all album objects
 
     return JsonResponse(
@@ -1402,7 +1402,7 @@ def getItemRequestsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_item_request_pk < -1 or direction not in ['forward', 'backward']:
+    if count < 1 or base_item_request_pk < -1 or not ItemRequest.objects.filter(pk=base_item_request_pk).exists() or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     search_string = ""
@@ -1448,15 +1448,23 @@ def getItemRequestsRelative(request):
     if base_item_requests_pk == -1:
         item_requests = item_requests.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
-        try:
-            base_item_requests_row = item_requests.get(pk=base_item_requests_pk).row
-        except:
-            return HttpResponse(status=400)
+        # filter out item requests based on base_item_request
+        sign = ">" if direction == "forward" else "<"
+        order = "ASC" if direction == "forward" else "DESC"
 
-        if direction == 'forward':
-            item_requests = item_requests.filter(row__gt=base_item_requests_row).order_by('row')[:count]
-        else:
-            item_requests = item_requests.filter(row__lt=base_item_requests_row).order_by('-row')[:count]
+        # django does not allow filtering after window function, so will use raw SQL
+        sql, params = item_requests.query.sql_with_params()
+        item_requests = ItemRequest.objects.raw("""
+                SELECT * FROM ({}) AS item_requests_with_rows
+                WHERE row {} (
+                    SELECT row FROM ({}) AS base_item_request_row
+                    WHERE id = %s
+                )
+                ORDER BY row {}
+                LIMIT %s
+            """.format(sql, sign, sql, order), # must order results here, since cannot order RawQuerySet
+            [*params, *params, base_item_request_pk, count],
+        )
 
     return JsonResponse(
         {
@@ -1470,7 +1478,7 @@ def getItemRequestsRelative(request):
                     "condition": item_request.condition,
                     "description": item_request.description,
                     "image": item_request.image.url,
-                } for item_request in list(item_requests)
+                } for item_request in item_requests
             ]
         }
     )
