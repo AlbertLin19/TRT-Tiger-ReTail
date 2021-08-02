@@ -75,8 +75,7 @@
                 beg_message_pk: -1, 
                 end_message_pk: -1, 
                 text: '', 
-                sending: false, 
-                autoscroll: true,
+                sending: false,
             };
         }
 
@@ -106,7 +105,7 @@
                     fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=1&direction=backward&base_message_pk=-1")
                         .then((resp) => {return resp.json();})
                         .then((data) => {
-                            let messages = this.state.messages;
+                            let messages = [...this.state.messages]; // need a deep copy of array for changes to be detected in componentDidUpdate etc, since arrays are passed by ref
                             for (const sent_message of data['sent'])
                             {
                                 messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
@@ -132,7 +131,7 @@
                 fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=" + count + "&direction=forward&base_message_pk=" + this.state.end_message_pk)
                     .then((resp) => {return resp.json();})
                     .then((data) => {
-                        let messages = this.state.messages;
+                        let messages = [...this.state.messages]; // need a deep copy of array for changes to be detected in componentDidUpdate etc, since arrays are passed by ref
                         for (const sent_message of data['sent'])
                         {
                             messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
@@ -148,7 +147,7 @@
                             fetch("/inbox/" + this.state.active_contact_pk + "/get_relative/?count=" + count + "&direction=backward&base_message_pk=" + this.state.beg_message_pk)
                                 .then((resp) => {return resp.json();})
                                 .then((data) => {
-                                    let messages = this.state.messages;
+                                    let messages = [...this.state.messages]; // need a deep copy of array for changes to be detected in componentDidUpdate etc, since arrays are passed by ref
                                     for (const sent_message of data['sent'])
                                     {
                                         messages.push({type: 'sent', datetime: new Date(sent_message[1]), text: sent_message[2]});
@@ -199,7 +198,7 @@
             {
                 return;
             }
-            this.setState({active_contact_pk: contact_pk, autoscroll: true, clear_messages: true});
+            this.setState({active_contact_pk: contact_pk, clear_messages: true});
             this.setInputText(this.state.text);
         }
 
@@ -224,6 +223,7 @@
                     .then((resp) => {return resp;})
                     .then((data) => {
                         this.setState({sending: false});
+                        $("#chat_scroll").scrollTop($("#chat_scroll")[0].scrollHeight);
                         })
                     .catch((error) => {
                         this.setState({sending: false});
@@ -268,28 +268,24 @@
             window.setTimeout(() => {this.manageMessagesSynchronously(5)}, 0);
             // periodically set get_more_messages to true
             window.setInterval(() => {this.setState({get_more_messages: true})}, 50);
+        }
 
-            // set up scroll stick feature
-            const chat_scroll = document.getElementById("chat_scroll");
-            chat_scroll.addEventListener('scroll', () =>
+        // implementing sticky scroll
+        getSnapshotBeforeUpdate(prevProps, prevState)
+        {
+            if (prevState.messages.length === this.state.messages.length)
             {
-                if (event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight)
-                {
-                    this.setState({autoscroll: true});
-                }
-                else 
-                {
-                    this.setState({autoscroll: false});
-                }
-            });
+                return null; // if message list did not change, no need to stick scroll
+            }
+            return $("#chat_scroll")[0].scrollHeight - $("#chat_scroll")[0].scrollTop; // distance from bottom of scroll
+        }
 
-            window.setInterval(() => {
-                if (this.state.autoscroll)
-                {
-                    $("#chat_scroll").scrollTop($("#chat_scroll")[0].scrollHeight);
-                }
-            }, 10);
-
+        componentDidUpdate(prevProps, prevState, snapshot)
+        {
+            if (snapshot !== null)
+            {
+                $("#chat_scroll").scrollTop($("#chat_scroll")[0].scrollHeight - snapshot);
+            }
         }
 
         render()
