@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from django.db.models import Window, F
+from django.db.models import Window, F, prefetch_related_objects
 from django.db.models.functions import RowNumber
 from django.core.mail import send_mail
 from django.core.cache import cache
@@ -346,7 +346,7 @@ def getItemsRelative(request):
     except:
         return HttpResponse(status=400)
 
-    if count < 1 or base_item_pk < -1 or direction not in ['forward', 'backward']:
+    if count < 1 or base_item_pk < -1 or not Item.objects.filter(pk=base_item_pk).exists() or direction not in ['forward', 'backward']:
         return HttpResponse(status=400)
 
     search_string = ""
@@ -392,15 +392,25 @@ def getItemsRelative(request):
     if base_item_pk == -1:
         items = items.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
-        try:
-            base_item_row = items.get(pk=base_item_pk).row
-        except:
-            return HttpResponse(status=400)
+        # filter out items based on base_item
+        sign = ">" if direction == "forward" else "<"
+        order = "ASC" if direction == "forward" else "DESC"
 
-        if direction == 'forward':
-            items = items.filter(row__gt=base_item_row).order_by('row')[:count]
-        else:
-            items = items.filter(row__lt=base_item_row).order_by('-row')[:count]
+        # django does not allow filtering after window function, so will use raw SQL
+        sql, params = items.query.sql_with_params()
+        items = Item.objects.raw("""
+                SELECT * FROM ({}) AS items_with_rows
+                WHERE row {} (
+                    SELECT row FROM ({}) AS base_item_row
+                    WHERE id = %s
+                )
+                ORDER BY row {}
+                LIMIT %s
+            """.format(sql, sign, sql, order), # must order here, since cannot order RawQuerySet
+            [*params, *params, base_item_pk, count],
+        )
+        
+    prefetch_related_objects(items, "album") # only 1 query to get all album objects
 
     return JsonResponse(
         {
@@ -415,7 +425,7 @@ def getItemsRelative(request):
                     "description": item.description,
                     "image": item.image.url,
                     "album": [albumimage.image.url for albumimage in item.album.all()],
-                } for item in list(items.prefetch_related("album"))
+                } for item in items
             ]
         }
     )
