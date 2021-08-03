@@ -49,7 +49,7 @@ a.nav-link:hover {
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(sara_schwartz.png) no-repeat;
+   background: url("sara_schwartz.021528c17c33.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -58,7 +58,7 @@ a.nav-link:hover {
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(phoebe_lin.png) no-repeat;
+   background: url("phoebe_lin.c4988a565c3c.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -67,7 +67,7 @@ a.nav-link:hover {
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(albert_lin.png) no-repeat;
+   background: url("albert_lin.3dd82ad3b351.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -76,7 +76,7 @@ a.nav-link:hover {
    height: 150px;
    width: 150px;
    border-radius: 20px;
-   background: url(katie_mclaughlin.png) no-repeat;
+   background: url("katie_mclaughlin.b4c915280c0a.png") no-repeat;
    background-size: 100%;
    margin: 0 auto;
 }
@@ -221,7 +221,7 @@ a.titleLink{
     padding: 20px 20px 20px 20px;
     background-color: rgb(255, 213, 159);
     /* rgb(241, 195, 134) */
-    /* background: url(tiger2.jpg); */
+    /* background: url("tiger2.3d97bceecdea.jpg"); */
     background-size: 100%;
     z-index:1;
  }
