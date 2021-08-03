@@ -1,49 +1,58 @@
 <!-- adapted from https://stackoverflow.com/questions/58863057/displaying-a-message-as-a-popup-alert-in-django -->
 <div style="position:absolute; top: 3px; right: 3px;">
-  {% if account and not account.email %}
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="100000000">
-      <div class="toast-body" style="background-color:rgba(142, 176, 216, 0.7);">
-          <i class="fas fa-exclamation mr-2"></i> Please set an email in your account settings.
-      </div>
-  </div>
-  {% endif %}
+  
+    {% if account and not account.email %}
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+            <div class="toast-body" style="background-color:rgba(142, 176, 216, 0.7);">
+                <i class="fas fa-exclamation mr-2"></i> Please set an email in your account settings.
+            </div>
+        </div>
+    {% endif %}
 
-  {% if account and not account.name %}
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="100000000">
-      <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
-          <i class="fas fa-exclamation mr-2"></i> Please set a display name in your account settings.
-      </div>
-  </div>
-  {% endif %}
+    {% if account and not account.name %}
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+            <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
+                <i class="fas fa-exclamation mr-2"></i> Please set a display name in your account settings.
+            </div>
+        </div>
+    {% endif %}
 
 
-  {% if account and not account.contact %}
-  <!--100000000-->
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
-      <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
-          <i class="fas fa-exclamation mr-2"></i> Please let other users know how to contact you in your account
-          settings.
-      </div>
-  </div>
-  {% endif %}
+    {% if account and not account.contact %}
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+            <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <i class="fas fa-exclamation mr-2"></i> Please let other users know how to contact you in your account
+                            settings.
+                        </div>
+                        <div class="col-2 mx-1">
+                            <button class="btn" onclick="removeParentToast(this);">&times;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
-  {% if messages %}
-  {% for message in messages %}
-  <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
-      <div class="toast-body" style="background-color:rgb(130, 175, 136);">
-          {% if message.tags == 'error' %}
-          <i class="fas fa-times mr-2"></i>
-          {% elif message.tags == 'warning' %}
-          <i class="fas fa-exclamation mr-2"></i>
-          {% elif message.tags == 'info' %}
-          <i class="fas fa-info mr-2"></i>
-          {% elif message.tags == 'success' %}
-          <i class="fas fa-check mr-2"></i>
-          {% endif %}
-          {{message.tags|capfirst}}: {{message|safe}}
-      </div>
-  </div>
-  {% endfor %}
-  {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+                <div class="toast-body" style="background-color:rgb(130, 175, 136);">
+                    {% if message.tags == 'error' %}
+                        <i class="fas fa-times mr-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation mr-2"></i>
+                    {% elif message.tags == 'info' %}
+                        <i class="fas fa-info mr-2"></i>
+                    {% elif message.tags == 'success' %}
+                        <i class="fas fa-check mr-2"></i>
+                    {% endif %}
+                    {{message.tags|capfirst}}: {{message|safe}}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 
 </div>
