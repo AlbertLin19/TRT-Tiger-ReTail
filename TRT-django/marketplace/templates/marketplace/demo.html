@@ -5,8 +5,8 @@
     <div class="row my-4">
         <div class="col-6">
             <div class="input-group rounded">
-              <input type="search" id="searchbar" onkeyup="updateQuery()" placeholder="Search" class="form-control" />
-              <button class="btn btn-secondary" type="submit" onkeyup="updateQuery()"><i class=" fa fa-search"></i></button>
+              <input type="search" id="searchbar" oninput="updateQuery()" placeholder="Search" class="form-control" />
+              <button class="btn btn-secondary"><i class=" fa fa-search"></i></button>
             </div>
         </div>
         <div class="col-6">
@@ -57,6 +57,7 @@
     let items = [];        // continuously gathered items, sorted by most relevant first
     // each item is a dict {"pk", "name", "price", "description", "lead_image", "album", etc.}
 
+    let existing_html = '';            
     let last_rendered_item_index = -1;  // tracks last rendered item
     let restart = false;                // indicates that items should be cleared
 
@@ -84,31 +85,29 @@
     // generates and injects new items HTML, updates 'last_rendered_item_index'
     function injectItemsHTML() {
 
-        let html = $('#table_body').html(); // existing html
-
         // generate and add new items html
         for (const item of items.slice(last_rendered_item_index + 1)) {
-            html += "<tr>";
-            html += "<td>" + item["name"] + "</td>";
-            html += "<td>" + item["price"] + "</td>";
-            html += "<td>" + item["description"] + "</td>";
-            html += "</tr>";
+            existing_html += "<tr>";
+            existing_html += "<td>" + item["name"] + "</td>";
+            existing_html += "<td>" + item["price"] + "</td>";
+            existing_html += "<td>" + item["description"] + "</td>";
+            existing_html += "</tr>";
         }
 
         // update index
         last_rendered_item_index = items.length - 1;
-        $('#table_body').html(html);
+        $('#table_body').html(existing_html);
     }
 
     // retrieve and render items repeatedly in a synchronous fashion 
-    // (only this function and those it calls should ever touch 'items', 'last_rendered_item_index' to avoid concurrency issues)
+    // (only this function and those it calls should ever touch 'items', 'existing_html', 'last_rendered_item_index' to avoid concurrency issues)
     function populateItemsSynchronously(count, period) {
 
         if (restart) {
             restart = false;
             items = [];
+            existing_html = '';
             last_rendered_item_index = -1;
-            $('#table_body').html('');
             window.setTimeout(populateItemsSynchronously(count, period), period);
             return;
         }
