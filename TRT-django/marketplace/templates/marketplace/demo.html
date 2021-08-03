@@ -108,6 +108,7 @@
             restart = false;
             items = [];
             last_rendered_item_index = -1;
+            $('#table_body').html('');
             window.setTimeout(populateItemsSynchronously(count, period), period);
             return;
         }
