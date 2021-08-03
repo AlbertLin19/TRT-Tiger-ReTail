@@ -1,0 +1,97 @@
+{% extends "marketplace/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row my-4">
+        <div class="col-6">
+            <div class="input-group rounded">
+              <input type="search" id="searchbar" onkeyup="updateQuery()" placeholder="Search" class="form-control" />
+              <button class="btn btn-secondary" type="submit" onkeyup="updateQuery()"><i class=" fa fa-search"></i></button>
+            </div>
+        </div>
+        <div class="col-6">
+            CATEGORIES
+            {% for category in categories %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="{{category.pk}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="{{category.pk}}">
+                        {{category.name}}
+                    </label>
+                </div>
+            {% endfor %}
+
+            CONDITIONS 
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="condition{{Item.NEW}}" oninput="updateQuery()">
+                <label class="form-check-label" for="condition{{Item.NEW}}">
+                    new
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="condition{{Item.LIKE_NEW}}" oninput="updateQuery()">
+                <label class="form-check-label" for="condition{{Item.LIKE_NEW}}">
+                    like new
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="condition{{Item.GENTLY_LOVED}}" oninput="updateQuery()">
+                <label class="form-check-label" for="condition{{Item.GENTLY_LOVED}}">
+                    gently loved
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="condition{{Item.WELL_LOVED}}" oninput="updateQuery()">
+                <label class="form-check-label" for="condition{{Item.WELL_LOVED}}">
+                    well loved
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="condition{{Item.POOR}}" oninput="updateQuery()">
+                <label class="form-check-label" for="condition{{Item.POOR}}">
+                    poor
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody id="table_body">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    'use strict';
+    const category_pks = [{% for category in categories %}{{category.pk}}, {% endfor %}];
+    const conditions = [{{Item.NEW}}, {{Item.LIKE_NEW}}, {{Item.GENTLY_LOVED}}, {{Item.WELL_LOVED}}, {{Item.POOR}}, ];
+    let active_category_pks = [];
+    let active_conditions = [];
+    let search_string = "";
+
+    // set active_category_pks, active_conditions, search_string appropriately
+    // based on current inputs
+    function updateQuery() {
+        active_category_pks = [];
+        active_conditions = [];
+
+        for (const category_pk of category_pks) {
+            if ($("#"+category_pk).is(':checked')) {
+                active_category_pks.push(category_pk);
+            }
+        }
+        for (const condition of conditions) {
+            if ($("#condition"+condition).is(':checked')) {
+                active_conditions.push(condition);
+            }
+        }
+    }
+</script>
+{% endblock content %}

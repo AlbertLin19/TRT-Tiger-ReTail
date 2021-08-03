@@ -1925,6 +1925,15 @@ def contact(request):
 
 # ----------------------------------------------------------------------
 
+# demo of dynamic items page
+
+
+def demo(request):
+    return render(request, "marketplace/demo.html", {})
+
+
+# ----------------------------------------------------------------------
+
 
 def logout(request):
     request.session.pop("username", default=None)

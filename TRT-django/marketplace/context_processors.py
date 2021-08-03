@@ -1,5 +1,5 @@
 # custom context processors to include common template context data
-from .models import Account, Item, Transaction
+from .models import Account, Item, Transaction, Category
 from django.conf import settings
 
 
@@ -28,3 +28,6 @@ def admin(request):
             for suffix in settings.ALT_ACCOUNT_SUFFIXES
         ]
     }
+
+def categories(request):
+    return {"categories": Category.objects.all()}

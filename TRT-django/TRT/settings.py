@@ -82,6 +82,7 @@ TEMPLATES = [
                 "marketplace.context_processors.item",
                 "marketplace.context_processors.transaction",
                 "marketplace.context_processors.admin",
+                "marketplace.context_processors.categories",
             ],
         },
     },

@@ -53,4 +53,5 @@ urlpatterns = [
     path("account/cycle/", views.cycleAccount, name="cycle_account"),
     path("faq/", views.faq, name="faq"),
     path("contact/", views.contact, name="contact"),
+    path("demo/", views.demo, name="demo"),
 ]

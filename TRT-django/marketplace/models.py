@@ -39,12 +39,48 @@ class Item(models.Model):
     AVAILABLE = 0
     FROZEN = 1
     COMPLETE = 2
+    STATUSES = [
+        {
+            "index": AVAILABLE,
+            "name": "available",
+        },
+        {
+            "index": FROZEN,
+            "name": "frozen",
+        },
+        {
+            "index": COMPLETE,
+            "name": "complete",
+        },
+    ]
 
     NEW = 0
     LIKE_NEW = 1
     GENTLY_LOVED = 2
     WELL_LOVED = 3
     POOR = 4
+    CONDITIONS = [
+        {
+            "index": NEW,
+            "name": "new",
+        },
+        {
+            "index": LIKE_NEW,
+            "name": "like new",
+        },
+        {
+            "index": GENTLY_LOVED,
+            "name": "gently loved",
+        },
+        {
+            "index": WELL_LOVED,
+            "name": "well loved",
+        },
+        {
+            "index": POOR,
+            "name": "poor",
+        },
+    ]
 
     MAX_TIME_DELTA = timedelta(days=365)
 
@@ -70,11 +106,7 @@ class Item(models.Model):
         max_digits=1,
         decimal_places=0,
         choices=[
-            (NEW, "New"),
-            (LIKE_NEW, "Like new"),
-            (GENTLY_LOVED, "Gently-loved"),
-            (WELL_LOVED, "Well-loved"),
-            (POOR, "Poor"),
+            (CONDITION['index'], CONDITION['name']) for CONDITION in CONDITIONS
         ],
     )
     categories = models.ManyToManyField(Category)
@@ -88,9 +120,7 @@ class Item(models.Model):
         max_digits=1,
         decimal_places=0,
         choices=[
-            (AVAILABLE, "available"),
-            (FROZEN, "frozen"),
-            (COMPLETE, "complete"),
+            (STATUS['index'], STATUS['name']) for STATUS in STATUSES
         ],
     )
 
@@ -118,6 +148,32 @@ class Transaction(models.Model):
     B_PENDING = 3
     COMPLETE = 4
     CANCELLED = 5
+    STATUSES = [
+        {
+            "index": INITIATED,
+            "name": "initiated",
+        },
+        {
+            "index": ACKNOWLEDGED,
+            "name": "acknowledged",
+        },
+        {
+            "index": S_PENDING,
+            "name": "seller pending",
+        },
+        {
+            "index": B_PENDING,
+            "name": "buyer pending",
+        },
+        {
+            "index": COMPLETE,
+            "name": "complete",
+        },
+        {
+            "index": CANCELLED,
+            "name": "cancelled",
+        },
+    ]
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     buyer = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -125,12 +181,7 @@ class Transaction(models.Model):
         max_digits=1,
         decimal_places=0,
         choices=[
-            (INITIATED, "initiated"),
-            (ACKNOWLEDGED, "acknowledged"),
-            (S_PENDING, "s_pending"),
-            (B_PENDING, "b_pending"),
-            (COMPLETE, "complete"),
-            (CANCELLED, "cancelled"),
+            (STATUS["index"], STATUS["name"]) for STATUS in STATUSES
         ],
     )
 
@@ -190,11 +241,7 @@ class ItemRequest(models.Model):
         max_digits=1,
         decimal_places=0,
         choices=[
-            (Item.NEW, "New"),
-            (Item.LIKE_NEW, "Like new"),
-            (Item.GENTLY_LOVED, "Gently-loved"),
-            (Item.WELL_LOVED, "Well-loved"),
-            (Item.POOR, "Poor"),
+            (CONDITION['index'], CONDITION['name']) for CONDITION in Item.CONDITIONS
         ],
     )
     categories = models.ManyToManyField(Category)
