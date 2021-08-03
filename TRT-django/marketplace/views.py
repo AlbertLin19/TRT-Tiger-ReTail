@@ -1515,13 +1515,20 @@ def countNotifications(request):
 
 # ----------------------------------------------------------------------
 
-# see all notifications
+# sees notifications in GET param "notifications=pk,pk,..."
+# otherwise, see all notifications
 
 
 @authentication_required
 def seeNotifications(request):
     account = Account.objects.get(username=request.session.get("username"))
-    notifications = account.notifications.all()
+
+    if "notifications" in request.GET:
+        notification_pks = [int(pk) for pk in request.GET["notifications"].split(",") if pk]
+        notifications = account.notifications.filter(pk__in=notification_pks)
+    else:
+        notifications = account.notifications.all()
+
     notifications.update(seen=True)
     return HttpResponse(status=200)
 
@@ -1605,7 +1612,15 @@ def getNotificationsRelative(request):
 
     return JsonResponse(
         {
-            "notifications": list(notifications.values_list("pk", "datetime", "text", "seen", "url"))
+            "notifications": [
+                [
+                    notification.pk, 
+                    notification.datetime, 
+                    notification.text, 
+                    notification.seen, 
+                    notification.url
+                ] for notification in notifications
+            ]
         }
     )
 

@@ -117,48 +117,91 @@
     <script>
         'use strict';
 
-        function handleNotifications(response) {
-            const notifications = response['notifications'];
+        const notifications = []; // will store in order starting from most recent
+        // each notification is ["pk", "datetime", "text", "seen", "url"]
+        let beg_notification_pk = -1;
+        let end_notification_pk = -1;
+        
+        // generates and injects notifications html from notifications array
+        function injectNotificationsHTML() {
             let html = '';
             for (const notification of notifications) {
-                const date = new Date(notification[0]);
+                const date = new Date(notification[1]);
                 html += '<hr class="m-0">';
-                html += '<a class="orange-link" href="' + notification[3] + '">';
+                html += '<a class="orange-link" href="' + notification[4] + '">';
                 html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
-                if (!notification[2])
+                if (!notification[3])
                     html += ' background-color: #fff0db;';
                 html += '">';
                 html += '<small>';
-                html += notification[1];
+                html += notification[2];
                 html += '<br>';
                 html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
                 html += '</small>';
                 html += '</div>';
                 html += '</a>';
             }
-
             $('#notifications_area').html(html);
-            $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'see_notifications' %}",
-                }
-            );
         }
 
-        let request = null;
+        function populateNotificationsHTMLSynchronously(count, period) {
+            // if no notifications yet gotten, try retrieving just most recent one first
+            if (beg_notification_pk === -1 && end_notification_pk === -1)
+            {
+                fetch("/notifications/get_relative/?count=1&direction=backward&base_notification_pk=-1")
+                    .then((resp) => {return resp.json();})
+                    .then((data) => {
+                        if (data["notifications"].length === 0) {
+                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                            return;
+                        }
+                        notifications.push(data["notifications"][0]);
+                        injectNotificationsHTML();
+                        end_notification_pk = data["notifications"][0][0];
+                        beg_notification_pk = data["notifications"][0][0];
+                        window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                        return;
+                    })
+                    .catch((error) => {
+                        window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                        return console.log(error);
+                    });
+                return;
+            }
 
-        function getResults() {
-            if (request != null)
-                request.abort();
+            // get notifications backward
+            fetch("/notifications/get_relative/?count=" + count + "&direction=backward&base_notification_pk=" + end_notification_pk)
+                .then((resp) => {return resp.json();})
+                .then((data) => {
+                    if (data['notifications'].length != 0) {
+                        notifications.push(...data['notifications']);
+                        end_notification_pk = data['notifications'][data['notifications'].length - 1][0];
+                    }
+                    
+                    // get notifications forward
+                    fetch("/notifications/get_relative/?count=" + count + "&direction=forward&base_notification_pk=" + beg_notification_pk)
+                        .then((resp) => {return resp.json();})
+                        .then((data) => {
+                            if (data['notifications'].length != 0) {
+                                notifications.unshift(...(data['notifications'].reverse())); // need to add reversed and to the front of the notifications list
+                                beg_notification_pk = data['notifications'][data['notifications'].length - 1][0];
+                            }
 
-            request = $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'get_notifications' %}",
-                    success: handleNotifications,
-                }
-            );
+                            injectNotificationsHTML();
+                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                            return;
+                        })
+                        .catch((error) => {
+                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                            return console.log(error);
+                        });
+                    return;
+                })
+                .catch((error) => {
+                    window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                    return console.log(error);
+                });
+            return;
         }
 
         function handleCount(response) {
@@ -182,8 +225,20 @@
             );
         }
 
+        // set notifications already retrieved to "seen"
+        function seeNotifications() {
+            let url = "/notifications/see/?notifications=";
+            for (const notification of notifications) {
+                url += notification[0] + ",";
+            }
+            fetch(url).catch((error) => {
+                return console.log(error);
+            });
+        }
+
         function setup() {
-            $('#notifications_dropdown').on('show.bs.dropdown', getResults);
+            $("#notifications_dropdown").on("show.bs.dropdown", seeNotifications);
+            window.setTimeout(() => {populateNotificationsHTMLSynchronously(15, 10)}, 0);
             window.setInterval(getCount, 1000);
         }
 
