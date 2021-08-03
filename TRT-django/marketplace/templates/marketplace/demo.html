@@ -55,8 +55,10 @@
     let search_string = "";
 
     let items = [];        // continuously gathered items, sorted by most relevant first
-    let base_item_pk = -1;
-    let restart = false;   // indicates that items should be cleared
+    // each item is a dict {"pk", "name", "price", "description", "lead_image", "album", etc.}
+
+    let last_rendered_item_index = -1;  // tracks last rendered item
+    let restart = false;                // indicates that items should be cleared
 
     // set active_category_pks, active_condition_indexes, search_string appropriately
     // based on current inputs
@@ -76,34 +78,43 @@
         }
 
         search_string = $("#searchbar").val();
-        restart = true; // trigger a clear of the items array
+        restart = true; // trigger a clear of the items array, since query parameters have changed
     }
 
-    // generates and injects the items HTML
+    // generates and injects new items HTML, updates 'last_rendered_item_index'
     function injectItemsHTML() {
-        let html = "";
-        for (const item of items) {
+
+        let html = $('#table_body').html(); // existing html
+
+        // generate and add new items html
+        for (const item of items.slice(last_rendered_item_index + 1)) {
             html += "<tr>";
             html += "<td>" + item["name"] + "</td>";
             html += "<td>" + item["price"] + "</td>";
             html += "<td>" + item["description"] + "</td>";
             html += "</tr>";
         }
+
+        // update index
+        last_rendered_item_index = items.length - 1;
         $('#table_body').html(html);
     }
 
-    // retrieve items repeatedly in a synchronous fashion 
-    // (only this function should ever touch the items array and base_item_pk to avoid concurrency issues)
+    // retrieve and render items repeatedly in a synchronous fashion 
+    // (only this function and those it calls should ever touch 'items', 'last_rendered_item_index' to avoid concurrency issues)
     function populateItemsSynchronously(count, period) {
+
         if (restart) {
             restart = false;
             items = [];
-            base_item_pk = -1;
+            last_rendered_item_index = -1;
             window.setTimeout(populateItemsSynchronously(count, period), period);
             return;
         }
 
-        // populate items
+        // populate items array with new items
+
+        // construct appropriate GET parameters
         let categories_str = "";
         for (const category_pk of active_category_pks) {
             categories_str += category_pk + ",";
@@ -112,23 +123,32 @@
         for (const condition_index of active_condition_indexes) {
             conditions_str += condition_index + ",";
         }
+
+        // get new items in backward direction
+        let base_item_pk = -1;
+        if (items.length != 0) {
+            base_item_pk = items[items.length - 1]["pk"];
+        }
         fetch("/items/get_relative/?count=" + count + "&direction=backward&base_item_pk=" + base_item_pk + "&search_string=" + search_string + "&condition_indexes=" + conditions_str + "&category_pks=" + categories_str)
             .then((resp) => {return resp.json();})
             .then((data) => {
+
+                // if items were retrieved, add to items array and render
                 if (data["items"].length != 0) {
                     items.push(...data["items"]);
-                    base_item_pk = data["items"][data["items"].length - 1]["pk"];
                     injectItemsHTML();
                 }
-                window.setTimeout(populateItemsSynchronously(count, period), period); 
-                // notice that setTimeout is called only in callback after fetch, to avoid concurrency issues
+
+                // notice that setTimeout is called only in callback of fetch, to avoid concurrency issues
                 // (the call to setTimeout in the .catch only occurs if .then doesn't execute)
+                window.setTimeout(populateItemsSynchronously(count, period), period);
                 return;
             })
             .catch((error) => {
                 window.setTimeout(populateItemsSynchronously(count, period), period);
                 return console.log(error);
             });
+            
         return;
     }
 
