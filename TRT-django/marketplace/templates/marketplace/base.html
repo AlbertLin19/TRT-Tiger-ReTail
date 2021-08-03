@@ -119,82 +119,129 @@
 
         const notifications = []; // will store in order starting from most recent
         // each notification is ["pk", "datetime", "text", "seen", "url"]
-        let beg_notification_pk = -1;
-        let end_notification_pk = -1;
+        let first_rendered_notification_index = -1;
+        let last_rendered_notification_index = -1;
         
-        // generates and injects notifications html from notifications array
+        // generates and injects new notifications html from new notifications, updates indexes
         function injectNotificationsHTML() {
-            let html = '';
-            for (const notification of notifications) {
-                const date = new Date(notification[1]);
-                html += '<hr class="m-0">';
-                html += '<a class="orange-link" href="' + notification[4] + '">';
-                html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
-                if (!notification[3])
-                    html += ' background-color: #fff0db;';
-                html += '">';
-                html += '<small>';
-                html += notification[2];
-                html += '<br>';
-                html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
-                html += '</small>';
-                html += '</div>';
-                html += '</a>';
-            }
-            $('#notifications_area').html(html);
-        }
 
-        function populateNotificationsHTMLSynchronously(count, period) {
-            // if no notifications yet gotten, try retrieving just most recent one first
-            if (beg_notification_pk === -1 && end_notification_pk === -1)
-            {
-                fetch("/notifications/get_relative/?count=1&direction=backward&base_notification_pk=-1")
-                    .then((resp) => {return resp.json();})
-                    .then((data) => {
-                        if (data["notifications"].length === 0) {
-                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
-                            return;
-                        }
-                        notifications.push(data["notifications"][0]);
-                        injectNotificationsHTML();
-                        end_notification_pk = data["notifications"][0][0];
-                        beg_notification_pk = data["notifications"][0][0];
-                        window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
-                        return;
-                    })
-                    .catch((error) => {
-                        window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
-                        return console.log(error);
-                    });
+            // if no notifications, do nothing
+            if (notifications.length == 0) {
                 return;
             }
 
+            let html = $('#notifications_area').html(); // existing html
+
+            // if no notifications previously rendered, render all
+            if (first_rendered_notification_index == -1 && last_rendered_notification_index == -1) {
+                for (const notification of notifications) {
+                    const date = new Date(notification[1]);
+                    html += '<hr class="m-0">';
+                    html += '<a class="orange-link" href="' + notification[4] + '">';
+                    html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
+                    if (!notification[3])
+                        html += ' background-color: #fff0db;';
+                    html += '">';
+                    html += '<small>';
+                    html += notification[2];
+                    html += '<br>';
+                    html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
+                    html += '</small>';
+                    html += '</div>';
+                    html += '</a>';
+                }
+            // otherwise, render only new notifications
+            } else {
+                for (const notification of notifications.slice(0, first_rendered_notification_index)) {
+                    let html_append = '';
+                    const date = new Date(notification[1]);
+                    html_append += '<hr class="m-0">';
+                    html_append += '<a class="orange-link" href="' + notification[4] + '">';
+                    html_append += '<div class="mx-0 my-1 p-2" style="text-align:left;';
+                    if (!notification[3])
+                        html_append += ' background-color: #fff0db;';
+                    html_append += '">';
+                    html_append += '<small>';
+                    html_append += notification[2];
+                    html_append += '<br>';
+                    html_append += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
+                    html_append += '</small>';
+                    html_append += '</div>';
+                    html_append += '</a>';
+                    html = html_append + html;
+                }
+                for (const notification of notifications.slice(last_rendered_notification_index + 1)) {
+                    const date = new Date(notification[1]);
+                    html += '<hr class="m-0">';
+                    html += '<a class="orange-link" href="' + notification[4] + '">';
+                    html += '<div class="mx-0 my-1 p-2" style="text-align:left;';
+                    if (!notification[3])
+                        html += ' background-color: #fff0db;';
+                    html += '">';
+                    html += '<small>';
+                    html += notification[2];
+                    html += '<br>';
+                    html += '<small class="text-secondary">' + date.toLocaleString() + '</small>';
+                    html += '</small>';
+                    html += '</div>';
+                    html += '</a>';
+                }
+            }
+
+            // update indexes
+            first_rendered_notification_index = 0;
+            last_rendered_notification_index = notifications.length - 1;
+            
+            $('#notifications_area').html(html);
+        }
+
+        // repeatedly retrieves and renders notifications synchronously to avoid concurrency issues
+        // only this function and those it calls should touch 'notifications', 'first_rendered_notification_index', 'last_rendered_notification_index'
+        function populateNotificationsHTMLSynchronously(count, period) {
+
             // get notifications backward
-            fetch("/notifications/get_relative/?count=" + count + "&direction=backward&base_notification_pk=" + end_notification_pk)
+            let base_notification_pk = -1;
+            if (notifications.length != 0) {
+                base_notification_pk = notifications[notifications.length - 1][0];
+            }
+            fetch("/notifications/get_relative/?count=" + count + "&direction=backward&base_notification_pk=" + base_notification_pk)
                 .then((resp) => {return resp.json();})
                 .then((data) => {
                     if (data['notifications'].length != 0) {
                         notifications.push(...data['notifications']);
-                        end_notification_pk = data['notifications'][data['notifications'].length - 1][0];
+                        injectNotificationsHTML();
                     }
                     
-                    // get notifications forward
-                    fetch("/notifications/get_relative/?count=" + count + "&direction=forward&base_notification_pk=" + beg_notification_pk)
-                        .then((resp) => {return resp.json();})
-                        .then((data) => {
-                            if (data['notifications'].length != 0) {
-                                notifications.unshift(...(data['notifications'].reverse())); // need to add reversed and to the front of the notifications list
-                                beg_notification_pk = data['notifications'][data['notifications'].length - 1][0];
-                            }
+                    // get notifications forward (only if notifications is not empty)
+                    if (notifications.length != 0) {
+                        let base_notification_pk = notifications[0][0];
+                        fetch("/notifications/get_relative/?count=" + count + "&direction=forward&base_notification_pk=" + base_notification_pk)
+                            .then((resp) => {return resp.json();})
+                            .then((data) => {
+                                if (data['notifications'].length != 0) {
+                                    notifications.unshift(...(data['notifications'].reverse())); // need to add reversed and to the front of the notifications list
+                                    // update indexes, since array was shifted
+                                    if (first_rendered_notification_index != -1) {
+                                        first_rendered_notification_index += data['notifications'].length;
+                                    }
+                                    if (last_rendered_notification_index != -1) {
+                                        last_rendered_notification_index += data['notifications'].length;
+                                    }
 
-                            injectNotificationsHTML();
-                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
-                            return;
-                        })
-                        .catch((error) => {
-                            window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
-                            return console.log(error);
-                        });
+                                    injectNotificationsHTML();
+                                }
+                                window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                                return;
+                            })
+                            .catch((error) => {
+                                window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                                return console.log(error);
+                            });
+                        return;
+                    } else {
+                        window.setTimeout(() => {populateNotificationsHTMLSynchronously(count, period)}, period);
+                        return;
+                    }
                     return;
                 })
                 .catch((error) => {
