@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from django.db.models import Window, F, prefetch_related_objects
+from django.db.models import Window, F, prefetch_related_objects, Q
 from django.db.models.functions import RowNumber
 from django.core.mail import send_mail
 from django.core.cache import cache
@@ -366,7 +366,7 @@ def getItemsRelative(request):
 
     if "category_pks" in request.GET:
         try:
-            categories = list(Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk]))
+            categories = Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk])
         except:
             return HttpResponse(status=400)
 
@@ -1424,7 +1424,7 @@ def getItemRequestsRelative(request):
 
     if "category_pks" in request.GET:
         try:
-            categories = list(Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk]))
+            categories = Category.objects.filter(pk__in=[int(pk) for pk in request.GET["category_pks"].split(",") if pk])
         except:
             return HttpResponse(status=400)
 
@@ -1677,11 +1677,7 @@ def getMessagesRelative(request, pk):
         return HttpResponse(status=400)
 
     # filter only messages between account and contact
-    sent_messages = account.sent_messages.filter(receiver=contact)
-    received_messages = account.received_messages.filter(sender=contact)
-    pk_list = list(sent_messages.values_list("pk", flat=True))
-    pk_list.extend(list(received_messages.values_list("pk", flat=True)))
-    messages = Message.objects.filter(pk__in=pk_list)
+    messages = Message.objects.filter((Q(sender=account) & Q(receiver=contact)) | (Q(sender=contact) & Q(receiver=account)))
 
     # annotate messages by row number after sorting by datetime (so no comparison issues with equal datetimes)
     messages = messages.annotate(
