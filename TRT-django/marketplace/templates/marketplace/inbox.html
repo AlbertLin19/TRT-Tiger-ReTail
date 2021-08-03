@@ -67,7 +67,7 @@
         {
             super(props);
             this.state = {
-                clear_messages: false, // using boolean indicators here so that manageMessagesSynchronously()
+                clear_messages: false,      // using boolean indicators here so that manageMessagesSynchronously()
                 get_more_messages: false,   // can clear and get messages synchronously to avoid setState concurrency issues
                 active_contact_pk: null, 
                 contact_pks: [{% for contact in contacts %}{{contact.pk}}, {% endfor %}], 
@@ -81,13 +81,12 @@
 
         // indefinitely clears and gets more messages forward and backward in batches of size 'count' (when indicated to do so by state booleans)
         // in a synchronous fashion to avoid setState concurrency issues
-        manageMessagesSynchronously(count)
+        manageMessagesSynchronously(count, period)
         {
-            const period = 10;
             if (this.state.clear_messages)
             {
                 this.setState({clear_messages: false, messages: [], beg_message_pk: -1, end_message_pk: -1}, () => {
-                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                    window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                 });
                 return;
             }
@@ -95,7 +94,7 @@
             {
                 if (!this.state.active_contact_pk)
                 {
-                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                    window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                     return;
                 }
                 
@@ -117,11 +116,11 @@
                             // sort by date
                             messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
                             this.setState({get_more_messages: false, messages: messages, end_message_pk: data['last_message_pk'], beg_message_pk: data['last_message_pk']}, () => {
-                                window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                                window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                             });
                         })
                         .catch((error) => { 
-                            window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                            window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                             return console.log(error);
                         });
                     return;
@@ -159,24 +158,24 @@
                                     // sort by date
                                     messages.sort((message1, message2) => message1['datetime']-message2['datetime']);
                                     this.setState({get_more_messages: false, messages: messages, beg_message_pk: data['last_message_pk'] == -1 ? this.state.beg_message_pk : data['last_message_pk']}, () => {
-                                        window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                                        window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                                     });
                                 })
                                 .catch((error) => { 
-                                    window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                                    window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                                     return console.log(error);
                                 });
                         });
                     })
                     .catch((error) => { 
-                        window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                        window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                         return console.log(error);
                     });
                 return;
             }
             else 
             {
-                window.setTimeout(() => {this.manageMessagesSynchronously(count)}, period);
+                window.setTimeout(() => {this.manageMessagesSynchronously(count, period)}, period);
                 return;
             }
         }
@@ -265,7 +264,7 @@
             text_input.value = '';
 
             // start the synchronous messages manager
-            window.setTimeout(() => {this.manageMessagesSynchronously(5)}, 0);
+            window.setTimeout(() => {this.manageMessagesSynchronously(5, 10)}, 0);
             // periodically set get_more_messages to true
             window.setInterval(() => {this.setState({get_more_messages: true})}, 50);
         }
