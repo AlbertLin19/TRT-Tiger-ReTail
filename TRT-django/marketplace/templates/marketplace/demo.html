@@ -13,44 +13,22 @@
             CATEGORIES
             {% for category in categories %}
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="{{category.pk}}" oninput="updateQuery()">
-                    <label class="form-check-label" for="{{category.pk}}">
+                    <input class="form-check-input" type="checkbox" id="category_{{category.pk}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="category_{{category.pk}}">
                         {{category.name}}
                     </label>
                 </div>
             {% endfor %}
 
             CONDITIONS 
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="condition{{Item.NEW}}" oninput="updateQuery()">
-                <label class="form-check-label" for="condition{{Item.NEW}}">
-                    new
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="condition{{Item.LIKE_NEW}}" oninput="updateQuery()">
-                <label class="form-check-label" for="condition{{Item.LIKE_NEW}}">
-                    like new
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="condition{{Item.GENTLY_LOVED}}" oninput="updateQuery()">
-                <label class="form-check-label" for="condition{{Item.GENTLY_LOVED}}">
-                    gently loved
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="condition{{Item.WELL_LOVED}}" oninput="updateQuery()">
-                <label class="form-check-label" for="condition{{Item.WELL_LOVED}}">
-                    well loved
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="condition{{Item.POOR}}" oninput="updateQuery()">
-                <label class="form-check-label" for="condition{{Item.POOR}}">
-                    poor
-                </label>
-            </div>
+            {% for condition in Item.CONDITIONS %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="condition_{{condition.index}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="condition_{{condition.index}}">
+                        {{condition.name}}
+                    </label>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -71,27 +49,94 @@
 <script>
     'use strict';
     const category_pks = [{% for category in categories %}{{category.pk}}, {% endfor %}];
-    const conditions = [{{Item.NEW}}, {{Item.LIKE_NEW}}, {{Item.GENTLY_LOVED}}, {{Item.WELL_LOVED}}, {{Item.POOR}}, ];
+    const condition_indexes = [{% for condition in Item.CONDITIONS %}{{condition.index}}, {% endfor %}];
     let active_category_pks = [];
-    let active_conditions = [];
+    let active_condition_indexes = [];
     let search_string = "";
 
-    // set active_category_pks, active_conditions, search_string appropriately
+    let items = [];        // continuously gathered items, sorted by most relevant first
+    let base_item_pk = -1;
+    let restart = false;   // indicates that items should be cleared
+
+    // set active_category_pks, active_condition_indexes, search_string appropriately
     // based on current inputs
     function updateQuery() {
         active_category_pks = [];
-        active_conditions = [];
+        active_condition_indexes = [];
 
         for (const category_pk of category_pks) {
-            if ($("#"+category_pk).is(':checked')) {
+            if ($("#category_"+category_pk).is(':checked')) {
                 active_category_pks.push(category_pk);
             }
         }
-        for (const condition of conditions) {
-            if ($("#condition"+condition).is(':checked')) {
-                active_conditions.push(condition);
+        for (const condition_index of condition_indexes) {
+            if ($("#condition_"+condition_index).is(':checked')) {
+                active_condition_indexes.push(condition_index);
             }
         }
+
+        search_string = $("#searchbar").val();
+        restart = true; // trigger a clear of the items array
     }
+
+    // generates and injects the items HTML
+    function injectItemsHTML() {
+        let html = "";
+        for (const item of items) {
+            html += "<tr>";
+            html += "<td>" + item["name"] + "</td>";
+            html += "<td>" + item["price"] + "</td>";
+            html += "<td>" + item["description"] + "</td>";
+            html += "</tr>";
+        }
+        $('#table_body').html(html);
+    }
+
+    // retrieve items repeatedly in a synchronous fashion 
+    // (only this function should ever touch the items array and base_item_pk to avoid concurrency issues)
+    function populateItemsSynchronously(count, period) {
+        if (restart) {
+            restart = false;
+            items = [];
+            base_item_pk = -1;
+            window.setTimeout(populateItemsSynchronously(count, period), period);
+            return;
+        }
+
+        // populate items
+        let categories_str = "";
+        for (const category_pk of active_category_pks) {
+            categories_str += category_pk + ",";
+        }
+        let conditions_str = "";
+        for (const condition_index of active_condition_indexes) {
+            conditions_str += condition_index + ",";
+        }
+        fetch("/items/get_relative/?count=" + count + "&direction=backward&base_item_pk=" + base_item_pk + "&search_string=" + search_string + "&condition_indexes=" + conditions_str + "&category_pks=" + categories_str)
+            .then((resp) => {return resp.json();})
+            .then((data) => {
+                if (data["items"].length != 0) {
+                    items.push(...data["items"]);
+                    base_item_pk = data["items"][data["items"].length - 1]["pk"];
+                    injectItemsHTML();
+                }
+                window.setTimeout(populateItemsSynchronously(count, period), period); 
+                // notice that setTimeout is called only in callback after fetch, to avoid concurrency issues
+                // (the call to setTimeout in the .catch only occurs if .then doesn't execute)
+                return;
+            })
+            .catch((error) => {
+                window.setTimeout(populateItemsSynchronously(count, period), period);
+                return console.log(error);
+            });
+        return;
+    }
+
+    function setup() {
+            window.setTimeout(() => {populateItemsSynchronously(5, 10)}, 0);
+        }
+
+    $('document').ready(setup);
+
 </script>
 {% endblock content %}

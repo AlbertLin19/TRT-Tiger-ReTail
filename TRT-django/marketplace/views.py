@@ -19,6 +19,7 @@ from .models import (
     ItemRequestLog,
     Message,
     Notification,
+    Category,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm
 from utils import CASClient
@@ -303,7 +304,7 @@ def gallery(request):
 # [REQUIRED] direction (forward/backward)
 # [REQUIRED] base_item_pk (if -1, then will collect items from beginning/end based on direction)
 # [OPTIONAL] search_string (used to index the items by name and description prior to retrieval)
-# [OPTIONAL] conditions ("condition,condition,...")
+# [OPTIONAL] condition_indexes ("condition_index,condition_index,...")
 # [OPTIONAL] category_pks ("category_pk,category_pk,...")
 
 # if base_item_pk == -1 and no items yet exist, then returns empty list
@@ -319,7 +320,7 @@ def gallery(request):
 #           "deadline",
 #           "price",
 #           "negotiable",
-#           "condition",
+#           "condition_index",
 #           "description",
 #           "image", (url)
 #           "album", (list of urls)
@@ -330,7 +331,7 @@ def gallery(request):
 #           "deadline",
 #           "price",
 #           "negotiable",
-#           "condition",
+#           "condition_index",
 #           "description",
 #           "image", (url)
 #           "album", (list of urls)
@@ -352,15 +353,15 @@ def getItemsRelative(request):
         return HttpResponse(status=400)
 
     search_string = ""
-    conditions = []
+    condition_indexes = []
     categories = []
 
     if "search_string" in request.GET:
         search_string = request.GET["search_string"]
 
-    if "conditions" in request.GET:
+    if "condition_indexes" in request.GET:
         try:
-            conditions = [int(pk) for pk in request.GET["conditions"].split(",") if pk]
+            condition_indexes = [int(pk) for pk in request.GET["condition_indexes"].split(",") if pk]
         except:
             return HttpResponse(status=400)
 
@@ -373,8 +374,8 @@ def getItemsRelative(request):
     # filter items that meet conditions and categories criteria
     items = Item.objects.filter(status=Item.AVAILABLE)
 
-    if conditions:
-        items = items.filter(condition__in=conditions)
+    if condition_indexes:
+        items = items.filter(condition__in=condition_indexes)
 
     if categories:
         items = items.filter(categories__in=categories)
@@ -423,7 +424,7 @@ def getItemsRelative(request):
                     "deadline": item.deadline,
                     "price": item.price,
                     "negotiable": item.negotiable,
-                    "condition": item.condition,
+                    "condition_index": item.condition,
                     "description": item.description,
                     "image": item.image.url,
                     "album": [albumimage.image.url for albumimage in item.album.all()],
@@ -1363,7 +1364,7 @@ def browseItemRequests(request):
 # [REQUIRED] direction (forward/backward)
 # [REQUIRED] base_item_request_pk (if -1, then will collect item requests from beginning/end based on direction)
 # [OPTIONAL] search_string (used to index the item requests by name and description prior to retrieval)
-# [OPTIONAL] conditions ("condition,condition,...")
+# [OPTIONAL] condition_indexes ("condition_index,condition_index,...")
 # [OPTIONAL] category_pks ("category_pk,category_pk,...")
 
 # if base_item_request_pk == -1 and no item requests yet exist, then returns empty list
@@ -1379,7 +1380,7 @@ def browseItemRequests(request):
 #           "deadline",
 #           "price",
 #           "negotiable",
-#           "condition",
+#           "condition_index",
 #           "description",
 #           "image", (url)
 #        },
@@ -1389,7 +1390,7 @@ def browseItemRequests(request):
 #           "deadline",
 #           "price",
 #           "negotiable",
-#           "condition",
+#           "condition_index",
 #           "description",
 #           "image", (url)
 #        },
@@ -1410,15 +1411,15 @@ def getItemRequestsRelative(request):
         return HttpResponse(status=400)
 
     search_string = ""
-    conditions = []
+    condition_indexes = []
     categories = []
 
     if "search_string" in request.GET:
         search_string = request.GET["search_string"]
 
-    if "conditions" in request.GET:
+    if "condition_indexes" in request.GET:
         try:
-            conditions = [int(pk) for pk in request.GET["conditions"].split(",") if pk]
+            condition_indexes = [int(pk) for pk in request.GET["condition_indexes"].split(",") if pk]
         except:
             return HttpResponse(status=400)
 
@@ -1431,8 +1432,8 @@ def getItemRequestsRelative(request):
     # filter item requests that meet conditions and categories criteria
     item_requests = ItemRequest.objects.all()
 
-    if conditions:
-        item_requests = item_requests.filter(condition__in=conditions)
+    if condition_indexes:
+        item_requests = item_requests.filter(condition__in=condition_indexes)
 
     if categories:
         item_requests = item_requests.filter(categories__in=categories)
@@ -1479,7 +1480,7 @@ def getItemRequestsRelative(request):
                     "deadline": item_request.deadline,
                     "price": item_request.price,
                     "negotiable": item_request.negotiable,
-                    "condition": item_request.condition,
+                    "condition_index": item_request.condition,
                     "description": item_request.description,
                     "image": item_request.image.url,
                 } for item_request in item_requests
