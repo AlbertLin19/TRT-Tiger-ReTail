@@ -2,7 +2,7 @@
 <div style="position:absolute; top: 3px; right: 3px;">
   
     {% if account and not account.email %}
-        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
             <div class="toast-body" style="background-color:rgba(142, 176, 216, 0.7);">
                 <div class="container">
                     <div class="row d-flex align-items-center">
@@ -19,7 +19,7 @@
     {% endif %}
 
     {% if account and not account.name %}
-        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
             <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
                 <div class="container">
                     <div class="row d-flex align-items-center">
@@ -37,7 +37,7 @@
 
 
     {% if account and not account.contact %}
-        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+        <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
             <div class="toast-body" style="background-color:rgb(142, 177, 216, 0.7);">
                 <div class="container">
                     <div class="row d-flex align-items-center">
@@ -56,7 +56,7 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
+            <div class="toast notification" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
                 <div class="toast-body" style="background-color:rgb(130, 175, 136);">
                     <div class="container">
                         <div class="row d-flex align-items-center">
