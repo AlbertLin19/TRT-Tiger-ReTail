@@ -19,7 +19,7 @@
       {% for item in items %}
       <div class="card item-card hover col-12" style="width: 18rem; padding-top: 1%;padding-bottom: 1%">
         <div class="pic-description" style="background-color: #fff5e6; border-radius:10px">
-          <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
+          <div style="text-align:center; padding-bottom:4%" class="card-img-top rounded-corners">
             {% cloudinary item.image format="jpg" width=220 height=150 background="#fff5e6" crop="lpad"%}
           </div>
           <div class="card-body">
