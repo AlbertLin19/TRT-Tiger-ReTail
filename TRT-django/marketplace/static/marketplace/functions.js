@@ -2,7 +2,7 @@ function search() {
    query = document.getElementById("searchbar").value.toLowerCase();
    cards = document.getElementsByClassName("card");
    if (query != '') {
-      for (i = 0; i < cards.length; i++) {
+      for (i = cards.length-1; i >= 0; i--) {
          if (cards[i].querySelector(".item_categories").innerHTML.toLowerCase().includes(query))
             cards[i].style.display = '';
          else if (cards[i].querySelector("h5").innerHTML.toLowerCase().includes(query))
@@ -16,6 +16,10 @@ function search() {
          cards[i].style.display = '';
       }
    }
+}
+
+function delayLoading() {
+   
 }
 
 function filter(input) {
