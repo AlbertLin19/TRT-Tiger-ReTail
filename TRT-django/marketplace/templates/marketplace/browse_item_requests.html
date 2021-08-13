@@ -1,251 +1,413 @@
 {% extends "marketplace/base.html" %}
-{% load cloudinary %}
 {% block content %}
 
 <div class="topbar header3 container-fluid">
-  <div class="row justify-content-around">
+    <div class="row justify-content-around">
+        <div class="col-5">
+            <div class="input-group rounded">
+              <input type="search" id="searchbar" oninput="updateQuery()" placeholder="Search" class="form-control" />
+              <button class="btn btn-secondary"><i class=" fa fa-search"></i></button>
+            </div>
+        </div>
 
-    <div class="col-6" id="search_bar">
-      <div class="input-group rounded">
-        <input type="search" id="searchbar" onkeyup="search()" placeholder="Search" class="form-control" />
-        <button class="btn btn-secondary" type="submit" onkeyup="search()"><i class=" fa fa-search"></i></button>
-      </div>
-    </div>
+        <div class="col-5 text-center">
+          <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 60%;"><span
+              class="d-none d-xl-inline">Want to Buy?&nbsp;&nbsp;</span><span class="d-none d-md-inline">Browse </span>Items</a>
+        </div>
 
-    <div class="col-5 text-center">
-      <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 80%;"><span
-          class="d-none d-sm-inline">Want to Buy? Browse </span>Gallery</a>
-    </div>
-
-    <div class="col-1">
-      <div class="dropdown show" style="text-align: right;">
-        <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;"
-          type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-plus"></i>
-        </button>
-        <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <div class="container-fluid dropdown-item mx-0 px-0">
-            <div class="row"> 
-              <button class="post-dropdown-item px-0 mx-0 noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST REQUEST</button>
+        <div class="col-2">
+          <div class="dropdown show" style="text-align: right;">
+            <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;" type="button"
+              id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Post
+            </button>
+            <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+              <div class="container-fluid dropdown-item mx-0 px-0">
+                <div class="row"> 
+                  <button class="post-dropdown-item px-0 mx-0 noHover" style="border:none; background-color:transparent; outline:none;" data-bs-toggle="modal" data-bs-target="#post-dropdown-item" onclick="disableHover()">POST REQUEST</button>
+                </div>
+              </div>
+              <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
             </div>
           </div>
-          <a class="dropdown-item" href="{% url 'new_item' %}">POST ITEM</a>
         </div>
-      </div>
+        <!-- Modal -->
+        <div class="modal fade" id="post-dropdown-item" tabindex="-1" role="dialog"
+          aria-labelledby="post-dropdown-item" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: #cee2db;">
+                <h5 style="font-size:30px" class="modal-title">Post Item Request</h5>
+                <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
+                  aria-label="Close">
+                <span style="font-size:30px" aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <a class="btn btn-light hover-grey my-2" href="{% url 'new_item_request' %}"style="width: 100%;">Post <span class="d-none d-sm-inline">Item </span>Request</a>
+                <a class="btn btn-light hover-grey my-2" href="{% url 'gallery' %}" style="width: 100%;"><span
+                  class="d-none d-sm-inline">Want to Buy?&nbsp;&nbsp;</span>Browse Items</a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="enableHover()"
+                  data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
-
-    <!-- Modal -->
-<div class="modal fade" id="post-dropdown-item" tabindex="-1" role="dialog"
-aria-labelledby="post-dropdown-item" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content">
-    <div class="modal-header" style="background-color: #cee2db;">
-      <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">Post Request</h5>
-      <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
-        aria-label="Close">
-        <span style="font-size:30px" aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <a class="btn btn-light hover-grey" href="{% url 'gallery' %}" style="width: 100%;"><span
-        class="d-none d-sm-inline">Want to Buy? Browse </span>Items for Sale</a><br><br>
-      <a class="btn btn-light hover-grey" href="{% url 'new_item_request' %}"style="width: 100%;"><span
-        class="d-none d-sm-inline">Post Request </span></a>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" onclick="enableHover()"
-        data-bs-dismiss="modal">Close</button>
-    </div>
-  </div>
 </div>
-</div>
-    
-  </div>
-</div>
-
+<!-- Next Section -->
 <div class="gallery_back container-fluid mb-3">
-  <br>
-  <div class="container">
-    <div class="d-none d-lg-block" id="gallery_title"> Item Requests </div>
-    <div class="d-lg-none d-md-block" id="gallery_title_small"> Item Requests</div>
-    <p>Respond to item requests here. Check out our FAQ for more.</p>
+
+  <div class="container my-4">
+    <div id="gallery_title">Items Requested</div>
+    <p>See what people are looking for here. Check out our FAQ for more.</p>
     <hr>
-    <br>
+  </div>
+
+  <div class="container-lg">
+
     <div class="row">
 
-      <div class="col-xs-12 col-md-2" style="padding-bottom:20px;">
-        <div id="category_label">FILTERS</div>
-        <button onclick="filter('')" style="background:none" class="btn btn-sm">Show All</button> <br>
-        <div id="category_sublabel">Dorm</div>
-        <button onclick="filter('appliances')" style="background:none" class="btn btn-sm">Appliances</button> <br>
-        <button onclick="filter('furniture')" style="background:none" class="btn btn-sm">Furniture</button><br>
-        <div id="category_sublabel">Clothing</div>
-        <button onclick="filter('clothes')" style="background:none" class="btn btn-sm">Clothes</button><br>
-        <div id="category_sublabel">Academics</div>
-        <button onclick="filter('book')" style="background:none" class="btn btn-sm">Books</button> <br>
-        <button onclick="filter('tech')" style="background:none" class="btn btn-sm">Tech</button> <br>
-        <div id="category_sublabel">Campus Life</div>
-        <button onclick="filter('tickets')" style="background:none" class="btn btn-sm">Tickets</button> <br>
-        <button onclick="filter('gift cards')" style="background:none" class="btn btn-sm">Gift Cards</button> <br>
-        <button onclick="filter('other')" style="background:none" class="btn btn-sm">Other</button>
-      </div>
-      <div class="col-md-10 row">
-        {% if not item_requests %}
-          <h4>No item requests posted yet.</h4>
-        {% endif %}
-        {% for item_request in item_requests %}
-        
-        <div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
-          <div class="pic-description" style="background-color: #fff5e6; border-radius:10px">
-            <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
-              {% cloudinary item_request.image format="jpg" width=270 height=200 background="#fff5e6" crop="lpad"%}
-            </div>
-            <div style="display:none;" class="item_categories">
-              {% for category in item_request.categories.all %}
-              <div class="item_category">{{category}}</div>
-              {% endfor %}
-            </div>
-            <div class="card-body">
-              <div class="card-title">{{item_request.name}}</div>
-              {%if item_request.negotiable == True%}
-              <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
-              {%else%}
-              <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
-              {%endif%}
-              <p class="card-text"> <i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
-              <p class="card-text"> <i class="fa fa-check" aria-hidden="true"></i> Quality </p>
-              {% if item_request.condition == Item.NEW%}
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
-                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              {% elif item_request.condition == Item.LIKE_NEW %}
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
-                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              {% elif item_request.condition == Item.GENTLY_LOVED %}
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%" aria-valuenow="100"
-                  aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              {% elif item_request.condition == Item.WELL_LOVED %}
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"
-                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              {% elif item_request.condition == Item.POOR %}
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"
-                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              {% endif %}
-              <div class="row" style="padding-top:3%;padding-bottom:4%">
-                <div class="col-sm-12">
-                  <a class="btn btn-success" style="padding-left: 23px; padding-right: 23px;" href="{% url 'contact_item_request' item_request.pk %}">Contact</a>
-                <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
-                  data-bs-target="#modal{{item_request.pk}}" style="padding-left: 30px; padding-right: 30px;">
-                  Details
-                </button>
-                </div>
-              </div>
-              
+      <div class="col-sm-2">
 
-              <!-- Modal -->
-              <div class="modal fade" id="modal{{item_request.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item_request.pk}}"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header" style="background-color: #cee2db;">
-                      <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item_request.name}}</h5>
-                      <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
-                        aria-label="Close">
-                        <span style="font-size:30px" aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <h2 style="text-align:center;">Item Request Details</h2>
-                      <div id="myCarousel{{item_request.pk}}" class="carousel slide text-center multi-item-carousel"
-                        data-bs-ride="carousel">
-                        <!--<a class="carousel-control left" href="#myCarousel{{item_request.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item_request.pk}}').carousel('prev')">&lsaquo;</a>-->
-                        <br>
-                        <div class="carousel-inner" role="listbox">
-                          <!--carousel-item active-->
-                          <div class="carousel-item active">
-                            {% cloudinary item_request.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
-                          </div>
-                          {%for image in item_request.album.all%}
-                          <div class="carousel-item">
-                            {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
-                          </div>
-                          {%endfor%}
-                        </div>
-                        <br>
-                        <a class="carousel-control-prev" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="sr-only">Next</span>
-                        </a>
-                        <!--<a class="carousel-control right" href="#myCarousel{{item_request.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item_request.pk}}').carousel('next')">&rsaquo;</a>-->
-                      </div>
-                      <div style="background:#d8e2dc; border-radius:10px;" id="description">
-                        <div class="item-details">
-                          {%if item_request.negotiable == True%}
-                          <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
-                          {%else%}
-                          <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
-                          {%endif%}
-                          <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
-                          <p class="card-text"><i class="fas fa-comment"></i> {{item_request.description}}</p>
-                          <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i> Quality</p>
-                          {% if item_request.condition == Item.NEW%}
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-                              style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                          {% elif item_request.condition == Item.LIKE_NEW %}
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
-                              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                          {% elif item_request.condition == Item.GENTLY_LOVED %}
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
-                              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                          {% elif item_request.condition == Item.WELL_LOVED %}
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-                              style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                          {% elif item_request.condition == Item.POOR %}
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-                              style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                          {% endif %}
-                          <br>
-                          
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" onclick="enableHover()"
-                        data-bs-dismiss="modal">Close</button>
-                    </div>
-                  </div>
+        <div class="row">
+
+          <div class="col-6 col-sm-12 mb-5">
+            <p class="fs-5">Categories</p>
+            {% for category in categories %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="category_{{category.pk}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="category_{{category.pk}}">
+                        {{category.name}}
+                    </label>
                 </div>
-              </div>
-            </div>
+            {% endfor %}
           </div>
+
+          <div class="col-6 col-sm-12">
+            <p class="fs-5">Conditions</p>
+            {% for condition in Item.CONDITIONS %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="condition_{{condition.index}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="condition_{{condition.index}}">
+                        {{condition.name}}
+                    </label>
+                </div>
+            {% endfor %}
+          </div>
+          
         </div>
-       
-        {% endfor %}
+            
       </div>
+
+      <div class="col-sm-10 px-4" style="height: 70vh; overflow-y: auto;">
+        <div class="row" id="results"></div>
+      </div>
+
     </div>
+
   </div>
+
 </div>
+
+<script>
+    'use strict';
+    const category_pks = [{% for category in categories %}{{category.pk}}, {% endfor %}];
+    const condition_indexes = [{% for condition in Item.CONDITIONS %}{{condition.index}}, {% endfor %}];
+    let active_category_pks = [];
+    let active_condition_indexes = [];
+    let search_string = "";
+
+    let item_requests = [];        // continuously gathered item_requests, sorted by most relevant first
+    // each item_request is a dict {"pk", "name", "price", "description", "lead_image", "album", etc.}
+            
+    let last_rendered_item_request_index = -1;  // tracks last rendered item_request
+    let restart = false;                // indicates that item_requests should be cleared
+    
+
+    // set active_category_pks, active_condition_indexes, search_string appropriately
+    // based on current inputs
+    function updateQuery() {
+        active_category_pks = [];
+        active_condition_indexes = [];
+
+        for (const category_pk of category_pks) {
+            if ($("#category_"+category_pk).is(':checked')) {
+                active_category_pks.push(category_pk);
+            }
+        }
+        for (const condition_index of condition_indexes) {
+            if ($("#condition_"+condition_index).is(':checked')) {
+                active_condition_indexes.push(condition_index);
+            }
+        }
+
+        search_string = $("#searchbar").val();
+        restart = true; // trigger a clear of the item_requests array, since query parameters have changed
+    }
+
+    // generates and injects new item_request HTML elements, updates 'last_rendered_item_request_index'
+    function injectItemRequestsHTML() {
+
+        if (last_rendered_item_request_index < 0) {
+          $('#results').html('');
+        }
+
+        // generate and add new item_request html elements
+        for (const item_request of item_requests.slice(last_rendered_item_request_index + 1)) {
+            let item_request_html = '';
+            item_request_html += '<div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">';
+            // image of the item_request
+            item_request_html += '<div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">';
+            item_request_html += '<img src="';
+            item_request_html += item_request["image"];
+            item_request_html += '" width="270" height="200">';
+            item_request_html += '</div>';
+            // categories that do not show up on the item_request
+            item_request_html += '<div style="display:none;" class="item_categories">';
+            item_request_html += item_request["categories"];
+            item_request_html += '</div>';
+            // card body
+            item_request_html += '<div class="card-body">';
+              // card title
+              item_request_html += '<div class="card-title">';
+              item_request_html += item_request["name"];
+              item_request_html += '</div>';
+              // negotiable item_request
+              if (item_request["negotiable"]) {
+                item_request_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                item_request_html += item_request["price"]; 
+                item_request_html += ' USD (negotiable)</p>';
+              }
+              else {
+                item_request_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                item_request_html += item_request["price"]; 
+                item_request_html += ' USD</p>';
+              }
+              // item_request deadline 
+              item_request_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
+              item_request_html += item_request["deadline"];
+              item_request_html += '</p>';
+              // item_request quality
+              item_request_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
+              if (item_request["condition_index"] == 0) {
+                item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
+                item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+              }
+              else if (item_request["condition_index"] == 1) {
+                item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
+                item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+              }
+              else if (item_request["condition_index"] == 2) {
+                item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
+                item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+              }
+              else if (item_request["condition_index"] == 3) {
+                item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
+                item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+              }
+              else if (item_request["condition_index"] == 4) {
+                item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
+                item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+              }
+
+              //item_request availability
+              item_request_html += '<div class="row" style="padding-top:3%;padding-bottom:4%">';
+                item_request_html += '<div class="col-sm-12">';
+                  item_request_html += '<a class="btn btn-success" style="padding-left: 23px; padding-right: 23px; margin-right: 6px;" href="/item_requests/' + item_request["pk"] + '/contact/">Contact</a>';
+                  item_request_html += '<button type="button" id="button_modal';
+                  item_request_html += item_request["pk"]
+                  item_request_html += '" class="btn btn-secondary noHover pull-right"';
+                    item_request_html += 'onclick="disableHover()" data-bs-toggle="modal" data-bs-target="#modal';
+                    item_request_html += item_request["pk"];
+                    item_request_html += '" style="padding-left: 28px; padding-right: 28px;">';
+                  item_request_html += 'Details </button>';
+                item_request_html += '</div>';
+              item_request_html += '</div>';
+
+              // modal
+              item_request_html += '<div class="modal fade" id="modal';
+              item_request_html += item_request['pk'];
+              item_request_html += '" tabindex="-1" role="dialog"aria-labelledby="modal';
+              item_request_html += item_request['pk'];
+              item_request_html += '" aria-hidden="true">';
+              item_request_html += '<div class="modal-dialog modal-dialog-centered" role="document">';
+                // modal content
+                item_request_html += '<div class="modal-content">';
+                  // modal header
+                  item_request_html += '<div class="modal-header" style="background-color: #cee2db;">';
+                    item_request_html += '<h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">';
+                    item_request_html += item_request["name"];
+                    item_request_html += '</h5>';
+                    item_request_html += '<button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal" aria-label="Close">';
+                    item_request_html += '<span style="font-size:30px" aria-hidden="true">&times;</span>';
+                    item_request_html += '</button>';
+                  item_request_html += '</div>';
+                  // modal body
+                  item_request_html += '<div class="modal-body">';
+                    item_request_html += '<h2 style="text-align:center;">Item Request Details</h2>';
+                    // carousel item_requests
+                    item_request_html += '<div id="myCarousel';
+                    item_request_html += item_request["pk"];
+                    item_request_html += '" class="carousel slide text-center multi-item-carousel" data-bs-ride="carousel">';
+                      item_request_html += '<br>';
+                      // carousel list box
+                      item_request_html += '<div class="carousel-inner" role="listbox">';
+                        item_request_html += '<div class="carousel-item active">';
+                          item_request_html += '<img src="';
+                          item_request_html += item_request["image"];
+                        item_request_html += '" width="320" height="240"></div>';
+                        /* item_request_html += '<p>';
+                        item_request_html += item_request["album"];
+                        item_request_html += '</p>'; */
+                      item_request_html += '</div>';
+                      item_request_html += '<br>';
+                      // carousel previous button
+                      item_request_html += '<a class="carousel-control-prev" href="#myCarousel';
+                      item_request_html += item_request["pk"];
+                      item_request_html += '" role="button" data-bs-slide="prev">';
+                      item_request_html += '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
+                      item_request_html += '<span class="sr-only">Previous</span></a>';
+                      // carousel next button
+                      item_request_html += '<a class="carousel-control-next" href="#myCarousel';
+                      item_request_html += item_request["pk"];
+                      item_request_html += '" role="button" data-bs-slide="next">';
+                      item_request_html += '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
+                      item_request_html += '<span class="sr-only">Next</span></a>';
+                    item_request_html += '</div>';
+                    // description
+                    item_request_html += '<div style="background:#d8e2dc; border-radius:10px;" id="description">';
+                      item_request_html += '<div class="item-details">';
+                      if (item_request['negotiable']) {
+                        item_request_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                        item_request_html += item_request["price"]; 
+                        item_request_html += ' USD (negotiable)</p>';
+                      }
+                      else {
+                        item_request_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                        item_request_html += item_request["price"]; 
+                        item_request_html += ' USD</p>';
+                      }
+                      // item_request deadline 
+                      item_request_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
+                      item_request_html += item_request["deadline"];
+                      item_request_html += '</p>';
+                      // item_request description
+                      item_request_html += '<p class="card-text"><i class="fas fa-comment"></i> ';
+                      item_request_html += item_request["description"];
+                      item_request_html += '</p>';
+                      // item_request quality
+                      item_request_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
+                      if (item_request["condition_index"] == 0) {
+                        item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
+                        item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                      }
+                      else if (item_request["condition_index"] == 1) {
+                        item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
+                        item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                      }
+                      else if (item_request["condition_index"] == 2) {
+                        item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
+                        item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                      }
+                      else if (item_request["condition_index"] == 3) {
+                        item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
+                        item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                      }
+                      else if (item_request["condition_index"] == 4) {
+                        item_request_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
+                        item_request_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                      }
+                      item_request_html += '</div>';
+                    item_request_html += '</div>';
+                  item_request_html += '</div>';
+                  // modal footer
+                  item_request_html += '<div class="modal-footer">';
+                    item_request_html += '<a class="btn btn-success" style="padding-left: 23px; padding-right: 23px;" href="/item_requests/' + item_request["pk"] + '/contact/">Contact</a>';
+                  item_request_html += '<button type="button" class="btn btn-secondary" onclick="enableHover()"data-bs-dismiss="modal">Close</button>';
+                  item_request_html += '</div>';
+                item_request_html += '</div>';
+              item_request_html += '</div>';
+            item_request_html += '</div>';
+            item_request_html += '</div>';
+            item_request_html += '</div>';
+            const item_request_element = document.createElement("div");
+            item_request_element.classList.add("col-xxl-4");
+            item_request_element.classList.add("col-xl-4");
+            item_request_element.classList.add("col-lg-6");
+            item_request_element.classList.add("col-md-6");
+            item_request_element.classList.add("col-sm-12");
+            item_request_element.innerHTML = item_request_html;
+            $('#results').append(item_request_element);
+        }
+
+        if (item_requests.length === 0) {
+          const p = document.createElement("p");
+          p.innerHTML = "No item requests match the current filters.";
+          $('#results').append(p);
+        }
+
+        // update index
+        last_rendered_item_request_index = item_requests.length - 1;
+    }
+
+    // retrieve and render item_requests repeatedly in a synchronous fashion 
+    // (only this function and those it calls should ever touch 'item_requests', 'last_rendered_item_request_index' to avoid concurrency issues)
+    function populateItemRequestsSynchronously(count, period) {
+
+        if (restart) {
+            restart = false;
+            item_requests = [];
+            last_rendered_item_request_index = -1;
+            window.setTimeout(populateItemRequestsSynchronously(count, period), period);
+            return;
+        }
+
+        // populate item_requests array with new item_requests
+
+        // construct appropriate GET parameters
+        let categories_str = "";
+        for (const category_pk of active_category_pks) {
+            categories_str += category_pk + ",";
+        }
+        let conditions_str = "";
+        for (const condition_index of active_condition_indexes) {
+            conditions_str += condition_index + ",";
+        }
+
+        // get new item_requests in backward direction
+        let base_item_request_pk = -1;
+        if (item_requests.length != 0) {
+            base_item_request_pk = item_requests[item_requests.length - 1]["pk"];
+        }
+        fetch("/item_requests/get_relative/?count=" + count + "&direction=backward&base_item_request_pk=" + base_item_request_pk + "&search_string=" + search_string + "&condition_indexes=" + conditions_str + "&category_pks=" + categories_str)
+            .then((resp) => {return resp.json();})
+            .then((data) => {
+
+                // push item_requests and render
+                item_requests.push(...data["item_requests"]);
+                injectItemRequestsHTML();
+                
+                // notice that setTimeout is called only in callback of fetch, to avoid concurrency issues
+                // (the call to setTimeout in the .catch only occurs if .then doesn't execute)
+                window.setTimeout(populateItemRequestsSynchronously(count, period), period);
+                return;
+            })
+            .catch((error) => {
+                window.setTimeout(populateItemRequestsSynchronously(count, period), period);
+                return console.log(error);
+            });
+            
+        return;
+    }
+
+    function setup() {
+            window.setTimeout(() => {populateItemRequestsSynchronously(5, 10)}, 0);
+        }
+
+    $('document').ready(setup);
+
+</script>
 {% endblock content %}

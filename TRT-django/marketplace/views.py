@@ -1516,7 +1516,7 @@ def getItemRequestsRelative(request):
     )
 
     # get the correct slice of item requests
-    if base_item_requests_pk == -1:
+    if base_item_request_pk == -1:
         item_requests = item_requests.order_by('row' if direction == 'forward' else '-row')[:count]
     else:
         # filter out item requests based on base_item_request
