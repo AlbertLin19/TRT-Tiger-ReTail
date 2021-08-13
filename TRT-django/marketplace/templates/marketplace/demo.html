@@ -133,11 +133,10 @@
             .then((resp) => {return resp.json();})
             .then((data) => {
 
-                // if items were retrieved, add to items array and render
-                if (data["items"].length != 0) {
-                    items.push(...data["items"]);
-                    injectItemsHTML();
-                }
+                // add to items array
+                items.push(...data["items"]);
+                // render
+                injectItemsHTML();
 
                 // notice that setTimeout is called only in callback of fetch, to avoid concurrency issues
                 // (the call to setTimeout in the .catch only occurs if .then doesn't execute)

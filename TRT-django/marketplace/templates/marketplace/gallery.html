@@ -3,7 +3,7 @@
 
 <div class="topbar header3 container-fluid">
     <div class="row justify-content-around">
-        <div class="col-6" id="search_bar">
+        <div class="col-5">
             <div class="input-group rounded">
               <input type="search" id="searchbar" oninput="updateQuery()" placeholder="Search" class="form-control" />
               <button class="btn btn-secondary"><i class=" fa fa-search"></i></button>
@@ -12,14 +12,14 @@
 
         <div class="col-5 text-center">
           <a class="btn btn-light hover-grey" href="{% url 'browse_item_requests' %}" style="width: 60%;"><span
-              class="d-none d-lg-inline">Want to Sell? Browse </span>Requests</a>
+              class="d-none d-xl-inline">Want to Sell?&nbsp;&nbsp;</span><span class="d-none d-md-inline">Browse </span>Requests</a>
         </div>
 
-        <div class="col-1">
+        <div class="col-2">
           <div class="dropdown show" style="text-align: right;">
             <button class="btn btn-light dropdown-toggle px-3 hover-grey" style="font-weight: bold;" type="button"
               id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-plus"></i>
+              Post
             </button>
             <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
               <div class="container-fluid dropdown-item mx-0 px-0">
@@ -34,20 +34,19 @@
         <!-- Modal -->
         <div class="modal fade" id="post-dropdown-item" tabindex="-1" role="dialog"
           aria-labelledby="post-dropdown-item" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header" style="background-color: #cee2db;">
-                <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">Post Item</h5>
+                <h5 style="font-size:30px" class="modal-title">Post Item</h5>
                 <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
                   aria-label="Close">
                 <span style="font-size:30px" aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <a class="btn btn-light hover-grey" href="{% url 'new_item' %}"style="width: 100%;"><span
-                  class="d-none d-sm-inline">Post Item </span></a><br><br>
-                <a class="btn btn-light hover-grey" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span
-                  class="d-none d-sm-inline">Want to Sell? Browse </span>Requests</a><br>
+                <a class="btn btn-light hover-grey my-2" href="{% url 'new_item' %}"style="width: 100%;">Post Item</a>
+                <a class="btn btn-light hover-grey my-2" href="{% url 'browse_item_requests' %}" style="width: 100%;"><span
+                  class="d-none d-sm-inline">Want to Sell?&nbsp;&nbsp;</span>Browse Requests</a>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="enableHover()"
@@ -60,15 +59,19 @@
 </div>
 <!-- Next Section -->
 <div class="gallery_back container-fluid mb-3">
-  <br>
-  <div class="col" style="height: 100%; overflow-y: scroll;">
-    <div id="gallery_title"> Items for Sale </div>
+
+  <div class="container my-4">
+    <div id="gallery_title">Items for Sale</div>
     <p>Purchase items here. Check out our FAQ for more.</p>
     <hr>
-    <br>
-    <div class="row">
-      <div class="col-xs-12 col-md-2" style="padding-bottom:20px;">
-          CATEGORIES
+  </div>
+
+  <div class="row">
+
+    <div class="col">
+
+      <div class="row mb-4"><div class="col">
+          <p class="fs-5">Categories</p>
           {% for category in categories %}
               <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="category_{{category.pk}}" oninput="updateQuery()">
@@ -77,8 +80,10 @@
                   </label>
               </div>
           {% endfor %}
+      </div></div>
 
-          CONDITIONS 
+      <div class="row mt-4"><div class="col">
+          <p class="fs-5">Conditions</p>
           {% for condition in Item.CONDITIONS %}
               <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="condition_{{condition.index}}" oninput="updateQuery()">
@@ -87,29 +92,17 @@
                   </label>
               </div>
           {% endfor %}
-      </div>
-      <div class="col-md-10 row">
-        {% if not items %}
-          <h4>No items posted yet.</h4>
-        {% endif %}
-        <div id="table_body"></div>
-      </div>
+      </div></div>
+          
     </div>
+
+    <div class="col" style="height: 70vh; overflow-y: auto;">
+      <div id="results"></div>
+    </div>
+
   </div>
+
 </div>
-<!-- Old Version <div class="container">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Description</th>
-            </tr>
-        </thead>
-        <tbody id="table_body">
-        </tbody>
-    </table>
-</div> Old Version up to Here -->
 
 <script>
     'use strict';
@@ -126,7 +119,7 @@
     let last_rendered_item_index = -1;  // tracks last rendered item
     let restart = false;                // indicates that items should be cleared
 
-    let new_purchase_url = "purchases/new/";
+    let new_purchase_url = "/purchases/new/";
     let csrf_token = '{% csrf_token %}';
     
 
@@ -361,9 +354,13 @@
             existing_html += '</div>';
         }
 
+        if (items.length === 0) {
+          existing_html = '<p>No items match the current filters.</p>';
+        }
+
         // update index
         last_rendered_item_index = items.length - 1;
-        $('#table_body').html(existing_html);
+        $('#results').html(existing_html);
     }
 
     // retrieve and render items repeatedly in a synchronous fashion 
@@ -400,12 +397,10 @@
             .then((resp) => {return resp.json();})
             .then((data) => {
 
-                // if items were retrieved, add to items array and render
-                if (data["items"].length != 0) {
-                    items.push(...data["items"]);
-                    injectItemsHTML();
-                }
-
+                // push items and render
+                items.push(...data["items"]);
+                injectItemsHTML();
+                
                 // notice that setTimeout is called only in callback of fetch, to avoid concurrency issues
                 // (the call to setTimeout in the .catch only occurs if .then doesn't execute)
                 window.setTimeout(populateItemsSynchronously(count, period), period);

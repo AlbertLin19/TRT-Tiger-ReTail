@@ -288,13 +288,79 @@ def authentication_required(view_function):
 
 # ----------------------------------------------------------------------
 
+# admin_required decorator for protected views
+
+# ensures that user is logged in and also an admin
+
+
+def admin_required(view_function):
+    def wrapper(request, *args, **kwargs):
+
+        # if username in session, check admin
+        if "username" in request.session:
+            if username in [netid + suffix for netid in settings.ADMIN_NETIDS for suffix in settings.ALT_ACCOUNT_SUFFIXES]:
+                return view_function(request, *args, **kwargs)
+
+            else:
+                messages.warning(request, "Forbidden, need admin permission.")
+                return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+
+        # if request contains a ticket, try validating it and call view if admin
+        if "ticket" in request.GET:
+            username = CASClient.validate(
+                request.build_absolute_uri(), request.GET["ticket"]
+            ).strip()
+
+            if username is not None:
+                # store authenticated username,
+                # check that associated Account exists, else create one,
+                # call view as normal only if admin
+                request.session["username"] = username
+                if not Account.objects.filter(username=username).exists():
+                    # note this assumes use of princeton email
+                    Account(
+                        username=username,
+                        name=username,
+                        email=username + "@princeton.edu",
+                    ).save()
+                # SPECIAL CASE: if the netid is an ADMIN_NETID
+                if username in settings.ADMIN_NETIDS:
+                    # create all the alternate accounts
+                    # and assign the first one as active
+                    for suffix in settings.ALT_ACCOUNT_SUFFIXES:
+                        if not Account.objects.filter(
+                            username=username + suffix
+                        ).exists():
+                            Account(
+                                username=username + suffix,
+                                name=username + suffix,
+                                email=username + "@princeton.edu",
+                            ).save()
+                    request.session["username"] = (
+                        username + settings.ALT_ACCOUNT_SUFFIXES[0]
+                    )
+                    return view_function(request, *args, **kwargs)
+                # view forbidden if not an admin
+                else:
+                    messages.warning(request, "Forbidden, need admin permission.")
+                    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+
+        # user could NOT be authenticated because ticket missing or invalid, so redirect to CAS login
+        # before redirection, store POST details for use once redirected back
+        if request.method == "POST":
+            request.session[request.path] = request.POST
+        return redirect(CASClient.getLoginUrl(request.build_absolute_uri()))
+
+    return wrapper
+
+
+# ----------------------------------------------------------------------
+
 # image gallery
 
 
 def gallery(request):
-    items = Item.objects.all()
-    context = {"items": items}
-    return render(request, "marketplace/gallery.html", context)
+    return render(request, "marketplace/gallery.html", {})
 
 
 # ----------------------------------------------------------------------
@@ -379,6 +445,7 @@ def getItemsRelative(request):
 
     if categories:
         items = items.filter(categories__in=categories)
+        items = Item.objects.filter(pk__in=items) # get rid of duplicate rows (can happen because of filtering on m2m categories table)
 
     # annotate items by search string rank
     items = items.annotate(rank=SearchRank(SearchVector("name", "description"), SearchQuery(search_string), cover_density=True))
@@ -1352,9 +1419,7 @@ def contactItemRequest(request, pk):
 
 
 def browseItemRequests(request):
-    item_requests = ItemRequest.objects.all()
-    context = {"item_requests": item_requests}
-    return render(request, "marketplace/browse_item_requests.html", context)
+    return render(request, "marketplace/browse_item_requests.html", {})
 
 
 # ----------------------------------------------------------------------
@@ -1437,6 +1502,7 @@ def getItemRequestsRelative(request):
 
     if categories:
         item_requests = item_requests.filter(categories__in=categories)
+        item_requests = ItemRequest.objects.filter(pk__in=item_requests) # get rid of duplicate rows (can happen because of filtering on m2m categories table)
 
     # annotate item requests by search string rank
     item_requests = item_requests.annotate(rank=SearchRank(SearchVector("name", "description"), SearchQuery(search_string), cover_density=True))
@@ -1775,6 +1841,83 @@ def sendMessage(request):
 
 # ----------------------------------------------------------------------
 
+# flag item
+
+
+@authentication_required
+def flagItem(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# flag item request
+
+
+@authentication_required
+def flagItemRequest(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# admin manage flags page
+
+
+@admin_required
+def adminManageFlags(request):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# admin delete item flag
+
+
+@admin_required
+def adminDeleteItemFlag(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# admin delete item request flag
+
+
+@admin_required
+def adminDeleteItemRequestFlag(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# admin delete item
+
+
+@admin_required
+def adminDeleteItem(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
+# admin delete item request
+
+
+@admin_required
+def adminDeleteItemRequest(request, pk):
+    account = Account.objects.get(username=request.session.get("username"))
+    return HttpResponse(status=200)
+
+
+# ----------------------------------------------------------------------
+
 # account activity page
 
 
@@ -1879,17 +2022,12 @@ def verifyEmail(request, token):
 # ----------------------------------------------------------------------
 
 
-@authentication_required
+@admin_required
 def cycleAccount(request):
     username = request.session.get("username")
 
     netids = settings.ADMIN_NETIDS
     suffixes = settings.ALT_ACCOUNT_SUFFIXES
-
-    # must be an admin netid + suffix
-    if username not in [netid + suffix for netid in netids for suffix in suffixes]:
-        messages.warning(request, "Forbidden, need permission.")
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
 
     # set the session username to the next netid+suffix
     done = False

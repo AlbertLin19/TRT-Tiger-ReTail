@@ -290,6 +290,13 @@ class Notification(models.Model):
     seen = models.BooleanField(default=False)
     url = models.URLField()
 
+class ItemFlag(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="flags")
+    text = models.CharField(max_length=500)
+
+class ItemRequestFlag(models.Model):
+    item_request = models.ForeignKey(ItemRequest, on_delete=models.CASCADE, related_name="flags")
+    text = models.CharField(max_length=500)
 
 ############## DELETE CLOUDINARY IMAGES POST_DELETE ###################
 @receiver(post_delete, sender=Item)
