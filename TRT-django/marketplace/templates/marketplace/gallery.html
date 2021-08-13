@@ -164,10 +164,10 @@
             item_html += '<div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">';
             // image of the item
             item_html += '<div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">';
-            item_html += '<img src="';
+            item_html += '<div style="height: 150px;"><img src="';
             item_html += item["image"];
             item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;">';
-            item_html += '</div>';
+            item_html += '</div></div>';
             // categories that do not show up on the item
             item_html += '<div style="display:none;" class="item_categories">';
             item_html += item["categories"];
@@ -267,15 +267,15 @@
                       // carousel list box
                       item_html += '<div class="carousel-inner" role="listbox">';
                         item_html += '<div class="carousel-item active">';
-                          item_html += '<img src="';
+                          item_html += '<div style="height: 150px;"><img src="';
                           item_html += item["image"];
-                        item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;"></div>';
+                        item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;"></div></div>';
                         item["album"].forEach(picture =>{
                           item_html += '<div class="carousel-item">';
-                          item_html += '<img src="';
+                          item_html += '<div style="height: 150px;"><img src="';
                           item_html += picture;
                           item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;">';
-                          item_html += '</div>';
+                          item_html += '</div></div>';
                         });
                         /* item_html += '<p>';
                         item_html += item["album"];
@@ -363,6 +363,7 @@
             item_element.classList.add("col-lg-6");
             item_element.classList.add("col-md-6");
             item_element.classList.add("col-sm-12");
+            item_element.classList.add("mb-4");
             item_element.innerHTML = item_html;
             $('#results').append(item_element);
         }
