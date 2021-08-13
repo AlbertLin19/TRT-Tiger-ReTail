@@ -298,7 +298,7 @@ def admin_required(view_function):
 
         # if username in session, check admin
         if "username" in request.session:
-            if username in [netid + suffix for netid in settings.ADMIN_NETIDS for suffix in settings.ALT_ACCOUNT_SUFFIXES]:
+            if request.session["username"] in [netid + suffix for netid in settings.ADMIN_NETIDS for suffix in settings.ALT_ACCOUNT_SUFFIXES]:
                 return view_function(request, *args, **kwargs)
 
             else:
