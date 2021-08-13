@@ -66,38 +66,46 @@
     <hr>
   </div>
 
-  <div class="row">
+  <div class="container-lg">
 
-    <div class="col">
+    <div class="row">
 
-      <div class="row mb-4"><div class="col">
-          <p class="fs-5">Categories</p>
-          {% for category in categories %}
-              <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="category_{{category.pk}}" oninput="updateQuery()">
-                  <label class="form-check-label" for="category_{{category.pk}}">
-                      {{category.name}}
-                  </label>
-              </div>
-          {% endfor %}
-      </div></div>
+      <div class="col-sm-2">
 
-      <div class="row mt-4"><div class="col">
-          <p class="fs-5">Conditions</p>
-          {% for condition in Item.CONDITIONS %}
-              <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="condition_{{condition.index}}" oninput="updateQuery()">
-                  <label class="form-check-label" for="condition_{{condition.index}}">
-                      {{condition.name}}
-                  </label>
-              </div>
-          {% endfor %}
-      </div></div>
+        <div class="row">
+
+          <div class="col-6 col-sm-12 mb-5">
+            <p class="fs-5">Categories</p>
+            {% for category in categories %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="category_{{category.pk}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="category_{{category.pk}}">
+                        {{category.name}}
+                    </label>
+                </div>
+            {% endfor %}
+          </div>
+
+          <div class="col-6 col-sm-12">
+            <p class="fs-5">Conditions</p>
+            {% for condition in Item.CONDITIONS %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="condition_{{condition.index}}" oninput="updateQuery()">
+                    <label class="form-check-label" for="condition_{{condition.index}}">
+                        {{condition.name}}
+                    </label>
+                </div>
+            {% endfor %}
+          </div>
           
-    </div>
+        </div>
+            
+      </div>
 
-    <div class="col" style="height: 70vh; overflow-y: auto;">
-      <div id="results"></div>
+      <div class="col-sm-10 px-4" style="height: 70vh; overflow-y: auto;">
+        <div class="row" id="results"></div>
+      </div>
+
     </div>
 
   </div>
@@ -114,12 +122,11 @@
 
     let items = [];        // continuously gathered items, sorted by most relevant first
     // each item is a dict {"pk", "name", "price", "description", "lead_image", "album", etc.}
-
-    let existing_html = '';            
+            
     let last_rendered_item_index = -1;  // tracks last rendered item
     let restart = false;                // indicates that items should be cleared
 
-    let new_purchase_url = "/purchases/new/";
+    let new_purchase_url = '{% url "new_purchase" %}';
     let csrf_token = '{% csrf_token %}';
     
 
@@ -144,233 +151,239 @@
         restart = true; // trigger a clear of the items array, since query parameters have changed
     }
 
-    // generates and injects new items HTML, updates 'last_rendered_item_index'
+    // generates and injects new item HTML elements, updates 'last_rendered_item_index'
     function injectItemsHTML() {
 
-        // generate and add new items html
+        if (last_rendered_item_index < 0) {
+          $('#results').html('');
+        }
+
+        // generate and add new item html elements
         for (const item of items.slice(last_rendered_item_index + 1)) {
-            /* Old Version 
-            existing_html += "<tr>";
-            existing_html += "<td>" + item["name"] + "</td>";
-            existing_html += "<td>" + item["price"] + "</td>";
-            existing_html += "<td>" + item["description"] + "</td>";
-            existing_html += "</tr>"; 
-            Old Version Ends Here */
-            existing_html += '<div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">';
+            let item_html = '';
+            item_html += '<div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">';
             // image of the item
-            existing_html += '<div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">';
-            existing_html += '<img src="';
-            existing_html += item["image"];
-            existing_html += '" width="270" height="200">';
-            existing_html += '</div>';
+            item_html += '<div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">';
+            item_html += '<img src="';
+            item_html += item["image"];
+            item_html += '" width="270" height="200">';
+            item_html += '</div>';
             // categories that do not show up on the item
-            existing_html += '<div style="display:none;" class="item_categories">';
-            existing_html += item["categories"];
-            existing_html += '</div>';
+            item_html += '<div style="display:none;" class="item_categories">';
+            item_html += item["categories"];
+            item_html += '</div>';
             // card body
-            existing_html += '<div class="card-body">';
+            item_html += '<div class="card-body">';
               // card title
-              existing_html += '<div class="card-title">';
-              existing_html += item["name"];
-              existing_html += '</div>';
+              item_html += '<div class="card-title">';
+              item_html += item["name"];
+              item_html += '</div>';
               // negotiable item
               if (item["negotiable"]) {
-                existing_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
-                existing_html += item["price"]; 
-                existing_html += ' USD (negotiable)</p>';
+                item_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                item_html += item["price"]; 
+                item_html += ' USD (negotiable)</p>';
               }
               else {
-                existing_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
-                existing_html += item["price"]; 
-                existing_html += ' USD</p>';
+                item_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                item_html += item["price"]; 
+                item_html += ' USD</p>';
               }
               // item deadline 
-              existing_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
-              existing_html += item["deadline"];
-              existing_html += '</p>';
+              item_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
+              item_html += item["deadline"];
+              item_html += '</p>';
               // item quality
-              existing_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
+              item_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
               if (item["condition_index"] == 0) {
-                existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
-                existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
+                item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
               }
               else if (item["condition_index"] == 1) {
-                existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
-                existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
+                item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
               }
               else if (item["condition_index"] == 2) {
-                existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
-                existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
+                item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
               }
               else if (item["condition_index"] == 3) {
-                existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
-                existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
+                item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
               }
               else if (item["condition_index"] == 4) {
-                existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
-                existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
+                item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
               }
 
               //item availability
-              existing_html += '<div class="row" style="padding-top:3%;padding-bottom:4%">';
-                existing_html += '<div class="col-sm-12">';
-                  existing_html +='<form action="';
-                  existing_html += new_purchase_url;
-                  existing_html += '" method="post" style="display: inline-block;">';
-                  existing_html += csrf_token;
-                    existing_html += '<input type="hidden" name="pk" value=';
-                    existing_html += item["pk"];
-                    existing_html += '>';
-                    existing_html += '<input type="submit" class="btn btn-success pull-left" value="Purchase" style="padding-left: 19px; padding-right: 19px;">';
-                  existing_html += '</form>';
-                  existing_html += '<button type="button" id="button_modal';
-                  existing_html += item["pk"]
-                  existing_html += '" class="btn btn-secondary noHover pull-right"';
-                    existing_html += 'onclick="disableHover()" data-bs-toggle="modal" data-bs-target="#modal';
-                    existing_html += item["pk"];
-                    existing_html += '" style="padding-left: 28px; padding-right: 28px;">';
-                  existing_html += 'Details </button>';
-                existing_html += '</div>';
-              existing_html += '</div>';
+              item_html += '<div class="row" style="padding-top:3%;padding-bottom:4%">';
+                item_html += '<div class="col-sm-12">';
+                  item_html +='<form action="';
+                  item_html += new_purchase_url;
+                  item_html += '" method="post" style="display: inline-block;">';
+                  item_html += csrf_token;
+                    item_html += '<input type="hidden" name="pk" value=';
+                    item_html += item["pk"];
+                    item_html += '>';
+                    item_html += '<input type="submit" class="btn btn-success pull-left" value="Purchase" style="padding-left: 19px; padding-right: 19px;">';
+                  item_html += '</form>';
+                  item_html += '<button type="button" id="button_modal';
+                  item_html += item["pk"]
+                  item_html += '" class="btn btn-secondary noHover pull-right"';
+                    item_html += 'onclick="disableHover()" data-bs-toggle="modal" data-bs-target="#modal';
+                    item_html += item["pk"];
+                    item_html += '" style="padding-left: 28px; padding-right: 28px;">';
+                  item_html += 'Details </button>';
+                item_html += '</div>';
+              item_html += '</div>';
 
               // modal
-              existing_html += '<div class="modal fade" id="modal';
-              existing_html += item['pk'];
-              existing_html += '" tabindex="-1" role="dialog"aria-labelledby="modal';
-              existing_html += item['pk'];
-              existing_html += '" aria-hidden="true">';
-              existing_html += '<div class="modal-dialog modal-dialog-centered" role="document">';
+              item_html += '<div class="modal fade" id="modal';
+              item_html += item['pk'];
+              item_html += '" tabindex="-1" role="dialog"aria-labelledby="modal';
+              item_html += item['pk'];
+              item_html += '" aria-hidden="true">';
+              item_html += '<div class="modal-dialog modal-dialog-centered" role="document">';
                 // modal content
-                existing_html += '<div class="modal-content">';
+                item_html += '<div class="modal-content">';
                   // modal header
-                  existing_html += '<div class="modal-header" style="background-color: #cee2db;">';
-                    existing_html += '<h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">';
-                    existing_html += item["name"];
-                    existing_html += '</h5>';
-                    existing_html += '<button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal" aria-label="Close">';
-                    existing_html += '<span style="font-size:30px" aria-hidden="true">&times;</span>';
-                    existing_html += '</button>';
-                  existing_html += '</div>';
+                  item_html += '<div class="modal-header" style="background-color: #cee2db;">';
+                    item_html += '<h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">';
+                    item_html += item["name"];
+                    item_html += '</h5>';
+                    item_html += '<button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal" aria-label="Close">';
+                    item_html += '<span style="font-size:30px" aria-hidden="true">&times;</span>';
+                    item_html += '</button>';
+                  item_html += '</div>';
                   // modal body
-                  existing_html += '<div class="modal-body">';
-                    existing_html += '<h2 style="text-align:center;">Item Details</h2>';
+                  item_html += '<div class="modal-body">';
+                    item_html += '<h2 style="text-align:center;">Item Details</h2>';
                     // carousel items
-                    existing_html += '<div id="myCarousel';
-                    existing_html += item["pk"];
-                    existing_html += '" class="carousel slide text-center multi-item-carousel" data-bs-ride="carousel">';
-                      existing_html += '<br>';
+                    item_html += '<div id="myCarousel';
+                    item_html += item["pk"];
+                    item_html += '" class="carousel slide text-center multi-item-carousel" data-bs-ride="carousel">';
+                      item_html += '<br>';
                       // carousel list box
-                      existing_html += '<div class="carousel-inner" role="listbox">';
-                        existing_html += '<div class="carousel-item active">';
-                          existing_html += '<img src="';
-                          existing_html += item["image"];
-                        existing_html += '" width="320" height="240"></div>';
+                      item_html += '<div class="carousel-inner" role="listbox">';
+                        item_html += '<div class="carousel-item active">';
+                          item_html += '<img src="';
+                          item_html += item["image"];
+                        item_html += '" width="320" height="240"></div>';
                         item["album"].forEach(picture =>{
-                          existing_html += '<div class="carousel-item">';
-                          existing_html += '<img src="';
-                          existing_html += picture;
-                          existing_html += '" width="320" height="240">';
-                          existing_html += '</div>';
+                          item_html += '<div class="carousel-item">';
+                          item_html += '<img src="';
+                          item_html += picture;
+                          item_html += '" width="320" height="240">';
+                          item_html += '</div>';
                         });
-                        /* existing_html += '<p>';
-                        existing_html += item["album"];
-                        existing_html += '</p>'; */
-                      existing_html += '</div>';
-                      existing_html += '<br>';
+                        /* item_html += '<p>';
+                        item_html += item["album"];
+                        item_html += '</p>'; */
+                      item_html += '</div>';
+                      item_html += '<br>';
                       // carousel previous button
-                      existing_html += '<a class="carousel-control-prev" href="#myCarousel';
-                      existing_html += item["pk"];
-                      existing_html += '" role="button" data-bs-slide="prev">';
-                      existing_html += '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
-                      existing_html += '<span class="sr-only">Previous</span></a>';
+                      item_html += '<a class="carousel-control-prev" href="#myCarousel';
+                      item_html += item["pk"];
+                      item_html += '" role="button" data-bs-slide="prev">';
+                      item_html += '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
+                      item_html += '<span class="sr-only">Previous</span></a>';
                       // carousel next button
-                      existing_html += '<a class="carousel-control-next" href="#myCarousel';
-                      existing_html += item["pk"];
-                      existing_html += '" role="button" data-bs-slide="next">';
-                      existing_html += '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
-                      existing_html += '<span class="sr-only">Next</span></a>';
-                    existing_html += '</div>';
+                      item_html += '<a class="carousel-control-next" href="#myCarousel';
+                      item_html += item["pk"];
+                      item_html += '" role="button" data-bs-slide="next">';
+                      item_html += '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
+                      item_html += '<span class="sr-only">Next</span></a>';
+                    item_html += '</div>';
                     // description
-                    existing_html += '<div style="background:#d8e2dc; border-radius:10px;" id="description">';
-                      existing_html += '<div class="item-details">';
+                    item_html += '<div style="background:#d8e2dc; border-radius:10px;" id="description">';
+                      item_html += '<div class="item-details">';
                       if (item['negotiable']) {
-                        existing_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
-                        existing_html += item["price"]; 
-                        existing_html += ' USD (negotiable)</p>';
+                        item_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                        item_html += item["price"]; 
+                        item_html += ' USD (negotiable)</p>';
                       }
                       else {
-                        existing_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
-                        existing_html += item["price"]; 
-                        existing_html += ' USD</p>';
+                        item_html += '<p class="card-text"><i class="fas fa-tag"></i> $';
+                        item_html += item["price"]; 
+                        item_html += ' USD</p>';
                       }
                       // item deadline 
-                      existing_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
-                      existing_html += item["deadline"];
-                      existing_html += '</p>';
+                      item_html += '<p class="card-text"><i class="fas fa-hourglass-half"></i> till ';
+                      item_html += item["deadline"];
+                      item_html += '</p>';
                       // item description
-                      existing_html += '<p class="card-text"><i class="fas fa-comment"></i> ';
-                      existing_html += item["description"];
-                      existing_html += '</p>';
+                      item_html += '<p class="card-text"><i class="fas fa-comment"></i> ';
+                      item_html += item["description"];
+                      item_html += '</p>';
                       // item quality
-                      existing_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
+                      item_html += '<p class="card-text"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Quality</p>';
                       if (item["condition_index"] == 0) {
-                        existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
-                        existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                        item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"';
+                        item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
                       }
                       else if (item["condition_index"] == 1) {
-                        existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
-                        existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                        item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"';
+                        item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
                       }
                       else if (item["condition_index"] == 2) {
-                        existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
-                        existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                        item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"';
+                        item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
                       }
                       else if (item["condition_index"] == 3) {
-                        existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
-                        existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                        item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"';
+                        item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
                       }
                       else if (item["condition_index"] == 4) {
-                        existing_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
-                        existing_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                        item_html += '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"';
+                        item_html += 'aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
                       }
-                      existing_html += '</div>';
-                    existing_html += '</div>';
-                  existing_html += '</div>';
+                      item_html += '</div>';
+                    item_html += '</div>';
+                  item_html += '</div>';
                   // modal footer
-                  existing_html += '<div class="modal-footer">';
-                  existing_html += '<form action="';
-                  existing_html += new_purchase_url;
-                  existing_html += '" method="post" style="display: inline-block;">';
-                  existing_html += csrf_token;
-                  existing_html += '<input type="hidden" name="pk" value=';
-                  existing_html += item["pk"];
-                  existing_html += '><input type="submit" class="btn btn-success pull-left" value="Purchase" style="padding-left: 19px; padding-right: 19px;">';
-                  existing_html += '</form><button type="button" class="btn btn-secondary" onclick="enableHover()"data-bs-dismiss="modal">Close</button>';
-                  existing_html += '</div>';
-                existing_html += '</div>';
-              existing_html += '</div>';
-            existing_html += '</div>';
-            existing_html += '</div>';
-            existing_html += '</div>';
+                  item_html += '<div class="modal-footer">';
+                  item_html += '<form action="';
+                  item_html += new_purchase_url;
+                  item_html += '" method="post" style="display: inline-block;">';
+                  item_html += csrf_token;
+                  item_html += '<input type="hidden" name="pk" value=';
+                  item_html += item["pk"];
+                  item_html += '><input type="submit" class="btn btn-success pull-left" value="Purchase" style="padding-left: 19px; padding-right: 19px;">';
+                  item_html += '</form><button type="button" class="btn btn-secondary" onclick="enableHover()"data-bs-dismiss="modal">Close</button>';
+                  item_html += '</div>';
+                item_html += '</div>';
+              item_html += '</div>';
+            item_html += '</div>';
+            item_html += '</div>';
+            item_html += '</div>';
+            const item_element = document.createElement("div");
+            item_element.classList.add("col-xxl-4");
+            item_element.classList.add("col-xl-4");
+            item_element.classList.add("col-lg-6");
+            item_element.classList.add("col-md-6");
+            item_element.classList.add("col-sm-12");
+            item_element.innerHTML = item_html;
+            $('#results').append(item_element);
         }
 
         if (items.length === 0) {
-          existing_html = '<p>No items match the current filters.</p>';
+          const p = document.createElement("p");
+          p.innerHTML = "No items match the current filters.";
+          $('#results').append(p);
         }
 
         // update index
         last_rendered_item_index = items.length - 1;
-        $('#results').html(existing_html);
     }
 
     // retrieve and render items repeatedly in a synchronous fashion 
-    // (only this function and those it calls should ever touch 'items', 'existing_html', 'last_rendered_item_index' to avoid concurrency issues)
+    // (only this function and those it calls should ever touch 'items', 'last_rendered_item_index' to avoid concurrency issues)
     function populateItemsSynchronously(count, period) {
 
         if (restart) {
             restart = false;
             items = [];
-            existing_html = '';
             last_rendered_item_index = -1;
             window.setTimeout(populateItemsSynchronously(count, period), period);
             return;
