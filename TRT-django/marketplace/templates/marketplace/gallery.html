@@ -166,7 +166,7 @@
             item_html += '<div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">';
             item_html += '<img src="';
             item_html += item["image"];
-            item_html += '" width="270" height="200">';
+            item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;">';
             item_html += '</div>';
             // categories that do not show up on the item
             item_html += '<div style="display:none;" class="item_categories">';
@@ -269,12 +269,12 @@
                         item_html += '<div class="carousel-item active">';
                           item_html += '<img src="';
                           item_html += item["image"];
-                        item_html += '" width="320" height="240"></div>';
+                        item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;"></div>';
                         item["album"].forEach(picture =>{
                           item_html += '<div class="carousel-item">';
                           item_html += '<img src="';
                           item_html += picture;
-                          item_html += '" width="320" height="240">';
+                          item_html += '" style="max-width: 220px; max-height: 150px; width: auto; height: auto;">';
                           item_html += '</div>';
                         });
                         /* item_html += '<p>';
