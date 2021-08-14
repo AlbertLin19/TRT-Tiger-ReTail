@@ -224,6 +224,7 @@
                     item_request_html += item_request["pk"];
                     item_request_html += '" style="padding-left: 28px; padding-right: 28px;">';
                   item_request_html += 'Details </button>';
+                  item_request_html += '<a style="margin-left: 10px;" href="/flag_item_request/' + item_request["pk"] + '/" data-bs-toggle="tooltip" data-bs-placement="top" title="Report"><i class="fas fa-flag" style="color:red;"></i></a>';
                 item_request_html += '</div>';
               item_request_html += '</div>';
 
@@ -327,6 +328,7 @@
                   item_request_html += '<div class="modal-footer">';
                     item_request_html += '<a class="btn btn-success" style="padding-left: 23px; padding-right: 23px;" href="/item_requests/' + item_request["pk"] + '/contact/">Contact</a>';
                   item_request_html += '<button type="button" class="btn btn-secondary" onclick="enableHover()"data-bs-dismiss="modal">Close</button>';
+                  item_request_html += '<a style="margin-left: 10px;" href="/flag_item_request/' + item_request["pk"] + '/" data-bs-toggle="tooltip" data-bs-placement="top" title="Report"><i class="fas fa-flag" style="color:red;"></i></a>';
                   item_request_html += '</div>';
                 item_request_html += '</div>';
               item_request_html += '</div>';
@@ -342,6 +344,12 @@
             item_request_element.classList.add("mb-4");
             item_request_element.innerHTML = item_request_html;
             $('#results').append(item_request_element);
+
+            // enable tooltips in item_request_element
+            const tooltipTriggerList = [].slice.call(item_request_element.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         }
 
         if (item_requests.length === 0) {

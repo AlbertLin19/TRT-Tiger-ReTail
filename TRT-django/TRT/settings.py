@@ -173,6 +173,8 @@ CACHES = {
 ADMIN_NETIDS = ["aklin", "singl", "kjm3", "sarats",]
 # list of alt account suffixes for admins
 ALT_ACCOUNT_SUFFIXES = ["", "_alt_a", "_alt_b"]
+# list of emails to send admin notices to
+ADMIN_EMAILS = ["aklin@princeton.edu"]
 # time buffer after which expired items are deleted
 EXPIRATION_BUFFER = timedelta(days=1)
 
