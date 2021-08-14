@@ -21,7 +21,7 @@ from .models import (
     Notification,
     Category,
 )
-from .forms import AccountForm, ItemForm, ItemRequestForm
+from .forms import AccountForm, ItemForm, ItemRequestForm, ItemFlagForm, ItemRequestFlagForm
 from utils import CASClient
 from datetime import timedelta
 
@@ -1841,24 +1841,94 @@ def sendMessage(request):
 
 # ----------------------------------------------------------------------
 
-# flag item
+# flag item form
+# GET requests get a blank form
+# POST requests get a form with error feedback, else new item flag created
+# and redirected to gallery page
 
 
 @authentication_required
 def flagItem(request, pk):
     account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+
+    try:
+        item = Item.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_flag_form = ItemFlagForm(request.POST)
+        if item_flag_form.is_valid():
+            # create new item flag, but do not save yet until changes made
+            item_flag = item_flag_form.save(commit=False)
+            item_flag.reporter = account
+            item_flag.item = item
+            item_flag.save()
+            
+            # email admin a report notice
+            send_mail(
+                "Item Flagged",
+                "Item Flagged\n\nSeller: {}\nName: {}\nPrice: {}\nDescription: {}\n\nReporter: {}\nExplanation: {}\n{}".format(item.seller.username, item.name, item.price, item.description, account.username, item_flag.text, request.build_absolute_uri(reverse("admin_manage_flags"))),
+                settings.EMAIL_NAME,
+                settings.ADMIN_EMAILS,
+                fail_silently=True,
+            )
+
+            messages.success(request, "Thank you for your help. Item reported to admin.")
+            return redirect("gallery")
+    # did not receive form data via POST, so send a blank form
+    else:
+        item_flag_form = ItemFlagForm()
+
+    context = {"item_flag_form": item_flag_form, "item": item}
+    return render(request, "marketplace/flag_item.html", context)
 
 
 # ----------------------------------------------------------------------
 
-# flag item request
+# flag item request form
+# GET requests get a blank form
+# POST requests get a form with error feedback, else new item request flag created
+# and redirected to browse_item_requests page
 
 
 @authentication_required
 def flagItemRequest(request, pk):
     account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+
+    try:
+        item_request = ItemRequest.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+
+    # populate the Django model form and validate data
+    if request.method == "POST":
+        item_request_flag_form = ItemRequestFlagForm(request.POST)
+        if item_request_flag_form.is_valid():
+            # create new item_request flag, but do not save yet until changes made
+            item_request_flag = item_request_flag_form.save(commit=False)
+            item_request_flag.reporter = account
+            item_request_flag.item_request = item_request
+            item_request_flag.save()
+            
+            # email admin a report notice
+            send_mail(
+                "Item Request Flagged",
+                "Item Request Flagged\n\nRequester: {}\nName: {}\nPrice: {}\nDescription: {}\n\nReporter: {}\nExplanation: {}\n{}".format(item_request.requester.username, item_request.name, item_request.price, item_request.description, account.username, item_request_flag.text, request.build_absolute_uri(reverse("admin_manage_flags"))),
+                settings.EMAIL_NAME,
+                settings.ADMIN_EMAILS,
+                fail_silently=True,
+            )
+
+            messages.success(request, "Thank you for your help. Item request reported to admin.")
+            return redirect("browse_item_requests")
+    # did not receive form data via POST, so send a blank form
+    else:
+        item_request_flag_form = ItemRequestFlagForm()
+
+    context = {"item_request_flag_form": item_request_flag_form, "item_request": item_request}
+    return render(request, "marketplace/flag_item_request.html", context)
 
 
 # ----------------------------------------------------------------------

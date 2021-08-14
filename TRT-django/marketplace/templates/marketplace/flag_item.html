@@ -1,0 +1,32 @@
+{% extends "marketplace/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="topbar" style="text-align: right;">
+    <a href="{% url 'gallery' %}" class="btn btn-outline-dark" style="font-weight: bold;">BACK TO IMAGE GALLERY</a>
+</div>
+
+<div class="container my-4">
+
+    <h2>Report Inappropriate Item (Thanks for your help!)</h2>
+    <hr>
+
+    <form action="{% url 'flag_item' item.pk %}" method="post">
+        {% csrf_token %}
+
+        <div class="row my-2">
+            <div class="col">
+                {{ item_flag_form.text|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class ="row my-4">
+            <div class="text-center">
+                <button id="id_submit" type="submit" value="Submit" class="btn btn-danger">Report</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock content %}

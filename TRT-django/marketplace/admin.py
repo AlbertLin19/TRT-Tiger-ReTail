@@ -10,6 +10,8 @@ from .models import (
     ItemRequest,
     Message,
     Notification,
+    ItemFlag,
+    ItemRequestFlag,
 )
 
 # Register your models here.
@@ -24,3 +26,5 @@ admin.site.register(AlbumImage)
 admin.site.register(ItemRequest)
 admin.site.register(Message)
 admin.site.register(Notification)
+admin.site.register(ItemFlag)
+admin.site.register(ItemRequestFlag)
