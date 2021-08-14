@@ -1,0 +1,147 @@
+{% load cloudinary %}
+<div class="card item-card hover col-12 col-md-4" style="width: 18rem; padding-top: 1%; padding-bottom: 1%;">
+    <div class="pic-description" style="background-color: #fff5e6; border-radius:10px">
+      <div style="text-align:center; padding-top:6%; padding-bottom:4%" class="card-img-top rounded-corners">
+        {% cloudinary item_request.image format="jpg" width=270 height=200 background="#fff5e6" crop="lpad"%}
+      </div>
+      <div style="display:none;" class="item_categories">
+        {% for category in item_request.categories.all %}
+        <div class="item_category">{{category}}</div>
+        {% endfor %}
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{item_request.name}}</div>
+        {%if item_request.negotiable == True%}
+        <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
+        {%else%}
+        <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
+        {%endif%}
+        <p class="card-text"> <i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
+        <p class="card-text"> <i class="fa fa-check" aria-hidden="true"></i> Quality </p>
+        {% if item_request.condition == Item.NEW%}
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% elif item_request.condition == Item.LIKE_NEW %}
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% elif item_request.condition == Item.GENTLY_LOVED %}
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% elif item_request.condition == Item.WELL_LOVED %}
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 55%"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% elif item_request.condition == Item.POOR %}
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% endif %}
+        <div class="row" style="padding-top:3%;padding-bottom:4%">
+          <div class="col-sm-12">
+          <button type="button" class="btn btn-secondary noHover" onclick="disableHover()" data-bs-toggle="modal"
+            data-bs-target="#modal{{item_request.pk}}" style="padding-left: 30px; padding-right: 30px;">
+            Details
+          </button>
+          </div>
+        </div>
+        
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal{{item_request.pk}}" tabindex="-1" role="dialog" aria-labelledby="modal{{item_request.pk}}"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: #cee2db;">
+                <h5 style="font-size:30px" class="modal-title" id="exampleModalLongTitle">{{item_request.name}}</h5>
+                <button type="button" class="btn close" onclick="enableHover()" data-bs-dismiss="modal"
+                  aria-label="Close">
+                  <span style="font-size:30px" aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <h2 style="text-align:center;">Item Request Details</h2>
+                <div id="myCarousel{{item_request.pk}}" class="carousel slide text-center multi-item-carousel"
+                  data-bs-ride="carousel">
+                  <!--<a class="carousel-control left" href="#myCarousel{{item_request.pk}}" data-bs-slide="prev" onclick="$('#myCarousel{{item_request.pk}}').carousel('prev')">&lsaquo;</a>-->
+                  <br>
+                  <div class="carousel-inner" role="listbox">
+                    <!--carousel-item active-->
+                    <div class="carousel-item active">
+                      {% cloudinary item_request.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
+                    </div>
+                    {%for image in item_request.album.all%}
+                    <div class="carousel-item">
+                      {% cloudinary image.image format="jpg" width=320 height=240 crop="lpad" radius=10%}
+                    </div>
+                    {%endfor%}
+                  </div>
+                  <br>
+                  <a class="carousel-control-prev" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#myCarousel{{item_request.pk}}" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                  <!--<a class="carousel-control right" href="#myCarousel{{item_request.pk}}" data-bs-slide="next" onclick="$('#myCarousel{{item_request.pk}}').carousel('next')">&rsaquo;</a>-->
+                </div>
+                <div style="background:#d8e2dc; border-radius:10px;" id="description">
+                  <div class="item-details">
+                    {%if item_request.negotiable == True%}
+                    <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD (negotiable)</p>
+                    {%else%}
+                    <p class="card-text"><i class="fas fa-tag"></i> ${{item_request.price}} USD</p>
+                    {%endif%}
+                    <p class="card-text"><i class="fas fa-hourglass-half"></i> till {{item_request.deadline}}</p>
+                    <p class="card-text"><i class="fas fa-comment"></i> {{item_request.description}}</p>
+                    <p class="card-text"><i class="fa fa-check" aria-hidden="true"></i> Quality</p>
+                    {% if item_request.condition == Item.NEW%}
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                        style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% elif item_request.condition == Item.LIKE_NEW %}
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 85%"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% elif item_request.condition == Item.GENTLY_LOVED %}
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 70%"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% elif item_request.condition == Item.WELL_LOVED %}
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                        style="width: 55%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% elif item_request.condition == Item.POOR %}
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                        style="width: 40%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% endif %}
+                    <br>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="enableHover()"
+                  data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

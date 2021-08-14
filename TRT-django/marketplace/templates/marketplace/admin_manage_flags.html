@@ -25,7 +25,7 @@
             <tbody>
               {% for item_flag in item_flags %}
               <tr>
-                <th scope="col">{{ item_flag.item }}</th>
+                <th scope="col">{% with item=item_flag.item %}{% include "marketplace/report_item_card.html" %}{% endwith %}</th>
                 <th scope="col"><a class="btn btn-danger" href="{% url 'admin_delete_item' item_flag.item.pk %}">Delete</a></th>
                 <th scope="col"><a class="btn btn-success" href="{% url 'admin_delete_item_flag' item_flag.pk %}">Release</a></th>
               </tr>
@@ -54,7 +54,7 @@
             <tbody>
               {% for item_request_flag in item_request_flags %}
               <tr>
-                <th scope="col">{{ item_request_flag.item_request }}</th>
+                <th scope="col">{% with item_request=item_request_flag.item_request %}{% include "marketplace/report_item_request_card.html" %}{% endwith %}</th>
                 <th scope="col"><a class="btn btn-danger" href="{% url 'admin_delete_item_request' item_request_flag.item_request.pk %}">Delete</a></th>
                 <th scope="col"><a class="btn btn-success" href="{% url 'admin_delete_item_request_flag' item_request_flag.pk %}">Release</a></th>
               </tr>
