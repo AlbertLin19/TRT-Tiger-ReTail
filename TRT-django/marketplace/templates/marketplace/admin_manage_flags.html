@@ -67,4 +67,12 @@
 
 </div>
 
+<script>
+  // disable hover on table cards - unfortunately need to do this since item cards onclick are enabling/disabling hovers on all classes 'cards'...
+  window.setInterval(() => {
+    $('#item_flags_data').parent().removeClass('hover');
+    $('#item_request_flags_data').parent().removeClass('hover');
+  }, 50);
+</script>
+
 {% endblock content %}
