@@ -20,6 +20,8 @@ from .models import (
     Message,
     Notification,
     Category,
+    ItemFlag,
+    ItemRequestFlag,
 )
 from .forms import AccountForm, ItemForm, ItemRequestForm, ItemFlagForm, ItemRequestFlagForm
 from utils import CASClient
@@ -1938,8 +1940,10 @@ def flagItemRequest(request, pk):
 
 @admin_required
 def adminManageFlags(request):
-    account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+    item_flags = ItemFlag.objects.all()
+    item_request_flags = ItemRequestFlag.objects.all()
+    context = {"item_flags": item_flags, "item_request_flags": item_request_flags}
+    return render(request, "marketplace/admin_manage_flags.html", context)
 
 
 # ----------------------------------------------------------------------
@@ -1949,8 +1953,12 @@ def adminManageFlags(request):
 
 @admin_required
 def adminDeleteItemFlag(request, pk):
-    account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+    try:
+        item_flag = ItemFlag.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+    item_flag.delete()
+    return redirect('admin_manage_flags')
 
 
 # ----------------------------------------------------------------------
@@ -1960,8 +1968,12 @@ def adminDeleteItemFlag(request, pk):
 
 @admin_required
 def adminDeleteItemRequestFlag(request, pk):
-    account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+    try:
+        item_request_flag = ItemRequestFlag.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+    item_request_flag.delete()
+    return redirect('admin_manage_flags')
 
 
 # ----------------------------------------------------------------------
@@ -1971,8 +1983,12 @@ def adminDeleteItemRequestFlag(request, pk):
 
 @admin_required
 def adminDeleteItem(request, pk):
-    account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+    try:
+        item = Item.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+    item.delete()
+    return redirect('admin_manage_flags')
 
 
 # ----------------------------------------------------------------------
@@ -1982,8 +1998,12 @@ def adminDeleteItem(request, pk):
 
 @admin_required
 def adminDeleteItemRequest(request, pk):
-    account = Account.objects.get(username=request.session.get("username"))
-    return HttpResponse(status=200)
+    try:
+        item_request = ItemRequest.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=400)
+    item_request.delete()
+    return redirect('admin_manage_flags')
 
 
 # ----------------------------------------------------------------------

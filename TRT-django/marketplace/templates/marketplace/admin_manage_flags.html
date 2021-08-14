@@ -1,0 +1,70 @@
+{% extends "marketplace/base.html" %}
+{% load cloudinary %}
+{% block content %}
+
+<!-- Bootstrap collapsables and tables referenced from online documentation. -->
+<div class="container my-4 p-2">
+    <h2>Manage Flags</h2>
+    <hr>
+
+    <div class="card my-2">
+      <div class="card-header hover-grey text-center" id="item_flags_data" type="button" data-bs-toggle="collapse" data-bs-target="#item_flags" aria-expanded="false" aria-controls="item_flags">
+            Item Flags
+      </div>
+
+      <div id="item_flags" class="collapse" aria-labelledby="item_flags_data">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Delete Item</th>
+                <th scope="col">Release Flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item_flag in item_flags %}
+              <tr>
+                <th scope="col">{{ item_flag.item }}</th>
+                <th scope="col"><a class="btn btn-danger" href="{% url 'admin_delete_item' item_flag.item.pk %}">Delete</a></th>
+                <th scope="col"><a class="btn btn-success" href="{% url 'admin_delete_item_flag' item_flag.pk %}">Release</a></th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card my-2">
+      <div class="card-header hover-grey text-center" id="item_request_flags_data" type="button" data-bs-toggle="collapse" data-bs-target="#item_request_flags" aria-expanded="false" aria-controls="item_request_flags">
+            Item Request Flags
+      </div>
+
+      <div id="item_request_flags" class="collapse" aria-labelledby="item_request_flags_data">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Item Request</th>
+                <th scope="col">Delete Item Request</th>
+                <th scope="col">Release Flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item_request_flag in item_request_flags %}
+              <tr>
+                <th scope="col">{{ item_request_flag.item_request }}</th>
+                <th scope="col"><a class="btn btn-danger" href="{% url 'admin_delete_item_request' item_request_flag.item_request.pk %}">Delete</a></th>
+                <th scope="col"><a class="btn btn-success" href="{% url 'admin_delete_item_request_flag' item_request_flag.pk %}">Release</a></th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+{% endblock content %}
