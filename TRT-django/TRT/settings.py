@@ -170,11 +170,11 @@ CACHES = {
 }
 
 # list of netids for which we allow multi-accounts
-ADMIN_NETIDS = ["aklin", "singl", "kjm3", "sarats",]
+ADMIN_NETIDS = ["aklin", "singl", "kjm3", "sarats", "ca9"]
 # list of alt account suffixes for admins
 ALT_ACCOUNT_SUFFIXES = ["", "_alt_a", "_alt_b"]
 # list of emails to send admin notices to
-ADMIN_EMAILS = ["aklin@princeton.edu"]
+ADMIN_EMAILS = ["aklin@princeton.edu", "tigerapps@princetonusg.com"]
 # time buffer after which expired items are deleted
 EXPIRATION_BUFFER = timedelta(days=1)
 
