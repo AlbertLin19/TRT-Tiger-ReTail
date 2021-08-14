@@ -1958,6 +1958,7 @@ def adminDeleteItemFlag(request, pk):
     except:
         return HttpResponse(status=400)
     item_flag.delete()
+    messages.success(request, "Item flag deleted.")
     return redirect('admin_manage_flags')
 
 
@@ -1973,6 +1974,7 @@ def adminDeleteItemRequestFlag(request, pk):
     except:
         return HttpResponse(status=400)
     item_request_flag.delete()
+    messages.success(request, "Item request flag deleted.")
     return redirect('admin_manage_flags')
 
 
@@ -1988,6 +1990,7 @@ def adminDeleteItem(request, pk):
     except:
         return HttpResponse(status=400)
     item.delete()
+    messages.success(request, "Item deleted.")
     return redirect('admin_manage_flags')
 
 
@@ -2003,6 +2006,7 @@ def adminDeleteItemRequest(request, pk):
     except:
         return HttpResponse(status=400)
     item_request.delete()
+    messages.success(request, "Item request deleted.")
     return redirect('admin_manage_flags')
 
 
