@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="topbar" style="text-align: right;">
-    <a href="{% url 'gallery' %}" class="btn btn-outline-light" style="font-weight: bold;"> BACK TO IMAGE GALLERY</a>
+    <a href="{% url 'list_item_requests' %}" class="btn btn-outline-dark" style="font-weight: bold;"> BACK TO MY REQUESTS</a>
 </div>
 <div class="container my-4">
     <h2>Request Edit Form</h2>
@@ -253,6 +253,9 @@
             document.getElementById("id_deadline").addEventListener("input", validateDeadline);
             document.getElementById("id_image").addEventListener("input", validateImage);
             window.setInterval(updateSubmitButton, 100);
+
+            // validate deadline (deadline could have passed since last edit)
+            validateDeadline();
         }
         document.addEventListener("DOMContentLoaded", setup);
     </script>
