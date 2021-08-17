@@ -1,4 +1,6 @@
-# TRT Tiger ReTail
+# OFFICIAL LIVE RELEASE!!!: https://retail.tigerapps.org/
+### further development has moved to Princeton's TigerApps repo
+## TRT Tiger ReTail
 an online web platform for Princeton students to buy/sell/request goods
 
 initial prototype is live here! https://tiger-retail.herokuapp.com/
